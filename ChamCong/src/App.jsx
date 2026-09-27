@@ -9,6 +9,7 @@ import InsurancePage from "./modules/insurance/pages/InsurancePage";
 import BankPage from "./modules/bank-accounts/pages/BankPage";
 import StatisticsPage from "./modules/statistics/pages/StatisticsPage";
 import AttendanceHistoryPage from "./modules/attendance/pages/AttendanceHistoryPage";
+import ProfilePage from "./modules/profile/pages/ProfilePage";
 
 function App() {
     return (
@@ -18,12 +19,13 @@ function App() {
                 <Route path="/employees" element={<EmployeePage />} />
                 <Route path="/attendance" element={<AttendancePage />} />
                 <Route path="/attendance-history" element={<AttendanceHistoryPage />} />
+                <Route path="/statistics" element={<StatisticsPage />} />
                 <Route path="/leave" element={<LeavePage />} />
                 <Route path="/contracts" element={<ContractPage />} />
                 <Route path="/salary" element={<SalaryPage />} />
                 <Route path="/insurance" element={<InsurancePage />} />
                 <Route path="/bank-accounts" element={<BankPage />} />
-                <Route path="/statistics" element={<StatisticsPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="*" element={<Navigate to="/attendance" replace />} />
             </Routes>
         </BrowserRouter>

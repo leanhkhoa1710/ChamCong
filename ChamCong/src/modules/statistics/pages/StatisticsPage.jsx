@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { getAuth } from "../../../services/auth/auth";
-import Sidebar from "../../../components/layout/Sidebar";
+import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../../attendance/api/relatedApi";
 import "../../attendance/attendance.css";
 
@@ -122,18 +122,12 @@ const StatisticsPage = () => {
     );
 
     return (
-        <div className="att-shell">
-            <Sidebar profile={profile} />
-
-            <main className="att-main">
-                <header className="att-main-head">
-                    <div>
-                        <h1>Thống kê công</h1>
-                        <p>Theo dõi số ngày công làm việc theo tháng</p>
-                    </div>
-                </header>
-
-                <div className="att-content">
+        <AppLayout
+            title="Thống kê công"
+            subtitle="Theo dõi số ngày công làm việc theo tháng"
+            profile={profile}
+        >
+            <div className="att-content">
                     {error && <div className="att-error">{error}</div>}
                     {loading && <div className="att-loading">Đang tải...</div>}
 
@@ -263,9 +257,8 @@ const StatisticsPage = () => {
                             </div>
                         </>
                     )}
-                </div>
-            </main>
-        </div>
+            </div>
+        </AppLayout>
     );
 };
 

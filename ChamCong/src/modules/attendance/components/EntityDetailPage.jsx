@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "../../../services/auth/auth";
-import Sidebar from "../../../components/layout/Sidebar";
+import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../api/relatedApi";
 import "../attendance.css";
 
@@ -61,55 +61,44 @@ const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
     }, [kind, userId, employeeId]);
 
     return (
-        <div className="att-shell">
-            <Sidebar profile={profile} />
+        <AppLayout title={title} subtitle={subtitle} profile={profile}>
+            {error && <div className="att-error">{error}</div>}
 
-            <main className="att-main">
-                <header className="att-main-head">
-                    <div>
-                        <h1>{title}</h1>
-                        <p>{subtitle}</p>
-                    </div>
-                </header>
-
-                {error && <div className="att-error">{error}</div>}
-
-                {loading ? (
-                    <div className="att-loading">Đang tải...</div>
-                ) : items.length === 0 ? (
-                    <div className="att-card">
-                        <p className="att-muted">{emptyMessage}</p>
-                    </div>
-                ) : (
-                    <div className="att-card">
-                        <div className="att-table-wrap">
-                            <table className="att-table">
-                                <thead>
-                                    <tr>
+            {loading ? (
+                <div className="att-loading">Đang tải...</div>
+            ) : items.length === 0 ? (
+                <div className="att-card">
+                    <p className="att-muted">{emptyMessage}</p>
+                </div>
+            ) : (
+                <div className="att-card">
+                    <div className="att-table-wrap">
+                        <table className="att-table">
+                            <thead>
+                                <tr>
+                                    {columns.map((c) => (
+                                        <th key={c.key}>{c.label}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {items.map((row) => (
+                                    <tr key={row.id}>
                                         {columns.map((c) => (
-                                            <th key={c.key}>{c.label}</th>
+                                            <td key={c.key}>
+                                                {c.render
+                                                    ? c.render(row)
+                                                    : row[c.key] ?? "—"}
+                                            </td>
                                         ))}
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {items.map((row) => (
-                                        <tr key={row.id}>
-                                            {columns.map((c) => (
-                                                <td key={c.key}>
-                                                    {c.render
-                                                        ? c.render(row)
-                                                        : row[c.key] ?? "—"}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
-                )}
-            </main>
-        </div>
+                </div>
+            )}
+        </AppLayout>
     );
 };
 

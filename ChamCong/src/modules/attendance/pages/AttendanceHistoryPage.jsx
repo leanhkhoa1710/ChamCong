@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "../../../services/auth/auth";
-import Sidebar from "../../../components/layout/Sidebar";
+import AppLayout from "../../../components/layout/AppLayout";
 import HistoryTable from "../components/HistoryTable";
 import relatedApi from "../api/relatedApi";
 import "../attendance.css";
@@ -43,25 +43,18 @@ const AttendanceHistoryPage = () => {
     }, [userId, employeeId]);
 
     return (
-        <div className="att-shell">
-            <Sidebar profile={profile} />
-
-            <main className="att-main">
-                <header className="att-main-head">
-                    <div>
-                        <h1>Lịch sử chấm công</h1>
-                        <p>Tất cả các bản ghi chấm công của bạn</p>
-                    </div>
-                </header>
-
-                {error && <div className="att-error">{error}</div>}
-                {loading ? (
-                    <div className="att-loading">Đang tải...</div>
-                ) : (
-                    <HistoryTable history={history} />
-                )}
-            </main>
-        </div>
+        <AppLayout
+            title="Lịch sử chấm công"
+            subtitle="Tất cả các bản ghi chấm công của bạn"
+            profile={profile}
+        >
+            {error && <div className="att-error">{error}</div>}
+            {loading ? (
+                <div className="att-loading">Đang tải...</div>
+            ) : (
+                <HistoryTable history={history} />
+            )}
+        </AppLayout>
     );
 };
 

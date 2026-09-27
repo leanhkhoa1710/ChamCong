@@ -8,6 +8,7 @@ export const saveAuth = (data) => {
         employeeId: data?.employeeId,
         userName: data?.userName,
         employeeCode: data?.employeeCode,
+        picture: data?.picture || null,
         roles: data?.roles || [],
         expiredAt: data?.expiredAt,
     };
