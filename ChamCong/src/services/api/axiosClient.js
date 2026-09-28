@@ -2,10 +2,10 @@ import axios from "axios";
 import { getAuth } from "../auth/auth";
 
 const axiosClient = axios.create({
-    baseURL: "https://localhost:7038/api",
-    headers: {
-        "Content-Type": "application/json",
-    },
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // Đính kèm token khi đã đăng nhập (lưu trong marixa_auth)
