@@ -1,6 +1,7 @@
-﻿using M.Contract.Serivces.Interface;
+using M.Contract.Serivces.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.EmployeeBankAccountModelView;
 
@@ -8,7 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize]
     public class EmployeeBankAccountController : ControllerBase
     {
         private readonly IEmployeeBankAccountService _employeeBankAccountService;
@@ -22,6 +23,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves all employee bank accounts with pagination
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,
@@ -75,6 +77,7 @@ namespace M.API.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeBankAccountModelView model)
@@ -91,6 +94,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Updates employee bank account information
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateEmployeeBankAccountModelView model)
@@ -107,6 +111,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Soft deletes employee bank account by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -122,6 +127,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Permanently deletes employee bank account by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

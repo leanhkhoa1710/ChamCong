@@ -1,4 +1,4 @@
-﻿using M.Core.Base;
+using M.Core.Base;
 using M.Core.Store;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UploadController : ControllerBase
     {
         private readonly IWebHostEnvironment _env;

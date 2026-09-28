@@ -1,6 +1,7 @@
-﻿using M.Contract.Serivces.Interface;
+using M.Contract.Serivces.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.AttendanceModelView;
 
@@ -8,7 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize]
     public class AttendanceController : ControllerBase
     {
         private readonly IAttendanceService _attendanceService;
@@ -21,6 +22,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves all attendances with pagination
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,
@@ -90,6 +92,7 @@ namespace M.API.Controllers
             ));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateAttendanceModelView model)
@@ -106,6 +109,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Updates attendance information
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateAttendanceModelView model)
@@ -122,6 +126,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Approves / rejects an attendance record (duyệt ngày công)
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPost("approve")]
         public async Task<IActionResult> Approve(
             [FromBody] ApproveAttendanceModelView model)
@@ -138,6 +143,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Soft deletes attendance by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -153,6 +159,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Permanently deletes attendance by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

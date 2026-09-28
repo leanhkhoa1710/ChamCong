@@ -1,4 +1,4 @@
-﻿using M.API;
+using M.API;
 using M.API.Middleware;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
@@ -23,6 +23,8 @@ builder.Services.AddConfig(builder.Configuration);
 
 
 var app = builder.Build();
+
+await M.API.Seed.RoleSeeder.SeedAsync(app.Services);
 
 //Catch error
 //app.UseDeveloperExceptionPage();

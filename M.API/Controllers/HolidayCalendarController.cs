@@ -1,6 +1,7 @@
-﻿using M.Contract.Services.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.HolidayCalendarModelView;
 
@@ -8,6 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class HolidayCalendarController : ControllerBase
     {
         private readonly IHolidayCalendarService _holidayCalendarService;
@@ -42,6 +44,7 @@ namespace M.API.Controllers
                 data: result));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateHolidayCalendarModelView model)
@@ -54,6 +57,7 @@ namespace M.API.Controllers
                 data: "Holiday created successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateHolidayCalendarModelView model)
@@ -66,6 +70,7 @@ namespace M.API.Controllers
                 data: "Holiday updated successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -77,6 +82,7 @@ namespace M.API.Controllers
                 data: "Holiday deleted successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
