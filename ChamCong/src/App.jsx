@@ -14,12 +14,13 @@ import DashboardPage from "./modules/admin/pages/DashboardPage";
 import AdminAttendanceHistoryPage from "./modules/admin/attendance/pages/AdminAttendanceHistoryPage";
 import AdminStatisticsPage from "./modules/admin/attendance/pages/AdminStatisticsPage";
 import RequireModule from "./components/common/RequireModule";
-
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
+
+                {/* Khu quản trị (sidebar 3 mục) */}
                 <Route
                     path="/employees"
                     element={
@@ -28,42 +29,30 @@ function App() {
                         </RequireModule>
                     }
                 />
+                <Route
+                    path="/admin/attendance-history"
+                    element={<AdminAttendanceHistoryPage />}
+                />
+                <Route
+                    path="/admin/statistics"
+                    element={<AdminStatisticsPage />}
+                />
+                <Route path="/admin" element={<DashboardPage />} />
+
+                {/* Khu nhân viên */}
                 <Route path="/attendance" element={<AttendancePage />} />
                 <Route
                     path="/attendance-history"
                     element={<AttendanceHistoryPage />}
                 />
                 <Route path="/statistics" element={<StatisticsPage />} />
-                <Route
-                    path="/admin"
-                    element={
-                        <RequireModule to="/admin">
-                            <DashboardPage />
-                        </RequireModule>
-                    }
-                />
-                <Route
-                    path="/admin/attendance-history"
-                    element={
-                        <RequireModule to="/admin/attendance-history">
-                            <AdminAttendanceHistoryPage />
-                        </RequireModule>
-                    }
-                />
-                <Route
-                    path="/admin/statistics"
-                    element={
-                        <RequireModule to="/admin/statistics">
-                            <AdminStatisticsPage />
-                        </RequireModule>
-                    }
-                />
                 <Route path="/leave" element={<LeavePage />} />
                 <Route path="/contracts" element={<ContractPage />} />
                 <Route path="/salary" element={<SalaryPage />} />
                 <Route path="/insurance" element={<InsurancePage />} />
                 <Route path="/bank-accounts" element={<BankPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+
                 <Route path="*" element={<Navigate to="/attendance" replace />} />
             </Routes>
         </BrowserRouter>

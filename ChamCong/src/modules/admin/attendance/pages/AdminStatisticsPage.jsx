@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import AppLayout from "../../../../components/layout/AppLayout";
+import AdminAppLayout from "../../layout/AdminAppLayout";
 import adminAttendanceApi from "../api/adminAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
 import { formatVnDate } from "../../../../utils/vnTime";
@@ -145,7 +145,7 @@ const AdminStatisticsPage = () => {
     };
 
     return (
-        <AppLayout
+        <AdminAppLayout
             title="Thống kê công · Quản trị"
             subtitle="Tổng hợp ngày công của tất cả nhân viên theo tháng"
         >
@@ -337,7 +337,7 @@ const AdminStatisticsPage = () => {
                     onSubmit={submitModal}
                 />
             </div>
-        </AppLayout>
+        </AdminAppLayout>
     );
 };
 

@@ -117,16 +117,6 @@ const ProfilePage = () => {
                         </dl>
                     </section>
 
-                    {/* Tài khoản */}
-                    <section className="profile-card">
-                        <h2>Tài khoản</h2>
-                        <p className="att-muted">
-                            Đổi mật khẩu và ảnh đại diện có sẵn trong menu tài
-                            khoản (góc phải trên). Mật khẩu tối thiểu 10 ký
-                            tự, gồm chữ hoa, chữ thường, số và ký tự đặc
-                            biệt.
-                        </p>
-                    </section>
                 </div>
             )}
         </AppLayout>

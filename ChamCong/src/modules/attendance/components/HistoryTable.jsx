@@ -25,11 +25,24 @@ const formatActual = (row) => {
     return `${inT || "—"} → ${outT || "—"}`;
 };
 
+// 1 ô ảnh: thumbnail (nếu có) + badge Có/Không.
+const PhotoCell = ({ src, alt }) => (
+    <div className="att-photo-cell">
+        {src ? (
+            <a href={src} target="_blank" rel="noreferrer" title={`Xem ảnh ${alt}`}>
+                <img src={src} alt={alt} className="att-photo-thumb" />
+            </a>
+        ) : null}
+        <span className={`att-badge ${src ? "ok" : "bad"}`}>
+            {src ? "Có" : "Không"}
+        </span>
+    </div>
+);
+
 const HistoryTable = ({ history }) => {
     if (!history || history.length === 0) {
         return (
             <section className="att-card">
-                <h2>Lịch sử chấm công</h2>
                 <p className="att-muted">Chưa có bản ghi chấm công nào.</p>
             </section>
         );
@@ -37,7 +50,6 @@ const HistoryTable = ({ history }) => {
 
     return (
         <section className="att-card">
-            <h2>Lịch sử chấm công</h2>
             <div className="att-table-wrap">
                 <table className="att-table">
                     <thead>
@@ -46,7 +58,8 @@ const HistoryTable = ({ history }) => {
                             <th>Ca</th>
                             <th>Trạng thái</th>
                             <th>Giờ thực tế</th>
-                            <th>Ảnh</th>
+                            <th>Ảnh vào ca</th>
+                            <th>Ảnh ra ca</th>
                             <th>Duyệt</th>
                         </tr>
                     </thead>
@@ -70,44 +83,10 @@ const HistoryTable = ({ history }) => {
                                 </td>
                                 <td>{formatActual(row)}</td>
                                 <td>
-                                    <div className="att-photos-cell">
-                                        {row.checkInPhoto ? (
-                                            <a
-                                                href={row.checkInPhoto}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                title="Ảnh vào ca"
-                                            >
-                                                <img
-                                                    src={row.checkInPhoto}
-                                                    alt="Vào ca"
-                                                    className="att-photo-thumb"
-                                                />
-                                            </a>
-                                        ) : (
-                                            <span className="att-muted">
-                                                —
-                                            </span>
-                                        )}
-                                        {row.checkOutPhoto ? (
-                                            <a
-                                                href={row.checkOutPhoto}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                title="Ảnh ra ca"
-                                            >
-                                                <img
-                                                    src={row.checkOutPhoto}
-                                                    alt="Ra ca"
-                                                    className="att-photo-thumb"
-                                                />
-                                            </a>
-                                        ) : (
-                                            <span className="att-muted">
-                                                —
-                                            </span>
-                                        )}
-                                    </div>
+                                    <PhotoCell src={row.checkInPhoto} alt="Vào ca" />
+                                </td>
+                                <td>
+                                    <PhotoCell src={row.checkOutPhoto} alt="Ra ca" />
                                 </td>
                                 <td>
                                     <span

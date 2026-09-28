@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import AppLayout from "../../../../components/layout/AppLayout";
+import AdminAppLayout from "../../layout/AdminAppLayout";
 import adminAttendanceApi from "../api/adminAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
@@ -116,7 +116,7 @@ const AdminAttendanceHistoryPage = () => {
     };
 
     return (
-        <AppLayout
+        <AdminAppLayout
             title="Lịch sử chấm công · Quản trị"
             subtitle="Toàn bộ bản ghi chấm công của tất cả nhân viên"
         >
@@ -241,7 +241,7 @@ const AdminAttendanceHistoryPage = () => {
                     onSubmit={submitModal}
                 />
             </div>
-        </AppLayout>
+        </AdminAppLayout>
     );
 };
 
