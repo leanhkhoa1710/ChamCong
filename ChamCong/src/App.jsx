@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./modules/login/pages/LoginPage";
-import EmployeePage from "./modules/employees/pages/EmployeePage";
+import HrPage from "./modules/admin/hr/pages/HrPage";
 import AttendancePage from "./modules/attendance/pages/AttendancePage";
 import LeavePage from "./modules/leave/pages/LeavePage";
 import ContractPage from "./modules/contracts/pages/ContractPage";
@@ -22,7 +22,7 @@ function App() {
                     path="/employees"
                     element={
                         <RequireModule to="/employees">
-                            <EmployeePage />
+                            <HrPage />
                         </RequireModule>
                     }
                 />
