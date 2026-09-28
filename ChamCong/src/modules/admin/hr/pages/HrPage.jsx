@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AdminAppLayout from "../../layout/AdminAppLayout";
 import { useHrData } from "../hooks/useHrData";
 import { useHrKpis } from "../hooks/useHrKpis";
 import { useHrFilters } from "../hooks/useHrFilters";
@@ -39,12 +40,10 @@ const HrPage = () => {
         );
 
     return (
-        <div className="hr-page">
-            <div className="hr-head">
-                <h1>Nhân sự</h1>
-                <p>Quản lý nhân viên, chấm công, hợp đồng &amp; hồ sơ lương</p>
-            </div>
-
+        <AdminAppLayout
+            title="Nhân sự"
+            subtitle="Quản lý nhân viên, chấm công, hợp đồng & hồ sơ lương"
+        >
             {data.error && <div className="att-error">{data.error}</div>}
             {data.loading && <div className="att-loading">Đang tải...</div>}
 
@@ -77,7 +76,7 @@ const HrPage = () => {
                     />
                 </div>
             )}
-        </div>
+        </AdminAppLayout>
     );
 };
 

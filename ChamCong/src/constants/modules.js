@@ -3,8 +3,11 @@
 // Mỗi module (một đường dẫn) khai báo:
 //   - to     : đường dẫn
 //   - label  : tên hiển thị trên sidebar
-//   - access : cấp quyền. "user" = mọi tài khoản đã đăng nhập;
-//              "admin" = chỉ những role trong ADMIN_ROLES.
+//   - access : cấp quyền chung. "user" = mọi tài khoản đã đăng
+//              nhập; "admin" = chỉ những role trong ADMIN_ROLES.
+//   - roles  : (tuỳ chọn) danh sách role được phép truy cập,
+//              ưu tiên hơn access. Ví dụ: /employees chỉ HR,
+//              Manager và Admin.
 // Sidebar và route guard đều đọc từ đây -> thống nhất nguồn quyền.
 // ============================================================
 export const MODULES = [
@@ -19,7 +22,8 @@ export const MODULES = [
     { to: "/profile", label: "Hồ sơ", access: "user" },
     // Khu quản trị (admin)
     { to: "/admin", label: "Dashboard", access: "admin" },
-    { to: "/employees", label: "Nhân sự", access: "admin" },
+    // Nhân sự: chỉ HR (Nhân sự), Manager (Quản lý), Admin
+    { to: "/employees", label: "Nhân sự", roles: ["HR", "Manager", "Admin"] },
     { to: "/admin/attendance-history", label: "Chấm công (QL)", access: "admin" },
     { to: "/admin/statistics", label: "Thống kê công (QL)", access: "admin" },
 ];
