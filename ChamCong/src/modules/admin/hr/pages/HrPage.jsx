@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AppLayout from "../../../../components/layout/AppLayout";
 import { useHrData } from "../hooks/useHrData";
 import { useHrKpis } from "../hooks/useHrKpis";
 import { useHrFilters } from "../hooks/useHrFilters";
@@ -6,6 +7,7 @@ import HrKpiCards from "../components/HrKpiCards";
 import HrFilterBar from "../components/HrFilterBar";
 import HrEmployeeTable from "../components/HrEmployeeTable";
 import HrPagination from "../components/HrPagination";
+import "../../../../modules/attendance/attendance.css";
 import "../hr.css";
 
 const PAGE_SIZE = 20;
@@ -39,45 +41,49 @@ const HrPage = () => {
         );
 
     return (
-        <div className="hr-page">
-            <div className="hr-head">
-                <h1>Nhân sự</h1>
-                <p>Quản lý nhân viên, chấm công, hợp đồng &amp; hồ sơ lương</p>
+        <AppLayout
+            title="Nhân sự"
+            subtitle="Quản lý nhân viên, chấm công, hợp đồng & hồ sơ lương"
+        >
+            <div className="att-content">
+                {data.error && <div className="att-error">{data.error}</div>}
+                {data.loading && (
+                    <div className="att-loading">Đang tải...</div>
+                )}
+
+                {!data.loading && !data.error && (
+                    <div className="hr-body">
+                        <HrKpiCards kpis={kpis} />
+                        <HrFilterBar
+                            departments={data.departments}
+                            positions={data.positions}
+                            filters={filters}
+                            setters={setters}
+                            hasActiveFilter={hasActiveFilter}
+                            onAdd={() =>
+                                window.alert("Chức năng thêm nhân viên")
+                            }
+                        />
+                        <HrEmployeeTable
+                            employees={slice}
+                            selected={selected}
+                            onToggle={toggle}
+                            onToggleAll={toggleAll}
+                        />
+                        <HrPagination
+                            page={safePage}
+                            pageCount={pageCount}
+                            totalItems={filtered.length}
+                            onPrev={() => setPage((p) => Math.max(1, p - 1))}
+                            onNext={() =>
+                                setPage((p) => Math.min(pageCount, p + 1))
+                            }
+                            onPage={setPage}
+                        />
+                    </div>
+                )}
             </div>
-
-            {data.error && <div className="att-error">{data.error}</div>}
-            {data.loading && <div className="att-loading">Đang tải...</div>}
-
-            {!data.loading && !data.error && (
-                <div className="hr-body">
-                    <HrKpiCards kpis={kpis} />
-                    <HrFilterBar
-                        departments={data.departments}
-                        positions={data.positions}
-                        filters={filters}
-                        setters={setters}
-                        hasActiveFilter={hasActiveFilter}
-                        onAdd={() => window.alert("Chức năng thêm nhân viên")}
-                    />
-                    <HrEmployeeTable
-                        employees={slice}
-                        selected={selected}
-                        onToggle={toggle}
-                        onToggleAll={toggleAll}
-                    />
-                    <HrPagination
-                        page={safePage}
-                        pageCount={pageCount}
-                        totalItems={filtered.length}
-                        onPrev={() => setPage((p) => Math.max(1, p - 1))}
-                        onNext={() =>
-                            setPage((p) => Math.min(pageCount, p + 1))
-                        }
-                        onPage={setPage}
-                    />
-                </div>
-            )}
-        </div>
+        </AppLayout>
     );
 };
 
