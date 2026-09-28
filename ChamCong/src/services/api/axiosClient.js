@@ -1,5 +1,4 @@
 import axios from "axios";
-import { API_BASE_URL } from "./apiConfig";
 import { getAuth } from "../auth/auth";
 
 const axiosClient = axios.create({
@@ -9,13 +8,13 @@ const axiosClient = axios.create({
   },
 });
 
-// Đính kèm token khi đã đăng nhập
+// Đính kèm token khi đã đăng nhập (lưu trong marixa_auth)
 axiosClient.interceptors.request.use((config) => {
-  const token = getAuth()?.token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+    const token = getAuth()?.token;
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
 });
 
 export default axiosClient;

@@ -1,6 +1,7 @@
-﻿using M.Contract.Services.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.EmployeeSalaryModelView;
 
@@ -8,7 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize]
     public class EmployeeSalaryController : ControllerBase
     {
         private readonly IEmployeeSalaryService _employeeSalaryService;
@@ -19,6 +20,7 @@ namespace M.API.Controllers
             _employeeSalaryService = employeeSalaryService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,
@@ -66,6 +68,7 @@ namespace M.API.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeSalaryModelView model)
@@ -79,6 +82,7 @@ namespace M.API.Controllers
             ));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateEmployeeSalaryModelView model)
@@ -92,6 +96,7 @@ namespace M.API.Controllers
             ));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -104,6 +109,7 @@ namespace M.API.Controllers
             ));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

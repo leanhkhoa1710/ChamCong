@@ -1,6 +1,7 @@
-﻿using M.Contract.Serivces.Interface;
+using M.Contract.Serivces.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.DepartmentModelView;
 
@@ -8,7 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize]
     public class DepartmeMontroller : ControllerBase
     {
         private readonly IDepartmentService _departmentService;
@@ -57,6 +58,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Creates a new department
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateDepartmentModelView model)
@@ -73,6 +75,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Updates department information
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateDepartmentModelView model)
@@ -89,6 +92,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Soft deletes department by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -104,6 +108,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Permanently deletes department by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

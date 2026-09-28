@@ -1,6 +1,7 @@
-﻿using M.Contract.Services.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace M.API.Controllers
@@ -8,6 +9,7 @@ namespace M.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     // No Authorize
+    [Authorize]
     public class UserLoginController : ControllerBase
     {
         private readonly IUserLoginService _userLoginService;

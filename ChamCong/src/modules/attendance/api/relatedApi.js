@@ -28,6 +28,15 @@ const relatedApi = {
         });
     },
 
+    // Upload ảnh chụp chấm công -> trả về URL lưu trong DB
+    uploadPhoto(file) {
+        const form = new FormData();
+        form.append("file", file);
+        return axiosClient.post("/Upload/photo", form, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+    },
+
     leavesByEmployee(employeeId) {
         return axiosClient.get(
             `/LeaveRequest/by-employee/${employeeId}`
@@ -55,6 +64,18 @@ const relatedApi = {
     bankAccountsByEmployee(employeeId) {
         return axiosClient.get(
             `/EmployeeBankAccount/by-employee/${employeeId}`
+        );
+    },
+
+    // Dữ liệu cho thống kê: loại nghỉ phép (mức "phép còn lại")
+    leaveTypesAll() {
+        return axiosClient.get("/LeaveType/get-all?pageNumber=1&pageSize=100");
+    },
+
+    // Lịch lễ của công ty (đánh dấu ngày lễ trên lệnh công)
+    holidayCalendarAll() {
+        return axiosClient.get(
+            "/HolidayCalendar/get-all?pageNumber=1&pageSize=400"
         );
     },
 };

@@ -1,4 +1,4 @@
-﻿using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.Entity;
 using M.Contract.Serivces.Interface;
 using M.Contract.Services.Interface;
 using M.Core.Base;
@@ -34,7 +34,10 @@ namespace M.API
                 options.AddPolicy("ReactPolicy", policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:5173", "http://localhost:5174")
+                        .SetIsOriginAllowed(origin =>
+                            origin.StartsWith("http://localhost", StringComparison.OrdinalIgnoreCase)
+                            || origin.StartsWith("http://127.0.0.1", StringComparison.OrdinalIgnoreCase)
+                            || origin.StartsWith("http://[::1]", StringComparison.OrdinalIgnoreCase))
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -79,6 +82,7 @@ namespace M.API
         public static void AddServices(this IServiceCollection services)
         {
             services
+                .AddScoped<M.Services.Security.JwtGenerator>()
                 .AddScoped<IAuthService, AuthService>()
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IRoleService, RoleService>()
@@ -141,7 +145,7 @@ namespace M.API
                 // ==========================
                 options.Events = new JwtBearerEvents
                 {
-                    // Không có token hoặc token sai
+                    // Kh�ng c� token ho?c token sai
                     OnChallenge = async context =>
                     {
                         context.HandleResponse();
@@ -163,7 +167,7 @@ namespace M.API
                     },
 
 
-                    // Có token nhưng không đủ quyền Role
+                    // C� token nhung kh�ng d? quy?n Role
                     OnForbidden = async context =>
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -191,14 +195,14 @@ namespace M.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 
-                // Cấu hình để Swagger hỗ trợ DateOnly
+                // C?u h�nh d? Swagger h? tr? DateOnly
                 c.MapType<DateOnly>(() => new OpenApiSchema
                 {
                     Type = "string",
-                    Format = "date", // Đảm bảo Swagger hiểu rằng đây là định dạng ngày
+                    Format = "date", // �?m b?o Swagger hi?u r?ng d�y l� d?nh d?ng ng�y
                 });
 
-                // Cấu hình Authorization
+                // C?u h�nh Authorization
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",

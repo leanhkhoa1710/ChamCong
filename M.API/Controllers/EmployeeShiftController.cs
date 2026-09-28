@@ -1,6 +1,7 @@
-﻿using M.Contract.Services.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.EmployeeShiftModelView;
 
@@ -8,6 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EmployeeShiftController : ControllerBase
     {
         private readonly IEmployeeShiftService _employeeShiftService;
@@ -17,6 +19,7 @@ namespace M.API.Controllers
             _employeeShiftService = employeeShiftService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {
@@ -57,6 +60,7 @@ namespace M.API.Controllers
             ));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeShiftModelView model)
@@ -69,6 +73,7 @@ namespace M.API.Controllers
                 data: "Employee shift assigned successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateEmployeeShiftModelView model)
@@ -81,6 +86,7 @@ namespace M.API.Controllers
                 data: "Employee shift updated successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -92,6 +98,7 @@ namespace M.API.Controllers
                 data: "Employee shift deleted successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
