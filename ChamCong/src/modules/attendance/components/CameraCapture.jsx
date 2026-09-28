@@ -2,20 +2,15 @@ import { useRef, useState, useEffect } from "react";
 
 // Chụp ảnh qua webcam theo phong cách marixa:
 // - Chờ: nút "Chụp ảnh" to viền chấm
-// - Bật: preview video to + nút "Chụp"
-// - Chụp xong: xem trước + "Chụp lại"
-const CameraCapture = ({ onPhoto }) => {
+// - Bật: preview video + nút "Chụp"
+// - Chụp xong: xem trước ảnh + "Xóa" và "Chụp lại"
+// Prop `locked`: ảnh đã sẵn sàng cho lần chấm công -> khóa 2 nút.
+const CameraCapture = ({ onPhoto, locked }) => {
     const videoRef = useRef(null);
     const streamRef = useRef(null);
     const [active, setActive] = useState(false);
     const [error, setError] = useState("");
     const [shot, setShot] = useState(null);
-
-    const stop = () => {
-        streamRef.current?.getTracks().forEach((t) => t.stop());
-        streamRef.current = null;
-        setActive(false);
-    };
 
     // Dừng camera khi rời trang
     useEffect(
@@ -25,6 +20,19 @@ const CameraCapture = ({ onPhoto }) => {
         []
     );
 
+    // Gán stream vào thẻ video (bắt buộc, thiếu dòng này sẽ chỉ hiện khung đen)
+    useEffect(() => {
+        if (active && videoRef.current && streamRef.current) {
+            videoRef.current.srcObject = streamRef.current;
+        }
+    }, [active]);
+
+    const stop = () => {
+        streamRef.current?.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+        setActive(false);
+    };
+
     const start = async () => {
         try {
             setError("");
@@ -32,6 +40,7 @@ const CameraCapture = ({ onPhoto }) => {
                 video: { width: 640, height: 480, facingMode: "user" },
             });
             streamRef.current = stream;
+            // srcObject được gán trong useEffect khi thẻ video mount
             setActive(true);
         } catch {
             setError("Không truy cập được camera. Hãy cấp quyền và thử lại.");
@@ -67,22 +76,50 @@ const CameraCapture = ({ onPhoto }) => {
         stop();
     };
 
-    const reset = () => {
+    // Xóa ảnh: bỏ ảnh vừa chụp, không gửi kèm khi vào/ra ca
+    const remove = () => {
         setShot(null);
         onPhoto?.(null);
-        stop();
+    };
+
+    // Chụp lại: xóa ảnh cũ rồi mở camera
+    const retake = () => {
+        remove();
+        start();
     };
 
     if (shot) {
         return (
             <div className="att-cam-done">
-                <img src={URL.createObjectURL(shot)} alt="Ảnh đã chụp" />
+                <img
+                    key={shot.name}
+                    src={URL.createObjectURL(shot)}
+                    alt="Ảnh đã chụp"
+                />
                 <div>
-                    <strong>Đã chụp ảnh</strong>
-                    <span className="att-muted">Sẽ gửi kèm khi vào / ra ca.</span>
-                    <button type="button" onClick={reset}>
-                        Chụp lại
-                    </button>
+                    <strong>Ảnh vừa chụp</strong>
+                    <span className="att-muted">
+                        {locked
+                            ? "Ảnh sẽ được gửi kèm khi bạn nhấn chấm công."
+                            : "Sẽ gửi kèm khi bạn nhấn Vào ca / Ra ca."}
+                    </span>
+                    <div className="att-cam-done-actions">
+                        <button
+                            type="button"
+                            className="att-cam-btn-remove"
+                            onClick={remove}
+                            disabled={locked}
+                        >
+                            Xóa
+                        </button>
+                        <button
+                            type="button"
+                            onClick={retake}
+                            disabled={locked}
+                        >
+                            Chụp lại
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -93,8 +130,9 @@ const CameraCapture = ({ onPhoto }) => {
             <div className="att-cam">
                 <video ref={videoRef} autoPlay playsInline muted />
                 <button type="button" onClick={capture}>
-                    Chụp ảnh
+                    Chụp
                 </button>
+                {error && <p className="att-cam-error">{error}</p>}
             </div>
         );
     }

@@ -1,5 +1,6 @@
 ﻿using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 
@@ -9,9 +10,16 @@ namespace M.API.Controllers
     [ApiController]
     public class UploadController : ControllerBase
     {
+        private readonly IWebHostEnvironment _env;
+
         private static readonly string[] AllowedExtensions =
             [".jpg", ".jpeg", ".png", ".webp"];
         private const long MaxBytes = 5 * 1024 * 1024; // 5MB
+
+        public UploadController(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
 
         /// <summary>
         /// Upload ảnh chấm công (vào ca / ra ca).
@@ -40,10 +48,10 @@ namespace M.API.Controllers
 
             string folder = DateTime.Now.ToString("yyyyMM");
             string fileName = $"{Guid.NewGuid()}{extension}";
-            string relativeDir = Path.Combine("uploads", folder);
-            string absoluteDir = Path.Combine(
-                AppContext.BaseDirectory, relativeDir);
-
+            // Lưu vào wwwroot/uploads (PhotoStore tạo thư mục nếu chưa có,
+            // fallback an toàn khi WebRootPath null)
+            string uploadRoot = PhotoStore.GetRoot(_env);
+            string absoluteDir = Path.Combine(uploadRoot, folder);
             Directory.CreateDirectory(absoluteDir);
 
             string absolutePath = Path.Combine(absoluteDir, fileName);

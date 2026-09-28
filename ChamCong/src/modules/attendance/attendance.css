@@ -218,16 +218,39 @@
     color: #15803d;
 }
 
-.att-cam-done button {
-    margin-top: 6px;
-    padding: 6px 14px;
-    border: 1px solid #15803d;
+.att-cam-done-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.att-cam-done-actions button {
+    padding: 7px 14px;
     border-radius: 8px;
-    background: #fff;
     font-size: 13px;
     font-weight: 600;
-    color: #15803d;
     cursor: pointer;
+    transition: background 0.15s;
+}
+
+.att-cam-btn-remove {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #64748b;
+}
+
+.att-cam-btn-remove:hover {
+    background: #f1f5f9;
+}
+
+.att-cam-done-actions button:not(.att-cam-btn-remove) {
+    border: 1px solid #005b94;
+    background: #fff;
+    color: #005b94;
+}
+
+.att-cam-done-actions button:not(.att-cam-btn-remove):hover {
+    background: #e3f0ff;
 }
 
 .att-cam-hint {

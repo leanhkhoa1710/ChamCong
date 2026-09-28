@@ -27,8 +27,8 @@ var app = builder.Build();
 //Catch error
 //app.UseDeveloperExceptionPage();
 app.UseMiddleware<ExceptionMiddleware>();
-
-
+app.UseStaticFiles();
+    
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -36,9 +36,8 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseCors("ReactPolicy");
 
-// Ảnh chấm công đã upload -> /uploads
-var uploadDir = Path.Combine(AppContext.BaseDirectory, "uploads");
-Directory.CreateDirectory(uploadDir);
+// Ảnh chấm công đã upload -> /uploads (lưu trong wwwroot/uploads, ổn định)
+var uploadDir = PhotoStore.GetRoot(app.Environment);
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadDir),

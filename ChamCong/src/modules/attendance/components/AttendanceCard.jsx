@@ -43,6 +43,8 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     const [error, setError] = useState("");
     // Ảnh vừa chụp, chờ gửi kèm lần chấm công
     const [pendingPhoto, setPendingPhoto] = useState(null);
+    // Đổi key sau mỗi lần chấm công -> camera về trạng thái "chưa chụp"
+    const [camKey, setCamKey] = useState(0);
 
     const checkInTime = record?.checkInTime
         ? formatVnTime(record.checkInTime)
@@ -64,6 +66,15 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     const check = async (type) => {
         if (!employeeId) {
             setError("Chưa xác định được nhân viên. Vui lòng đăng nhập lại.");
+            return;
+        }
+        // Bắt buộc phải có ảnh chụp mới trước khi chấm công (vào ca / ra ca)
+        if (!pendingPhoto) {
+            setError(
+                type === 1
+                    ? "Hãy chụp ảnh trước khi nhấn Vào ca."
+                    : "Hãy chụp ảnh trước khi nhấn Ra ca."
+            );
             return;
         }
         setBusy(true);
@@ -88,7 +99,9 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                     ? data.message || "Đã có lần chấm cùng loại gần đây."
                     : data?.message || "Đã ghi nhận chấm công."
             );
+            // Dùng xong ảnh -> xóa luôn để lần ra/vào ca sau phải chụp mới
             setPendingPhoto(null);
+            setCamKey((k) => k + 1);
             onChanged?.(data?.attendance || null);
         } catch (err) {
             setError(
@@ -101,34 +114,54 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
         }
     };
 
+
+
     return (
         <section className="att-hero">
             <div className="att-hero-title">
                 <h2>Chấm công</h2>
-                <p>Chụp một ảnh của bạn để vào ca.</p>
+                <p>
+                    {isCheckedIn && !isCheckedOut
+                        ? "Chụp một ảnh của bạn để ra ca."
+                        : "Chụp một ảnh của bạn để vào ca."}
+                </p>
             </div>
 
-            <CameraCapture onPhoto={setPendingPhoto} />
+            <CameraCapture
+                key={camKey}
+                onPhoto={setPendingPhoto}
+                locked={busy}
+            />
 
             {!isCheckedIn && !isCheckedOut ? (
                 <div className="att-hero-actions">
                     <button
                         type="button"
                         onClick={() => check(1)}
-                        disabled={busy}
+                        disabled={busy || !pendingPhoto}
                     >
                         Vào ca
                     </button>
+                    {!pendingPhoto && (
+                        <span className="att-cam-hint">
+                            Chụp ảnh trước khi nhấn Vào ca.
+                        </span>
+                    )}
                 </div>
             ) : isCheckedIn && !isCheckedOut ? (
                 <div className="att-hero-actions">
                     <button
                         type="button"
                         onClick={() => check(2)}
-                        disabled={busy}
+                        disabled={busy || !pendingPhoto}
                     >
                         Ra ca
                     </button>
+                    {!pendingPhoto && (
+                        <span className="att-cam-hint">
+                            Chụp ảnh trước khi nhấn Ra ca.
+                        </span>
+                    )}
                 </div>
             ) : (
                 <div className="att-hero-done">
