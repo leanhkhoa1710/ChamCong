@@ -34,7 +34,7 @@ namespace M.API
                 options.AddPolicy("ReactPolicy", policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:5173")
+                        .WithOrigins("http://localhost:5173", "http://localhost:5174")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -110,7 +110,7 @@ namespace M.API
         //JWT
         public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            var secret = configuration.GetValue<string>("Jwtsettings:Key");
+            var secret = configuration.GetValue<string>("JwtSettings:Key");
             var key = Encoding.UTF8.GetBytes(secret ?? throw new InvalidOperationException("JWT Key not found"));
 
 
@@ -124,10 +124,10 @@ namespace M.API
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = configuration["Jwtsettings:Issuer"],
+                    ValidIssuer = configuration["JwtSettings:Issuer"],
 
                     ValidateAudience = true,
-                    ValidAudience = configuration["Jwtsettings:Audience"],
+                    ValidAudience = configuration["JwtSettings:Audience"],
 
                     ValidateLifetime = true,
 
