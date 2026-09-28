@@ -67,11 +67,7 @@ const AttendancePage = () => {
     };
 
     return (
-        <AppLayout
-            title="Trang chủ"
-            subtitle="Chấm công hôm nay của bạn"
-            profile={profile}
-        >
+        <AppLayout profile={profile}>
             {error && <div className="att-error">{error}</div>}
             {loading ? (
                 <div className="att-loading">Đang tải...</div>
