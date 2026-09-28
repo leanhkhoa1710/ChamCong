@@ -222,6 +222,122 @@
     background: #005b94;
 }
 
+/* ===== TRANG QL CHẤM CÔNG: thanh điều khiển + hành động hàng + modal ===== */
+.admin-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.admin-toolbar select,
+.admin-toolbar input[type="month"] {
+    padding: 9px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    color: #182a3a;
+}
+
+.admin-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #5a6b7b;
+}
+
+.admin-check input {
+    accent-color: #005b94;
+}
+
+.admin-toolbar .att-muted {
+    margin-right: auto;
+}
+
+.admin-row-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.admin-link-btn--danger {
+    background: #b42323;
+}
+
+.admin-link-btn--danger:hover {
+    background: #8f1c1c;
+}
+
+.admin-view-link {
+    padding: 8px 14px;
+    border: 1px solid #005b94;
+    border-radius: 8px;
+    background: #fff;
+    color: #005b94;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.admin-view-link:hover {
+    background: #e3f0ff;
+}
+
+/* Modal form thêm / sửa */
+.att-form-modal {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 26px;
+    box-shadow: 0 20px 60px rgba(14, 26, 38, 0.2);
+}
+
+.att-form-modal h2 {
+    margin: 0 0 16px;
+    font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
+    font-size: 18px;
+    color: #0e1a26;
+}
+
+.att-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.att-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a6b7b;
+}
+
+.att-form select,
+.att-form input,
+.att-form textarea {
+    padding: 9px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0e1a26;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.att-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
     .admin-kpi-row {

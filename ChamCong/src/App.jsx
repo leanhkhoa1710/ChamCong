@@ -11,6 +11,8 @@ import StatisticsPage from "./modules/statistics/pages/StatisticsPage";
 import AttendanceHistoryPage from "./modules/attendance/pages/AttendanceHistoryPage";
 import ProfilePage from "./modules/profile/pages/ProfilePage";
 import DashboardPage from "./modules/admin/pages/DashboardPage";
+import AdminAttendanceHistoryPage from "./modules/admin/attendance/pages/AdminAttendanceHistoryPage";
+import AdminStatisticsPage from "./modules/admin/attendance/pages/AdminStatisticsPage";
 import RequireModule from "./components/common/RequireModule";
 
 function App() {
@@ -37,6 +39,22 @@ function App() {
                     element={
                         <RequireModule to="/admin">
                             <DashboardPage />
+                        </RequireModule>
+                    }
+                />
+                <Route
+                    path="/admin/attendance-history"
+                    element={
+                        <RequireModule to="/admin/attendance-history">
+                            <AdminAttendanceHistoryPage />
+                        </RequireModule>
+                    }
+                />
+                <Route
+                    path="/admin/statistics"
+                    element={
+                        <RequireModule to="/admin/statistics">
+                            <AdminStatisticsPage />
                         </RequireModule>
                     }
                 />

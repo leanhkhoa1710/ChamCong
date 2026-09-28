@@ -20,6 +20,8 @@ export const MODULES = [
     // Khu quản trị (admin)
     { to: "/admin", label: "Dashboard", access: "admin" },
     { to: "/employees", label: "Nhân sự", access: "admin" },
+    { to: "/admin/attendance-history", label: "Chấm công (QL)", access: "admin" },
+    { to: "/admin/statistics", label: "Thống kê công (QL)", access: "admin" },
 ];
 
 export const moduleByPath = (path) =>

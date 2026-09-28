@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getAuth } from "../auth/auth";
+import { API_BASE_URL } from "./apiConfig";
 
 const axiosClient = axios.create({
   baseURL: API_BASE_URL,
