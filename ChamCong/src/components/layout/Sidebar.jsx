@@ -1,16 +1,7 @@
 import { NavLink } from "react-router-dom";
+import { visibleModules } from "../../services/auth/permission";
 
-const NAV_ITEMS = [
-    { to: "/attendance", label: "Trang chủ" },
-    { to: "/attendance-history", label: "Lịch sử chấm công" },
-    { to: "/statistics", label: "Thống kê công" },
-    { to: "/leave", label: "Nghỉ phép" },
-    { to: "/contracts", label: "Hợp đồng" },
-    { to: "/salary", label: "Bảng lương" },
-    { to: "/insurance", label: "Bảo hiểm & thuế" },
-    { to: "/bank-accounts", label: "Tài khoản ngân hàng" },
-    { to: "/profile", label: "Hồ sơ" },
-];
+const NAV_ITEMS = visibleModules();
 
 const Sidebar = ({ collapsed }) => {
     return (

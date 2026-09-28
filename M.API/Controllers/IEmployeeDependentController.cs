@@ -1,6 +1,7 @@
-﻿using M.Contract.Services.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.EmployeeDependentModelView;
 
@@ -8,7 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class EmployeeDependeMontroller : ControllerBase
     {
         private readonly IEmployeeDependentService _employeeDependentService;

@@ -10,16 +10,36 @@ import BankPage from "./modules/bank-accounts/pages/BankPage";
 import StatisticsPage from "./modules/statistics/pages/StatisticsPage";
 import AttendanceHistoryPage from "./modules/attendance/pages/AttendanceHistoryPage";
 import ProfilePage from "./modules/profile/pages/ProfilePage";
+import DashboardPage from "./modules/admin/pages/DashboardPage";
+import RequireModule from "./components/common/RequireModule";
 
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/employees" element={<EmployeePage />} />
+                <Route
+                    path="/employees"
+                    element={
+                        <RequireModule to="/employees">
+                            <EmployeePage />
+                        </RequireModule>
+                    }
+                />
                 <Route path="/attendance" element={<AttendancePage />} />
-                <Route path="/attendance-history" element={<AttendanceHistoryPage />} />
+                <Route
+                    path="/attendance-history"
+                    element={<AttendanceHistoryPage />}
+                />
                 <Route path="/statistics" element={<StatisticsPage />} />
+                <Route
+                    path="/admin"
+                    element={
+                        <RequireModule to="/admin">
+                            <DashboardPage />
+                        </RequireModule>
+                    }
+                />
                 <Route path="/leave" element={<LeavePage />} />
                 <Route path="/contracts" element={<ContractPage />} />
                 <Route path="/salary" element={<SalaryPage />} />

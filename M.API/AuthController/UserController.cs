@@ -1,4 +1,4 @@
-﻿using M.Contract.Services.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +10,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

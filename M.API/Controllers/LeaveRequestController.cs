@@ -1,6 +1,7 @@
-﻿using M.Contract.Services.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.LeaveRequestModelView;
 
@@ -8,6 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LeaveRequestController : ControllerBase
     {
         private readonly ILeaveRequestService _leaveRequestService;
@@ -20,6 +22,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves all leave requests with pagination
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {
@@ -83,6 +86,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Updates a leave request
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update([FromBody] UpdateLeaveRequestModelView model)
         {
@@ -98,6 +102,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Soft deletes a leave request by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -113,6 +118,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Permanently deletes a leave request by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

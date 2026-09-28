@@ -1,6 +1,7 @@
-﻿using M.Contract.Services.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.ShiftModelView;
 
@@ -8,6 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ShiftController : ControllerBase
     {
         private readonly IShiftService _shiftService;
@@ -40,6 +42,7 @@ namespace M.API.Controllers
                 data: result));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateShiftModelView model)
         {
@@ -51,6 +54,7 @@ namespace M.API.Controllers
                 data: "Shift created successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update([FromBody] UpdateShiftModelView model)
         {
@@ -62,6 +66,7 @@ namespace M.API.Controllers
                 data: "Shift updated successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -73,6 +78,7 @@ namespace M.API.Controllers
                 data: "Shift deleted successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

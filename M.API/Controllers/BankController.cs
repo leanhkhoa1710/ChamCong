@@ -1,6 +1,7 @@
-﻿using M.Contract.Serivces.Interface;
+using M.Contract.Serivces.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.BankModelView;
 
@@ -8,7 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize]
     public class BankController : ControllerBase
     {
         private readonly IBankService _bankService;
@@ -55,6 +56,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Creates a new bank
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateBankModelView model)
@@ -71,6 +73,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Updates bank information
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateBankModelView model)
@@ -87,6 +90,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Soft deletes bank by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -102,6 +106,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Permanently deletes bank by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

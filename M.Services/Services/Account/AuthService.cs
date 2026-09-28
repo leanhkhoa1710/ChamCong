@@ -1,10 +1,11 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using M.Contract.Repositories.Entity;
 using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Utils;
 using M.Repositories.Context;
 using M.Services.Mappings;
+using M.Services.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,6 @@ using Microsoft.Extensions.Configuration;
 using ModelViews.ActivationCodeModelView;
 using ModelViews.AuthModelView;
 using System.Net.Mail;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using static M.Core.Base.BaseException;
 
 namespace M.Services.Service
@@ -27,19 +24,22 @@ namespace M.Services.Service
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly DatabaseContext _dbContext;
+        private readonly JwtGenerator _jwtGenerator;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
             IConfiguration configuration,
-            DatabaseContext dbContext)
+            DatabaseContext dbContext,
+            JwtGenerator jwtGenerator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _dbContext = dbContext;
+            _jwtGenerator = jwtGenerator;
         }
 
         #region Register
@@ -80,7 +80,7 @@ namespace M.Services.Service
                     "DUPLICATE_EMAIL",
                     "Email already exists");
 
-            ApplicationUser user = new ApplicationUser
+            ApplicationUser user = new()
             {
                 UserName = model.Username,
                 Email = model.Email,
@@ -106,7 +106,7 @@ namespace M.Services.Service
                 await _userManager.AddToRoleAsync(user, "Employee");
             }
 
-            Employee employee = new Employee
+            Employee employee = new()
             {
                 UserId = user.Id,
                 EmployeeCode = model.Username,
@@ -149,11 +149,7 @@ namespace M.Services.Service
                     "Password is required.");
             }
 
-            // =====================================================
             // Tìm user linh hoạt: Username / Email / Phone
-            // Không yêu cầu EmailConfirmed / PhoneNumberConfirmed
-            // =====================================================
-
             ApplicationUser? user = await _userManager.Users
                 .FirstOrDefaultAsync(x =>
                     x.UserName == login ||
@@ -162,7 +158,7 @@ namespace M.Services.Service
 
             if (user == null)
             {
-                // Fallback: tìm theo Mã nhân viên (Tên đăng nhập = Mã nhân viên)
+                // Fallback: tìm theo Mã nhân viên
                 Employee? employeeByCode = await _dbContext.Set<Employee>()
                     .FirstOrDefaultAsync(x =>
                         x.EmployeeCode == login &&
@@ -172,8 +168,7 @@ namespace M.Services.Service
                 if (employeeByCode?.UserId.HasValue == true)
                 {
                     user = await _userManager.Users
-                        .FirstOrDefaultAsync(x =>
-                            x.Id == employeeByCode.UserId.Value);
+                        .FirstOrDefaultAsync(x => x.Id == employeeByCode.UserId.Value);
                 }
             }
 
@@ -193,15 +188,7 @@ namespace M.Services.Service
                     "User account has been deactivated.");
             }
 
-            // =====================================================
-            // Kiểm tra trạng thái khóa tài khoản (lockout)
-            // =====================================================
-
-
-            // =====================================================
             // Kiểm tra password (cho phép lockout khi sai)
-            // =====================================================
-
             SignInResult result =
                 await _signInManager.PasswordSignInAsync(
                     user,
@@ -217,27 +204,16 @@ namespace M.Services.Service
                     "Username, email/phone/employee code or password is incorrect.");
             }
 
-            // =====================================================
             // Lấy Employee (optional - hỗ trợ tài khoản admin thuần)
-            // =====================================================
-
             Employee? employee = await _dbContext.Set<Employee>()
                 .FirstOrDefaultAsync(x =>
                     x.UserId == user.Id &&
                     !x.DeletedTime.HasValue);
 
-            // =====================================================
-            // Generate JWT
-            // =====================================================
-
-            int expireMinutes = int.Parse(
-                _configuration["Jwtsettings:ExpirationMinutes"]!);
-
-            DateTime expires = DateTime.UtcNow.AddMinutes(expireMinutes);
-
-            string token = GenerateJwtToken(
-                await GenerateClaims(user, employee),
-                expires);
+            // Generate JWT (thông qua JwtGenerator - đã gán claim role)
+            DateTime expires = DateTime.UtcNow.AddMinutes(
+                int.Parse(_configuration["Jwtsettings:ExpirationMinutes"]!));
+            string token = await _jwtGenerator.GenerateAsync(user, employee);
 
             return new AuthResponseModelView
             {
@@ -287,7 +263,6 @@ namespace M.Services.Service
                     "Password and confirmation do not match.");
             }
 
-            // Chính sách mật khẩu: tối thiểu 10 ký tự, hoa, thường, số, ký tự đặc biệt
             ValidatePasswordPolicy(model.Password);
 
             ActivationCode activationCode = await _dbContext.Set<ActivationCode>()
@@ -378,7 +353,6 @@ namespace M.Services.Service
         public async Task<ActivationCodeResponseModelView>
             CreateActivationCodeAsync(CreateActivationCodeModelView model)
         {
-            // Kiểm tra employee tồn tại
             Employee employee = await _dbContext.Set<Employee>()
                 .FirstOrDefaultAsync(x =>
                     x.Id == model.EmployeeId &&
@@ -388,7 +362,6 @@ namespace M.Services.Service
                     ResponseCodeConstants.NOT_FOUND,
                     "Employee not found.");
 
-            // Kiểm tra mã trùng
             bool codeExists = await _dbContext.Set<ActivationCode>()
                 .AnyAsync(x =>
                     x.Code == model.Code &&
@@ -467,15 +440,15 @@ namespace M.Services.Service
                     "Current password is incorrect.");
             }
 
-            IdentityResult result = await _userManager.ChangePasswordAsync(
+            IdentityResult changeResult = await _userManager.ChangePasswordAsync(
                 user, model.CurrentPassword, model.NewPassword);
 
-            if (!result.Succeeded)
+            if (!changeResult.Succeeded)
             {
                 throw new ErrorException(
                     StatusCodes.Status400BadRequest,
                     ResponseCodeConstants.BAD_REQUEST,
-                    result.Errors.FirstOrDefault()?.Description
+                    changeResult.Errors.FirstOrDefault()?.Description
                     ?? "Failed to change password.");
             }
         }
@@ -484,11 +457,8 @@ namespace M.Services.Service
 
         #region Private
 
-        // =====================================================
-        // Chính sách mật khẩu theo tài liệu bàn giao (Monica):
-        // tối thiểu 10 ký tự, có chữ HOA, chữ thường,
-        // chữ số và ký tự đặc biệt (@, #, !...)
-        // =====================================================
+        // Chính sách mật khẩu: tối thiểu 10 ký tự, có chữ hoa, chữ thường,
+        // chữ số và ký tự đặc biệt.
         private void ValidatePasswordPolicy(string password)
         {
             if (string.IsNullOrEmpty(password))
@@ -516,64 +486,6 @@ namespace M.Services.Service
                     "WEAK_PASSWORD",
                     "Password must contain uppercase, lowercase, digit and special character.");
             }
-        }
-
-        private async Task<List<Claim>> GenerateClaims(
-            ApplicationUser user,
-            Employee? employee)
-        {
-            List<Claim> claims = new()
-            {
-                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-                new(ClaimTypes.Name, user.UserName ?? string.Empty),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            if (employee != null)
-            {
-                string fullName = $"{employee.GivenName} {employee.FamilyName}".Trim();
-
-                claims.Add(new Claim("employeeId", employee.Id.ToString()));
-                claims.Add(new Claim("employeeCode", employee.EmployeeCode));
-                claims.Add(new Claim("fullName", fullName));
-                claims.Add(new Claim("givenName", employee.GivenName));
-                claims.Add(new Claim("familyName", employee.FamilyName));
-                claims.Add(new Claim("gender", employee.Gender.ToString()));
-            }
-
-            foreach (string role in await _userManager.GetRolesAsync(user))
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            return claims;
-        }
-
-        private string GenerateJwtToken(
-            IEnumerable<Claim> claims,
-            DateTime expires)
-        {
-            SymmetricSecurityKey key =
-                new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(
-                        _configuration["Jwtsettings:Key"]!));
-
-            SigningCredentials creds =
-                new SigningCredentials(
-                    key,
-                    SecurityAlgorithms.HmacSha256);
-
-            JwtSecurityToken token =
-                new JwtSecurityToken(
-                    issuer: _configuration["Jwtsettings:Issuer"],
-                    audience: _configuration["Jwtsettings:Audience"],
-                    claims: claims,
-                    expires: expires,
-                    signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler()
-                .WriteToken(token);
         }
 
         #endregion

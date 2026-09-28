@@ -66,6 +66,18 @@ const relatedApi = {
             `/EmployeeBankAccount/by-employee/${employeeId}`
         );
     },
+
+    // Dữ liệu cho thống kê: loại nghỉ phép (mức "phép còn lại")
+    leaveTypesAll() {
+        return axiosClient.get("/LeaveType/get-all?pageNumber=1&pageSize=100");
+    },
+
+    // Lịch lễ của công ty (đánh dấu ngày lễ trên lệnh công)
+    holidayCalendarAll() {
+        return axiosClient.get(
+            "/HolidayCalendar/get-all?pageNumber=1&pageSize=400"
+        );
+    },
 };
 
 export default relatedApi;

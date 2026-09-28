@@ -1,5 +1,6 @@
-﻿using M.Core.Base;
+using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 
@@ -7,6 +8,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UploadController : ControllerBase
     {
         private static readonly string[] AllowedExtensions =
