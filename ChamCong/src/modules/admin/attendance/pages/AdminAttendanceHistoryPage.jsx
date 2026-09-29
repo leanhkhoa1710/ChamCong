@@ -4,6 +4,7 @@ import AdminAppLayout from "../../layout/AdminAppLayout";
 import HrAppLayout from "../../hr/layout/HrAppLayout";
 import adminAttendanceApi from "../api/adminAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
+import PhotoCell from "../../../../modules/attendance/components/PhotoCell";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
 import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
 import { toCsv, downloadCsv } from "../../hr/hrUtils";
