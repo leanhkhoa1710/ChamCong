@@ -105,11 +105,9 @@ const HrPage = () => {
             title="Nhân sự"
             subtitle="Quản lý nhân viên, chấm công, hợp đồng & hồ sơ lương"
         >
-            <div className="att-content">
-                {data.error && <div className="att-error">{data.error}</div>}
-                {data.loading && (
-                    <div className="att-loading">Đang tải...</div>
-                )}
+            {notice && <div className="att-notice">{notice}</div>}
+            {data.error && <div className="att-error">{data.error}</div>}
+            {data.loading && <div className="att-loading">Đang tải...</div>}
 
                 {!data.loading && !data.error && (
                     <div className="hr-body">

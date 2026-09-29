@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import adminApi from "../../api/adminApi";
 
 const items = (r) =>
@@ -50,7 +50,7 @@ export const useHrData = () => {
             }
         };
         load();
-    }, []);
+    }, [load]);
 
-    return { ...data, loading, error };
+    return { ...data, loading, error, reload: load };
 };
