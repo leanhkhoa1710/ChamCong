@@ -285,6 +285,8 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                             <th>Trạng thái</th>
                                             <th>Giờ vào → ra</th>
                                             <th>Giờ thực</th>
+                                            <th>Ảnh vào ca</th>
+                                            <th>Ảnh ra ca</th>
                                             <th>Duyệt</th>
                                             <th />
                                         </tr>
@@ -292,7 +294,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                     <tbody>
                                         {filtered.length === 0 ? (
                                             <tr>
-                                                <td colSpan={7}>
+                                                <td colSpan={9}>
                                                     <span className="att-muted">Không có bản ghi phù hợp.</span>
                                                 </td>
                                             </tr>
@@ -313,6 +315,8 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                                         {formatVnTime(row.checkOutTime) || "—"}
                                                     </td>
                                                     <td>{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
+                                                    <td><PhotoCell src={row.checkInPhoto} alt="Vào ca" /></td>
+                                                    <td><PhotoCell src={row.checkOutPhoto} alt="Ra ca" /></td>
                                                     <td>
                                                         <span
                                                             className={`att-badge ${approvalClass(row.approvalStatus)}`}

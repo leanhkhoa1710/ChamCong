@@ -63,12 +63,11 @@ const CameraCapture = ({ onPhoto, locked }) => {
                     setError("Không chụp được ảnh.");
                     return;
                 }
-                setShot(
-                    new File([blob], "attendance-photo.jpg", {
-                        type: "image/jpeg",
-                    })
-                );
-                onPhoto?.(blob);
+                const photo = new File([blob], "attendance-photo.jpg", {
+                    type: "image/jpeg",
+                });
+                setShot(photo);
+                onPhoto?.(photo);
             },
             "image/jpeg",
             0.85

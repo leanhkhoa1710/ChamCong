@@ -25,10 +25,16 @@ namespace M.API.Controllers
 
         /// <summary>
         /// Upload ảnh chấm công (vào ca / ra ca).
-        /// Trả về đường dẫn tương đối /uploads/... để lưu vào CSDL.
+        /// type: "checkin" (vào ca) hoặc "checkout" (ra ca).
+        /// Lưu vào wwwroot/uploads/attendance/{type}/yyyyMM/ và trả về
+        /// đường dẫn TƯƠNG ĐỐI /uploads/... để lưu CSDL. Client tự ghép
+        /// với origin của API -> không phụ thuộc scheme/host (tránh lỗi
+        /// mixed-content khi front http/https khác nhau với API).
         /// </summary>
         [HttpPost("photo")]
-        public async Task<IActionResult> UploadPhoto(IFormFile file)
+        public async Task<IActionResult> UploadPhoto(
+            IFormFile file,
+            string type = "checkin")
         {
             if (file == null || file.Length == 0)
             {
@@ -48,12 +54,13 @@ namespace M.API.Controllers
                     "Chỉ chấp nhận jpg/png/webp, tối đa 5MB."));
             }
 
+            // Phân loại: ảnh vào ca / ra ca -> 2 thư mục riêng
+            string kind = type == "checkout" ? "checkout" : "checkin";
             string folder = DateTime.Now.ToString("yyyyMM");
             string fileName = $"{Guid.NewGuid()}{extension}";
-            // Lưu vào wwwroot/uploads (PhotoStore tạo thư mục nếu chưa có,
-            // fallback an toàn khi WebRootPath null)
-            string uploadRoot = PhotoStore.GetRoot(_env);
-            string absoluteDir = Path.Combine(uploadRoot, folder);
+
+            string absoluteDir = Path.Combine(
+                PhotoStore.GetAttendanceFolder(_env, kind), folder);
             Directory.CreateDirectory(absoluteDir);
 
             string absolutePath = Path.Combine(absoluteDir, fileName);
@@ -63,14 +70,14 @@ namespace M.API.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            // Đường dẫn tĩnh (served qua /uploads) - lưu URL tuyệt đối vào DB
-            string url = $"{Request.Scheme}://{Request.Host}" +
-                $"/uploads/{folder}/{fileName}";
+            // Đường dẫn tĩnh tương đối - client ghép với origin API khi hiển thị
+            string url = $"/uploads/attendance/{kind}/{folder}/{fileName}";
 
-            return Ok(new BaseResponse<string>(
-                StatusCodeHelper.OK,
-                ResponseCodeConstants.SUCCESS,
-                url));
+            // QUAN TRỌNG: URL nằm trong `data` (không phải `message`).
+            // BaseResponse<string> khi pass (code, url) sẽ rơi vào overload
+            // (statusCode, code, message) -> data = null -> client không đọc
+            // được URL (hiện "Không" dù file đã lưu).
+            return Ok(BaseResponse<string>.OkResponse(url, null));
         }
     }
 }

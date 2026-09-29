@@ -79,8 +79,11 @@ namespace M.Services.Mappings
             entity.PlannedShiftId = model.PlannedShiftId;
             entity.PlannedHours = model.PlannedHours;
             entity.ActualHours = model.ActualHours;
-            entity.CheckInPhoto = model.CheckInPhoto;
-            entity.CheckOutPhoto = model.CheckOutPhoto;
+            // keep existing photo unless a new one is supplied
+            if (!string.IsNullOrWhiteSpace(model.CheckInPhoto))
+                entity.CheckInPhoto = model.CheckInPhoto;
+            if (!string.IsNullOrWhiteSpace(model.CheckOutPhoto))
+                entity.CheckOutPhoto = model.CheckOutPhoto;
             entity.ApprovalStatus = model.ApprovalStatus;
             entity.ApprovedBy = model.ApprovedBy;
             entity.ApprovedAt = model.ApprovedAt;

@@ -28,13 +28,25 @@ const relatedApi = {
         });
     },
 
-    // Upload ảnh chụp chấm công -> trả về URL lưu trong DB
-    uploadPhoto(file) {
+    // Upload ảnh chấm công -> trả về đường dẫn tương đối /uploads/...
+    // type: "checkin" (vào ca) / "checkout" (ra ca) -> 2 thư mục riêng.
+    // QUAN TRỌNG: KHÔNG gán "Content-Type" thủ công. Khi body là FormData,
+    // trình duyệt (adapter XHR của axios) tự đặt "multipart/form-data;
+    // boundary=...". Gán giá trị cố định thiếu boundary khiến server không
+    // tách được file -> IFormFile = null -> ảnh không được lưu (DB ra NULL).
+    uploadPhoto(file, type) {
         const form = new FormData();
         form.append("file", file);
-        return axiosClient.post("/Upload/photo", form, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
+        // QUAN TRỌNG: bỏ đè default "Content-Type: application/json" của
+        // axiosClient (instance dùng chung). Không làm vậy, axios sẽ JSON.stringify
+        // luôn FormData -> server tách file = null -> ảnh không được lưu (DB ra NULL).
+        // Đặt "Content-Type: undefined" để trình duyệt tự sinh
+        // "multipart/form-data; boundary=..." (bắt buộc cho IFormFile).
+        return axiosClient.post(
+            `/Upload/photo?type=${encodeURIComponent(type || "checkin")}`,
+            form,
+            { headers: { "Content-Type": undefined } }
+        );
     },
 
     leavesByEmployee(employeeId) {
