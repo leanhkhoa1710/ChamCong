@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import Header from "../../../../components/layout/Header";
-import HrSidebar from "./HrSidebar";
-import "../../../../components/layout/header.css";
-import "../../admin.css";
+import Header from "../../../components/layout/Header";
+import AdminSidebar from "./AdminSidebar";
+import "../../../components/layout/header.css";
+import "../admin.css";
 
 const COLLAPSE_KEY = "marixa_sidebar_collapsed";
 
@@ -22,13 +22,13 @@ const AdminAppLayout = ({ title, subtitle, children }) => {
             try {
                 localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0");
             } catch {
-                // localStorage bị chặn: bỏ qua.
+                // localStorage bị chặn: bỏ qua, không chặn luồng.
             }
             return next;
         });
     }, []);
 
-    // Kéo ra/vào bằng phím tắt "[".
+    // Kéo ra/vào bằng phím tắt "[" (không cần focus input).
     useEffect(() => {
         const onKey = (e) => {
             if (e.key === "[") toggle();
@@ -41,7 +41,7 @@ const AdminAppLayout = ({ title, subtitle, children }) => {
         <div className="app-shell">
             <Header collapsed={collapsed} onToggleSidebar={toggle} />
             <div className="app-body">
-                <HrSidebar collapsed={collapsed} />
+                <AdminSidebar collapsed={collapsed} />
                 <main className="att-main">
                     {title && (
                         <div className="att-main-head">
@@ -56,4 +56,4 @@ const AdminAppLayout = ({ title, subtitle, children }) => {
     );
 };
 
-export default HrLayout;
+export default AdminAppLayout;

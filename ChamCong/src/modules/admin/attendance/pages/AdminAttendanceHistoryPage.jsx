@@ -1,14 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import HrLayout from "../layout/HrLayout";
-import hrApi from "../api/hrApi";
+import AdminAppLayout from "../../layout/AdminAppLayout";
+import adminAttendanceApi from "../api/adminAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
-import {
-    ATT_STATUS_LABELS,
-    ATT_STATUS_CLASS,
-    APPROVAL_LABELS,
-    APPROVAL_CLASS,
-} from "../hrLabels";
+import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
 import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
 import { toCsv, downloadCsv } from "../../hr/hrUtils";
 import { getAuth } from "../../../../services/auth/auth";
@@ -160,7 +155,7 @@ const AdminAttendanceHistoryPage = () => {
         const e = empMap[row.employeeId];
         if (!window.confirm(`Xóa bản ghi ${formatVnDate(row.attendanceDate)} của ${e?.fullName || row.employeeCode}?`)) return;
         try {
-            await hrApi.softDeleteAttendance(row.id);
+            await adminAttendanceApi.softDelete(row.id);
             load();
         } catch (err) {
             setError(err.response?.data?.message || err.message);
@@ -179,10 +174,10 @@ const AdminAttendanceHistoryPage = () => {
         try {
             if (isEdit) {
                 payload.id = editRow.id;
-                await hrApi.updateAttendance(payload);
+                await adminAttendanceApi.update(payload);
             } else {
                 // Create chỉ nhận các field của CreateAttendanceModelView
-                await hrApi.createAttendance({
+                await adminAttendanceApi.create({
                     employeeId: payload.employeeId,
                     attendanceDate: payload.attendanceDate,
                     status: payload.status,
@@ -204,8 +199,8 @@ const AdminAttendanceHistoryPage = () => {
     };
 
     return (
-        <HrLayout
-            title="Lịch sử chấm công"
+        <AdminAppLayout
+            title="Lịch sử chấm công · Quản trị"
             subtitle="Toàn bộ bản ghi chấm công của tất cả nhân viên"
         >
             <div className="att-content">
@@ -382,8 +377,8 @@ const AdminAttendanceHistoryPage = () => {
                     onSubmit={submitModal}
                 />
             </div>
-        </HrLayout>
+        </AdminAppLayout>
     );
 };
 
-export default AttendanceHistoryPage;
+export default AdminAttendanceHistoryPage;
