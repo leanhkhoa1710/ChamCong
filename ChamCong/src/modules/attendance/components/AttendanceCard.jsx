@@ -84,8 +84,18 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
         try {
             let photoUrl = null;
             if (pendingPhoto) {
-                const up = await relatedApi.uploadPhoto(pendingPhoto);
-                photoUrl = up.data.data;
+                const up = await relatedApi.uploadPhoto(
+                    pendingPhoto,
+                    type === 1 ? "checkin" : "checkout"
+                );
+                photoUrl = up.data?.data;
+                if (!photoUrl) {
+                    // Upload thất bại (VD: server lỗi) -> báo lỗi, không chấm
+                    // công im lặng với ảnh rỗng.
+                    throw new Error(
+                        up.data?.message || "Không tải được ảnh chụp."
+                    );
+                }
             }
 
             const response = await relatedApi.checkin(
@@ -113,8 +123,6 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
             setBusy(false);
         }
     };
-
-
 
     return (
         <section className="att-hero">

@@ -1,4 +1,5 @@
 import { formatVnTime } from "../../../utils/vnTime";
+import PhotoCell from "./PhotoCell";
 
 const statusLabel = (s) =>
     ({
@@ -25,19 +26,19 @@ const formatActual = (row) => {
     return `${inT || "—"} → ${outT || "—"}`;
 };
 
-// 1 ô ảnh: thumbnail (nếu có) + badge Có/Không.
-const PhotoCell = ({ src, alt }) => (
-    <div className="att-photo-cell">
-        {src ? (
-            <a href={src} target="_blank" rel="noreferrer" title={`Xem ảnh ${alt}`}>
-                <img src={src} alt={alt} className="att-photo-thumb" />
-            </a>
-        ) : null}
-        <span className={`att-badge ${src ? "ok" : "bad"}`}>
-            {src ? "Có" : "Không"}
-        </span>
-    </div>
-);
+const statusClass = (s) =>
+    ({
+        1: "ok",
+        2: "warn",
+        3: "warn",
+        4: "bad",
+        5: "info",
+        6: "info",
+        7: "info",
+    })[s] || "";
+
+const approvalClass = (s) =>
+    ({ 0: "warn", 1: "ok", 2: "bad" })[s] || "";
 
 const HistoryTable = ({ history }) => {
     if (!history || history.length === 0) {
@@ -105,19 +106,5 @@ const HistoryTable = ({ history }) => {
         </section>
     );
 };
-
-const statusClass = (s) =>
-    ({
-        1: "ok",
-        2: "warn",
-        3: "warn",
-        4: "bad",
-        5: "info",
-        6: "info",
-        7: "info",
-    })[s] || "";
-
-const approvalClass = (s) =>
-    ({ 0: "warn", 1: "ok", 2: "bad" })[s] || "";
 
 export default HistoryTable;
