@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
+import HrAppLayout from "../../hr/layout/HrAppLayout";
 import adminApi from "../../api/adminApi";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
@@ -7,7 +8,7 @@ import "../../admin.css";
 // Module "Cấp tài khoản" cho người lao động.
 // KPI: tổng hồ sơ - đang làm - đã có tài khoản - chưa có - không hợp lệ -
 //       trùng id - sẵn sàng - đang chọn.
-const AccountIssuancePage = () => {
+const AccountIssuancePage = ({ hrMode = false }) => {
     const [employees, setEmployees] = useState([]);
     const [users, setUsers] = useState([]);
     const [codes, setCodes] = useState([]);
@@ -111,8 +112,10 @@ const AccountIssuancePage = () => {
 
     const working = employees.filter((e) => [1, 2, 3].includes(e.status));
 
+    const PageLayout = hrMode ? HrAppLayout : AdminAppLayout;
+
     return (
-        <AdminAppLayout
+        <PageLayout
             title="Cấp tài khoản"
             subtitle="Cấp tài khoản + mã kích hoạt cho người lao động"
         >
@@ -244,7 +247,7 @@ const AccountIssuancePage = () => {
                     </>
                 )}
             </div>
-        </AdminAppLayout>
+        </PageLayout>
     );
 };
 

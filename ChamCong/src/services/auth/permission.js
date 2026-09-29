@@ -29,7 +29,12 @@ export const canAccessModule = (to) => {
     return true;
 };
 
-// Danh sách module hiển thị trên sidebar /attendance (khu nhân viên):
-// bỏ các module có hideInUserSidebar (đã nằm trong sidebar admin).
+// Sidebar khu chấm công chỉ chứa các module dùng hằng ngày của nhân viên.
 export const visibleModules = () =>
-    MODULES.filter((m) => !m.hideInUserSidebar && canAccessModule(m.to));
+    MODULES.filter(
+        (m) =>
+            m.access === "user" &&
+            m.to !== "/attendance" &&
+            !m.hideInUserSidebar &&
+            canAccessModule(m.to)
+    );

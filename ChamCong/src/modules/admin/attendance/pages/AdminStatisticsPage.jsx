@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import AdminAppLayout from "../../layout/AdminAppLayout";
+import HrAppLayout from "../../hr/layout/HrAppLayout";
 import adminAttendanceApi from "../api/adminAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
 import { formatVnDate } from "../../../../utils/vnTime";
@@ -12,7 +13,7 @@ import "../../admin.css";
 // Trích "YYYY-MM" từ chuỗi ngày (bất biến theo múi giờ).
 const monthOf = (iso) => (iso || "").slice(0, 7);
 
-const AdminStatisticsPage = () => {
+const AdminStatisticsPage = ({ hrMode = false }) => {
     const [rows, setRows] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -144,9 +145,14 @@ const AdminStatisticsPage = () => {
         }
     };
 
+    const PageLayout = hrMode ? HrAppLayout : AdminAppLayout;
+    const attendanceHistoryPath = hrMode
+        ? "/employees/attendance-history"
+        : "/admin/attendance-history";
+
     return (
-        <AdminAppLayout
-            title="Thống kê công · Quản trị"
+        <PageLayout
+            title={hrMode ? "Thống kê công" : "Thống kê công · Quản trị"}
             subtitle="Tổng hợp ngày công của tất cả nhân viên theo tháng"
         >
             <div className="att-content">
@@ -278,7 +284,7 @@ const AdminStatisticsPage = () => {
                                                         <td>
                                                             <div className="admin-row-actions">
                                                                 <Link
-                                                                    to={`/admin/attendance-history?employee=${emp.id}`}
+                                                                    to={`${attendanceHistoryPath}?employee=${emp.id}`}
                                                                     className="admin-view-link"
                                                                 >
                                                                     Chi tiết
@@ -337,7 +343,7 @@ const AdminStatisticsPage = () => {
                     onSubmit={submitModal}
                 />
             </div>
-        </AdminAppLayout>
+        </PageLayout>
     );
 };
 

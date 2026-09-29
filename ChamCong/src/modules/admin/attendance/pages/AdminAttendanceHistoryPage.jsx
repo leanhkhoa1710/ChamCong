@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import AdminAppLayout from "../../layout/AdminAppLayout";
+import HrAppLayout from "../../hr/layout/HrAppLayout";
 import adminAttendanceApi from "../api/adminAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
@@ -13,7 +14,7 @@ import "../../admin.css";
 // Trang quản trị: lịch sử chấm công của TOÀN BỘ nhân viên,
 // + KPI (chấm hôm nay / bất thường / chờ duyệt), duyệt công,
 // xuất file theo tháng và báo cáo công việc.
-const AdminAttendanceHistoryPage = () => {
+const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
     const [rows, setRows] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [logs, setLogs] = useState([]);
@@ -198,9 +199,11 @@ const AdminAttendanceHistoryPage = () => {
         return e ? `${e.employeeCode} · ${e.fullName}` : row.employeeName || "—";
     };
 
+    const PageLayout = hrMode ? HrAppLayout : AdminAppLayout;
+
     return (
-        <AdminAppLayout
-            title="Lịch sử chấm công · Quản trị"
+        <PageLayout
+            title={hrMode ? "Lịch sử & duyệt công" : "Lịch sử chấm công · Quản trị"}
             subtitle="Toàn bộ bản ghi chấm công của tất cả nhân viên"
         >
             <div className="att-content">
@@ -377,7 +380,7 @@ const AdminAttendanceHistoryPage = () => {
                     onSubmit={submitModal}
                 />
             </div>
-        </AdminAppLayout>
+        </PageLayout>
     );
 };
 

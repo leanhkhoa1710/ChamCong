@@ -54,7 +54,7 @@ const PayrollAdminPage = () => {
 };
 
 // ===== Trang Người đã nghỉ việc (lưu trữ + lịch sử) =====
-const ResignedPage = () => {
+const ResignedPage = ({ hrMode = false }) => {
     return (
         <AdminListPage
             title="Người đã nghỉ việc"
@@ -88,12 +88,13 @@ const ResignedPage = () => {
             ]}
             searchKeys={["employeeCode", "fullName", "departmentName"]}
             emptyText="Không có nhân viên nào đã nghỉ việc."
+            hrMode={hrMode}
         />
     );
 };
 
 // ===== Trang Báo cáo công việc (tổng hợp theo tháng, xuất CSV) =====
-const ReportPage = () => {
+const ReportPage = ({ hrMode = false }) => {
     return (
         <AdminListPage
             title="Báo cáo công việc"
@@ -147,6 +148,7 @@ const ReportPage = () => {
             ]}
             searchKeys={["employeeName", "employeeCode", "month"]}
             emptyText="Chưa có dữ liệu chấm công để báo cáo."
+            hrMode={hrMode}
         />
     );
 };

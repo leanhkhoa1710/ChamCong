@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import AdminAppLayout from "./layout/AdminAppLayout";
+import HrAppLayout from "./hr/layout/HrAppLayout";
 import { useAdminList } from "./hooks/useAdminList";
 import ApproveButtons from "./components/ApproveButtons";
 import { toCsv, downloadCsv } from "./hr/hrUtils";
@@ -19,6 +20,7 @@ const AdminListPage = ({
     reject,
     pendingOf,
     emptyText,
+    hrMode = false,
 }) => {
     const { rows, loading, error, reload } = useAdminList(fetcher);
     const [search, setSearch] = useState("");
@@ -77,8 +79,10 @@ const AdminListPage = ({
         return String(v);
     };
 
+    const PageLayout = hrMode ? HrAppLayout : AdminAppLayout;
+
     return (
-        <AdminAppLayout title={title} subtitle={subtitle}>
+        <PageLayout title={title} subtitle={subtitle}>
             <div className="att-content">
                 {error && <div className="att-error">{error}</div>}
                 {loading && <div className="att-loading">Đang tải...</div>}
@@ -181,7 +185,7 @@ const AdminListPage = ({
                     </div>
                 )}
             </div>
-        </AdminAppLayout>
+        </PageLayout>
     );
 };
 

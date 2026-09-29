@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import AdminAppLayout from "../../layout/AdminAppLayout";
+import HrAppLayout from "../layout/HrAppLayout";
 import adminApi from "../../api/adminApi";
 import { useHrData } from "../hooks/useHrData";
 import { useHrKpis } from "../hooks/useHrKpis";
@@ -101,7 +101,7 @@ const HrPage = () => {
     };
 
     return (
-        <AdminAppLayout
+        <HrAppLayout
             title="Nhân sự"
             subtitle="Quản lý nhân viên, chấm công, hợp đồng & hồ sơ lương"
         >
@@ -224,7 +224,7 @@ const HrPage = () => {
                     </div>
                 )}
 
-        </AdminAppLayout>
+        </HrAppLayout>
     );
 };
 

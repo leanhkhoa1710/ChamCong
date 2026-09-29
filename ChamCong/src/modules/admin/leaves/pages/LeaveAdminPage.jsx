@@ -3,7 +3,7 @@ import adminApi from "../../api/adminApi";
 import { currentUserId } from "../../util";
 
 // ===== Trang Nghỉ phép (quản trị) =====
-const LeaveAdminPage = () => {
+const LeaveAdminPage = ({ hrMode = false }) => {
     const approve = async (row) => {
         await adminApi.updateLeave({
             id: row.id,
@@ -69,6 +69,7 @@ const LeaveAdminPage = () => {
             reject={reject}
             pendingOf={(r) => r.status === 1}
             emptyText="Không có đơn nghỉ phép nào."
+            hrMode={hrMode}
         />
     );
 };

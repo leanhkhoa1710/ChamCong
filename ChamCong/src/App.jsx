@@ -21,6 +21,7 @@ import {
     ReportPage,
 } from "./modules/admin/leaves/pages/PayrollResignedReport";
 import AccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
+import HomePage from "./modules/home/pages/HomePage";
 import RequireModule from "./components/common/RequireModule";
 
 const guarded = (to, el) => <RequireModule to={to}>{el}</RequireModule>;
@@ -30,11 +31,55 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/" element={<Navigate to="/Home" replace />} />
+                <Route path="/Home" element={<HomePage />} />
 
                 {/* Khu quản trị */}
                 <Route
                     path="/employees"
                     element={guarded("/employees", <HrPage />)}
+                />
+                <Route
+                    path="/employees/attendance-history"
+                    element={guarded(
+                        "/employees/attendance-history",
+                        <AdminAttendanceHistoryPage hrMode />
+                    )}
+                />
+                <Route
+                    path="/employees/statistics"
+                    element={guarded(
+                        "/employees/statistics",
+                        <AdminStatisticsPage hrMode />
+                    )}
+                />
+                <Route
+                    path="/employees/leaves"
+                    element={guarded(
+                        "/employees/leaves",
+                        <LeaveAdminPage hrMode />
+                    )}
+                />
+                <Route
+                    path="/employees/resigned"
+                    element={guarded(
+                        "/employees/resigned",
+                        <ResignedPage hrMode />
+                    )}
+                />
+                <Route
+                    path="/employees/reports"
+                    element={guarded(
+                        "/employees/reports",
+                        <ReportPage hrMode />
+                    )}
+                />
+                <Route
+                    path="/employees/accounts"
+                    element={guarded(
+                        "/employees/accounts",
+                        <AccountIssuancePage hrMode />
+                    )}
                 />
                 <Route
                     path="/admin/attendance-history"
@@ -90,7 +135,7 @@ function App() {
                 <Route path="/bank-accounts" element={<BankPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
 
-                <Route path="*" element={<Navigate to="/attendance" replace />} />
+                <Route path="*" element={<Navigate to="/Home" replace />} />
             </Routes>
         </BrowserRouter>
     );

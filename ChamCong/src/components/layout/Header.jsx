@@ -12,7 +12,7 @@ import "./header.css";
 
 // Thanh nav toàn rộng: logo + slogan (trái), nút gập sidebar,
 // nút vuông dropdown tài khoản (phải).
-const Header = ({ profile, onToggleSidebar, collapsed }) => {
+const Header = ({ profile, onToggleSidebar, collapsed, minimal = false }) => {
     const auth = getAuth();
     const key = auth?.userId;
 
@@ -76,24 +76,28 @@ const Header = ({ profile, onToggleSidebar, collapsed }) => {
     };
 
     return (
-        <header className="app-header">
+        <header className={`app-header${minimal ? " app-header--minimal" : ""}`}>
             <div className="app-header-left">
-                <button
-                    type="button"
-                    className="app-header-toggle"
-                    aria-label={collapsed ? "Mở thanh menu" : "Gập thanh menu"}
-                    onClick={onToggleSidebar}
-                >
-                    <span />
-                    <span />
-                    <span />
-                </button>
-                <a href="/attendance" className="app-header-brand">
+                {!minimal && (
+                    <button
+                        type="button"
+                        className="app-header-toggle"
+                        aria-label={collapsed ? "Mở thanh menu" : "Gập thanh menu"}
+                        onClick={onToggleSidebar}
+                    >
+                        <span />
+                        <span />
+                        <span />
+                    </button>
+                )}
+                <a href="/home" className="app-header-brand">
                     <span className="app-header-logo">M</span>
                     <span className="app-header-logo-text">MARIXA</span>
-                    <span className="app-header-slogan">
-                        Chấm công &amp; quản lý nhân sự
-                    </span>
+                    {!minimal && (
+                        <span className="app-header-slogan">
+                            Chấm công &amp; quản lý nhân sự
+                        </span>
+                    )}
                 </a>
             </div>
 
