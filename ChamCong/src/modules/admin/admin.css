@@ -356,3 +356,70 @@
         gap: 10px;
     }
 }
+
+/* ===== HR: thông báo (flash) ===== */
+.att-notice {
+    margin: 0 0 16px;
+    padding: 10px 16px;
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    color: #15803d;
+    font-size: 14px;
+}
+
+/* ===== HR: form nhân viên + nút duyệt nhanh ===== */
+.att-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 640px) {
+    .att-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.att-form-check {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px !important;
+    color: #182a3a !important;
+}
+
+.att-form-check input {
+    width: 16px;
+    height: 16px;
+    accent-color: #005b94;
+}
+
+.hr-approve-btn {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.hr-approve-btn--ok {
+    background: #15803d;
+    color: #fff;
+}
+
+.hr-approve-btn--ok:hover {
+    background: #166534;
+}
+
+.hr-approve-btn--bad {
+    background: #b42323;
+    color: #fff;
+}
+
+.hr-approve-btn--bad:hover {
+    background: #8f1c1c;
+}
+

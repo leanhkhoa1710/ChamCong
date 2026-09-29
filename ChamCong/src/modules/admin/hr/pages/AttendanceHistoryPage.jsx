@@ -1,16 +1,21 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import AdminAppLayout from "../../layout/AdminAppLayout";
-import adminAttendanceApi from "../api/adminAttendanceApi";
+import HrLayout from "../layout/HrLayout";
+import hrApi from "../api/hrApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
-import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
+import {
+    ATT_STATUS_LABELS,
+    ATT_STATUS_CLASS,
+    APPROVAL_LABELS,
+    APPROVAL_CLASS,
+} from "../hrLabels";
 import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
 
-// Trang quản trị: lịch sử chấm công của TOÀN BỘ nhân viên,
+// Trong hub Nhân sự: lịch sử chấm công của TOÀN BỘ nhân viên,
 // dạng bảng có nút Thêm / Sửa / Xóa (soft-delete).
-const AdminAttendanceHistoryPage = () => {
+const AttendanceHistoryPage = () => {
     const [rows, setRows] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -40,8 +45,8 @@ const AdminAttendanceHistoryPage = () => {
     const load = async () => {
         try {
             const [a, e] = await Promise.all([
-                adminAttendanceApi.attendanceAll(),
-                adminAttendanceApi.employeesAll(),
+                hrApi.attendanceAll(),
+                hrApi.employees(),
             ]);
             setRows(a.data.data?.items || []);
             setEmployees(e.data.data?.items || []);
@@ -72,7 +77,7 @@ const AdminAttendanceHistoryPage = () => {
         const e = empMap[row.employeeId];
         if (!window.confirm(`Xóa bản ghi ${formatVnDate(row.attendanceDate)} của ${e?.fullName || row.employeeCode}?`)) return;
         try {
-            await adminAttendanceApi.softDelete(row.id);
+            await hrApi.softDeleteAttendance(row.id);
             load();
         } catch (err) {
             setError(err.response?.data?.message || err.message);
@@ -91,10 +96,10 @@ const AdminAttendanceHistoryPage = () => {
         try {
             if (isEdit) {
                 payload.id = editRow.id;
-                await adminAttendanceApi.update(payload);
+                await hrApi.updateAttendance(payload);
             } else {
                 // Create chỉ nhận các field của CreateAttendanceModelView
-                await adminAttendanceApi.create({
+                await hrApi.createAttendance({
                     employeeId: payload.employeeId,
                     attendanceDate: payload.attendanceDate,
                     status: payload.status,
@@ -116,8 +121,8 @@ const AdminAttendanceHistoryPage = () => {
     };
 
     return (
-        <AdminAppLayout
-            title="Lịch sử chấm công · Quản trị"
+        <HrLayout
+            title="Lịch sử chấm công"
             subtitle="Toàn bộ bản ghi chấm công của tất cả nhân viên"
         >
             <div className="att-content">
@@ -127,10 +132,7 @@ const AdminAttendanceHistoryPage = () => {
                 ) : (
                     <section className="att-card">
                         <div className="admin-toolbar">
-                            <select
-                                value={q}
-                                onChange={(e) => setQ(e.target.value)}
-                            >
+                            <select value={q} onChange={(e) => setQ(e.target.value)}>
                                 <option value="">Tất cả nhân viên</option>
                                 {employees.map((x) => (
                                     <option key={x.id} value={x.id}>
@@ -183,9 +185,9 @@ const AdminAttendanceHistoryPage = () => {
                                                 <td>{formatVnDate(row.attendanceDate)}</td>
                                                 <td>
                                                     <span
-                                                        className={`att-badge ${statusClass(row.status)}`}
+                                                        className={`att-badge ${ATT_STATUS_CLASS[row.status] || ""}`}
                                                     >
-                                                        {statusLabel(row.status)}
+                                                        {ATT_STATUS_LABELS[row.status] || "Chưa đánh giá"}
                                                     </span>
                                                 </td>
                                                 <td>
@@ -195,9 +197,9 @@ const AdminAttendanceHistoryPage = () => {
                                                 <td>{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
                                                 <td>
                                                     <span
-                                                        className={`att-badge ${approvalClass(row.approvalStatus)}`}
+                                                        className={`att-badge ${APPROVAL_CLASS[row.approvalStatus] || ""}`}
                                                     >
-                                                        {approvalLabel(row.approvalStatus)}
+                                                        {APPROVAL_LABELS[row.approvalStatus]}
                                                     </span>
                                                 </td>
                                                 <td>
@@ -241,8 +243,8 @@ const AdminAttendanceHistoryPage = () => {
                     onSubmit={submitModal}
                 />
             </div>
-        </AdminAppLayout>
+        </HrLayout>
     );
 };
 
-export default AdminAttendanceHistoryPage;
+export default AttendanceHistoryPage;

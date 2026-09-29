@@ -11,6 +11,7 @@ const Sidebar = ({ collapsed }) => {
                     <NavLink
                         key={item.to}
                         to={item.to}
+                        end={item.to === "/home"}
                         title={collapsed ? item.label : undefined}
                         className={({ isActive }) =>
                             `att-nav-item${isActive ? " active" : ""}`

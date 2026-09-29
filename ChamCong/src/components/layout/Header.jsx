@@ -88,7 +88,7 @@ const Header = ({ profile, onToggleSidebar, collapsed }) => {
                     <span />
                     <span />
                 </button>
-                <a href="/attendance" className="app-header-brand">
+                <a href="/home" className="app-header-brand">
                     <span className="app-header-logo">M</span>
                     <span className="app-header-logo-text">MARIXA</span>
                     <span className="app-header-slogan">

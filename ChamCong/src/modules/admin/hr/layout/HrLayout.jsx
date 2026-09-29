@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import Header from "../../../components/layout/Header";
-import AdminSidebar from "./AdminSidebar";
-import "../../../components/layout/header.css";
-import "../admin.css";
+import Header from "../../../../components/layout/Header";
+import HrSidebar from "./HrSidebar";
+import "../../../../components/layout/header.css";
+import "../../admin.css";
 
 const COLLAPSE_KEY = "marixa_sidebar_collapsed";
 
-// Layout dùng chung 3 trang quản trị (Nhân sự / Chấm công QL / Thống kê QL):
-// header nav 100% width + sidebar 3 mục (kéo ra/vào) + main.
-const AdminAppLayout = ({ title, subtitle, children }) => {
+// Layout dùng chung mọi trang của hub /employees (Nhân sự):
+// header nav 100% width + sidebar 6 mục (kéo ra/vào) + main.
+const HrLayout = ({ title, subtitle, children }) => {
     const [collapsed, setCollapsed] = useState(() => {
         try {
             return localStorage.getItem(COLLAPSE_KEY) === "1";
@@ -23,13 +23,13 @@ const AdminAppLayout = ({ title, subtitle, children }) => {
             try {
                 localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0");
             } catch {
-                // localStorage bị chặn: bỏ qua, không chặn luồng.
+                // localStorage bị chặn: bỏ qua.
             }
             return next;
         });
     }, []);
 
-    // Kéo ra/vào bằng phím tắt "[" (không cần focus input).
+    // Kéo ra/vào bằng phím tắt "[".
     useEffect(() => {
         const onKey = (e) => {
             if (e.key === "[") toggle();
@@ -42,7 +42,7 @@ const AdminAppLayout = ({ title, subtitle, children }) => {
         <div className="app-shell">
             <Header collapsed={collapsed} onToggleSidebar={toggle} />
             <div className="app-body">
-                <AdminSidebar collapsed={collapsed} />
+                <HrSidebar collapsed={collapsed} />
                 <main className="att-main">
                     {title && (
                         <div className="att-main-head">
@@ -57,4 +57,4 @@ const AdminAppLayout = ({ title, subtitle, children }) => {
     );
 };
 
-export default AdminAppLayout;
+export default HrLayout;

@@ -1,6 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./modules/login/pages/LoginPage";
+import HomePage from "./modules/home/pages/HomePage";
 import HrPage from "./modules/admin/hr/pages/HrPage";
+import AttendanceApprovalPage from "./modules/admin/hr/pages/AttendanceApprovalPage";
+import HrAttendanceHistoryPage from "./modules/admin/hr/pages/AttendanceHistoryPage";
+import HrStatisticsPage from "./modules/admin/hr/pages/StatisticsPage";
+import LeaveApprovalPage from "./modules/admin/hr/pages/LeaveApprovalPage";
+import ReportPage from "./modules/admin/hr/pages/ReportPage";
 import AttendancePage from "./modules/attendance/pages/AttendancePage";
 import LeavePage from "./modules/leave/pages/LeavePage";
 import ContractPage from "./modules/contracts/pages/ContractPage";
@@ -11,16 +17,16 @@ import StatisticsPage from "./modules/statistics/pages/StatisticsPage";
 import AttendanceHistoryPage from "./modules/attendance/pages/AttendanceHistoryPage";
 import ProfilePage from "./modules/profile/pages/ProfilePage";
 import DashboardPage from "./modules/admin/pages/DashboardPage";
-import AdminAttendanceHistoryPage from "./modules/admin/attendance/pages/AdminAttendanceHistoryPage";
-import AdminStatisticsPage from "./modules/admin/attendance/pages/AdminStatisticsPage";
 import RequireModule from "./components/common/RequireModule";
+
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/home" element={<HomePage />} />
 
-                {/* Khu quản trị (sidebar 3 mục) */}
+                {/* Hub Nhân sự (HR / Manager / Admin) */}
                 <Route
                     path="/employees"
                     element={
@@ -30,13 +36,47 @@ function App() {
                     }
                 />
                 <Route
-                    path="/admin/attendance-history"
-                    element={<AdminAttendanceHistoryPage />}
+                    path="/employees/approval"
+                    element={
+                        <RequireModule to="/employees/approval">
+                            <AttendanceApprovalPage />
+                        </RequireModule>
+                    }
                 />
                 <Route
-                    path="/admin/statistics"
-                    element={<AdminStatisticsPage />}
+                    path="/employees/attendance-history"
+                    element={
+                        <RequireModule to="/employees/attendance-history">
+                            <HrAttendanceHistoryPage />
+                        </RequireModule>
+                    }
                 />
+                <Route
+                    path="/employees/statistics"
+                    element={
+                        <RequireModule to="/employees/statistics">
+                            <HrStatisticsPage />
+                        </RequireModule>
+                    }
+                />
+                <Route
+                    path="/employees/leaves"
+                    element={
+                        <RequireModule to="/employees/leaves">
+                            <LeaveApprovalPage />
+                        </RequireModule>
+                    }
+                />
+                <Route
+                    path="/employees/report"
+                    element={
+                        <RequireModule to="/employees/report">
+                            <ReportPage />
+                        </RequireModule>
+                    }
+                />
+
+                {/* Khu quản trị */}
                 <Route path="/admin" element={<DashboardPage />} />
 
                 {/* Khu nhân viên */}

@@ -11,7 +11,8 @@
 // Sidebar và route guard đều đọc từ đây -> thống nhất nguồn quyền.
 // ============================================================
 export const MODULES = [
-    { to: "/attendance", label: "Trang chủ", access: "user" },
+    { to: "/home", label: "Trang chủ", access: "user" },
+    { to: "/attendance", label: "Chấm công", access: "user" },
     { to: "/attendance-history", label: "Lịch sử chấm công", access: "user" },
     { to: "/statistics", label: "Thống kê công", access: "user" },
     { to: "/leave", label: "Nghỉ phép", access: "user" },
@@ -22,10 +23,9 @@ export const MODULES = [
     { to: "/profile", label: "Hồ sơ", access: "user" },
     // Khu quản trị (admin)
     { to: "/admin", label: "Dashboard", access: "admin" },
-    // Nhân sự: chỉ HR (Nhân sự), Manager (Quản lý), Admin
+    // Hub Nhân sự: chỉ HR (Nhân sự), Manager (Quản lý), Admin.
+    // Các trang con (/employees/*) kế thừa quyền của /employees.
     { to: "/employees", label: "Nhân sự", roles: ["HR", "Manager", "Admin"] },
-    { to: "/admin/attendance-history", label: "Chấm công (QL)", access: "admin" },
-    { to: "/admin/statistics", label: "Thống kê công (QL)", access: "admin" },
 ];
 
 export const moduleByPath = (path) =>

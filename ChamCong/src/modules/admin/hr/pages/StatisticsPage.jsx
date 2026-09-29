@@ -1,18 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import AdminAppLayout from "../../layout/AdminAppLayout";
-import adminAttendanceApi from "../api/adminAttendanceApi";
+import HrLayout from "../layout/HrLayout";
+import hrApi from "../api/hrApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
 import { formatVnDate } from "../../../../utils/vnTime";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
 
-// Trang quản trị: thống kê công của TOÀN BỘ nhân viên theo tháng,
+// Trong hub Nhân sự: thống kê công của TOÀN BỘ nhân viên theo tháng,
 // dạng bảng có nút Thêm / Sửa / Xóa.
-// Trích "YYYY-MM" từ chuỗi ngày (bất biến theo múi giờ).
 const monthOf = (iso) => (iso || "").slice(0, 7);
 
-const AdminStatisticsPage = () => {
+const StatisticsPage = () => {
     const [rows, setRows] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -35,8 +34,8 @@ const AdminStatisticsPage = () => {
     const load = async () => {
         try {
             const [a, e] = await Promise.all([
-                adminAttendanceApi.attendanceAll(),
-                adminAttendanceApi.employeesAll(),
+                hrApi.attendanceAll(),
+                hrApi.employees(),
             ]);
             setRows(a.data.data?.items || []);
             setEmployees(e.data.data?.items || []);
@@ -112,10 +111,9 @@ const AdminStatisticsPage = () => {
         };
         try {
             if (isEdit) {
-                await adminAttendanceApi.update(payload);
+                await hrApi.updateAttendance(payload);
             } else {
-                // Create chỉ nhận các field của CreateAttendanceModelView
-                await adminAttendanceApi.create({
+                await hrApi.createAttendance({
                     employeeId: payload.employeeId,
                     attendanceDate: payload.attendanceDate,
                     status: payload.status,
@@ -137,7 +135,7 @@ const AdminStatisticsPage = () => {
         if (!window.confirm(`Xóa bản ghi ngày ${formatVnDate(row.attendanceDate)} của ${name}?`))
             return;
         try {
-            await adminAttendanceApi.softDelete(row.id);
+            await hrApi.softDeleteAttendance(row.id);
             load();
         } catch (err) {
             setError(err.response?.data?.message || err.message);
@@ -145,8 +143,8 @@ const AdminStatisticsPage = () => {
     };
 
     return (
-        <AdminAppLayout
-            title="Thống kê công · Quản trị"
+        <HrLayout
+            title="Thống kê công"
             subtitle="Tổng hợp ngày công của tất cả nhân viên theo tháng"
         >
             <div className="att-content">
@@ -278,7 +276,7 @@ const AdminStatisticsPage = () => {
                                                         <td>
                                                             <div className="admin-row-actions">
                                                                 <Link
-                                                                    to={`/admin/attendance-history?employee=${emp.id}`}
+                                                                    to={`/employees/attendance-history?employee=${emp.id}`}
                                                                     className="admin-view-link"
                                                                 >
                                                                     Chi tiết
@@ -337,8 +335,8 @@ const AdminStatisticsPage = () => {
                     onSubmit={submitModal}
                 />
             </div>
-        </AdminAppLayout>
+        </HrLayout>
     );
 };
 
-export default AdminStatisticsPage;
+export default StatisticsPage;

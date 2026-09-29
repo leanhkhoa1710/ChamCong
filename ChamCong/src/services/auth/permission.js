@@ -21,8 +21,16 @@ const hasAnyRole = (roles) =>
 // - có "roles": phải thuộc đúng 1 role trong danh sách (ưu tiên).
 // - "access: admin": chỉ role quản trị (Admin).
 // - "access: user" / không khai báo: mọi tài khoản đã đăng nhập.
+// - trang con (VD /employees/approval) kế thừa quyền của module cha
+//   dài nhất (/employees) nếu chưa được khai báo riêng.
 export const canAccessModule = (to) => {
-    const m = MODULES.find((x) => x.to === to);
+    let m = MODULES.find((x) => x.to === to);
+    if (!m) {
+        const parent = MODULES.map((x) => x.to)
+            .filter((p) => to.startsWith(p + "/"))
+            .sort((a, b) => b.length - a.length)[0];
+        m = MODULES.find((x) => x.to === parent);
+    }
     if (!m) return true; // đường dẫn tự do (login, hồ sơ...)
     if (m.roles) return hasAnyRole(m.roles);
     if (m.access === "admin") return hasAdminRole();
@@ -30,4 +38,5 @@ export const canAccessModule = (to) => {
 };
 
 // Danh sách module hiển thị trên sidebar cho tài khoản hiện tại.
-export const visibleModules = () => MODULES.filter((m) => canAccessModule(m.to));
+export const visibleModules = () =>
+    MODULES.filter((m) => canAccessModule(m.to));

@@ -1,9 +1,18 @@
 import { STATUS_LABELS, STATUS_TONES } from "../hooks/useHrFilters";
 
-// Bảng nhân sự: checkbox + Mã NV + Họ tên + Phòng ban + Chức vụ + Trạng thái.
-const HrEmployeeTable = ({ employees, selected, onToggle, onToggleAll }) => {
+// Bảng nhân sự: checkbox + Mã NV + Họ tên + Phòng ban + Chức vụ + Trạng thái
+// + cột hành động (Sửa / Xóa, nếu có onEdit/onDelete).
+const HrEmployeeTable = ({
+    employees,
+    selected,
+    onToggle,
+    onToggleAll,
+    onEdit,
+    onDelete,
+}) => {
     const allSelected =
         employees.length > 0 && employees.every((e) => selected.has(e.id));
+    const hasActions = !!(onEdit || onDelete);
 
     return (
         <div className="hr-table-wrap">
@@ -14,9 +23,7 @@ const HrEmployeeTable = ({ employees, selected, onToggle, onToggleAll }) => {
                             <input
                                 type="checkbox"
                                 checked={allSelected}
-                                onChange={() =>
-                                    onToggleAll(allSelected)
-                                }
+                                onChange={() => onToggleAll(allSelected)}
                                 aria-label="Chọn tất cả"
                             />
                         </th>
@@ -25,12 +32,16 @@ const HrEmployeeTable = ({ employees, selected, onToggle, onToggleAll }) => {
                         <th>Phòng ban</th>
                         <th>Chức vụ</th>
                         <th>Trạng thái</th>
+                        {hasActions && <th />}
                     </tr>
                 </thead>
                 <tbody>
                     {employees.length === 0 ? (
                         <tr>
-                            <td colSpan={6} className="hr-empty">
+                            <td
+                                colSpan={6 + (hasActions ? 1 : 0)}
+                                className="hr-empty"
+                            >
                                 Không có nhân viên nào khớp bộ lọc.
                             </td>
                         </tr>
@@ -56,6 +67,30 @@ const HrEmployeeTable = ({ employees, selected, onToggle, onToggleAll }) => {
                                         {STATUS_LABELS[e.status] || "Chưa rõ"}
                                     </span>
                                 </td>
+                                {hasActions && (
+                                    <td>
+                                        <div className="admin-row-actions">
+                                            {onEdit && (
+                                                <button
+                                                    type="button"
+                                                    className="admin-link-btn"
+                                                    onClick={() => onEdit(e)}
+                                                >
+                                                    Sửa
+                                                </button>
+                                            )}
+                                            {onDelete && (
+                                                <button
+                                                    type="button"
+                                                    className="admin-link-btn admin-link-btn--danger"
+                                                    onClick={() => onDelete(e)}
+                                                >
+                                                    Xóa
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                )}
                             </tr>
                         ))
                     )}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-// Modal thêm / sửa bản ghi chấm công (admin).
+// Modal thêm / sửa bản ghi chấm công (hub Nhân sự).
 // row = null -> thêm mới; row có giá trị -> sửa.
 const STATUS_OPTIONS = [
     { v: "", l: "Chưa đánh giá" },
@@ -52,8 +52,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
 
     if (!open || !form) return null;
 
-    const set = (k) => (e) =>
-        setForm({ ...form, [k]: e.target.value });
+    const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
     const submit = async (e) => {
         e.preventDefault();
@@ -77,11 +76,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                 <form onSubmit={submit} className="att-form">
                     <label>
                         Nhân viên
-                        <select
-                            required
-                            value={form.employeeId}
-                            onChange={set("employeeId")}
-                        >
+                        <select required value={form.employeeId} onChange={set("employeeId")}>
                             <option value="">— Chọn nhân viên —</option>
                             {employees.map((x) => (
                                 <option key={x.id} value={x.id}>
@@ -93,12 +88,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
 
                     <label>
                         Ngày
-                        <input
-                            type="date"
-                            required
-                            value={form.attendanceDate}
-                            onChange={set("attendanceDate")}
-                        />
+                        <input type="date" required value={form.attendanceDate} onChange={set("attendanceDate")} />
                     </label>
 
                     <label>
@@ -114,22 +104,12 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
 
                     <label>
                         Giờ thực tế
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.5"
-                            value={form.actualHours}
-                            onChange={set("actualHours")}
-                            placeholder="Tùy chọn"
-                        />
+                        <input type="number" min="0" step="0.5" value={form.actualHours} onChange={set("actualHours")} placeholder="Tùy chọn" />
                     </label>
 
                     <label>
                         Phê duyệt
-                        <select
-                            value={form.approvalStatus}
-                            onChange={set("approvalStatus")}
-                        >
+                        <select value={form.approvalStatus} onChange={set("approvalStatus")}>
                             {APPROVAL_OPTIONS.map((o) => (
                                 <option key={o.v} value={o.v}>
                                     {o.l}
@@ -140,22 +120,13 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
 
                     <label>
                         Ghi chú
-                        <textarea
-                            rows="2"
-                            value={form.note}
-                            onChange={set("note")}
-                            placeholder="Tùy chọn"
-                        />
+                        <textarea rows="2" value={form.note} onChange={set("note")} placeholder="Tùy chọn" />
                     </label>
 
                     {error && <p className="att-cam-error">{error}</p>}
 
                     <div className="att-form-actions">
-                        <button
-                            type="button"
-                            className="att-cam-btn-remove"
-                            onClick={onClose}
-                        >
+                        <button type="button" className="att-cam-btn-remove" onClick={onClose}>
                             Hủy
                         </button>
                         <button type="submit" className="admin-link-btn">
