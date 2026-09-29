@@ -36,6 +36,7 @@ namespace M.Services.Service
                 .Include(x => x.Employee)
                 .Include(x => x.PlannedShift)
                 .Include(x => x.Approver)
+                .Include(x => x.AttendanceLogs)
                 .OrderBy(x => x.CreatedTime);
 
             int totalItems = await query.CountAsync();

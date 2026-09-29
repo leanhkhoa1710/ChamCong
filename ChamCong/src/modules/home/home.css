@@ -1,6 +1,23 @@
-.home-page {
-    width: min(1320px, 100%);
+.home-shell {
+    min-height: 100vh;
+    background: #f7f9fb;
+    color: #122638;
+    font-family: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+}
+
+.app-header.app-header--minimal {
+    padding-right: max(24px, calc((100vw - 1400px) / 2));
+    padding-left: max(24px, calc((100vw - 1400px) / 2));
+}
+
+.home-main {
+    width: min(1400px, 100%);
     margin: 0 auto;
+    padding: 38px 40px 30px;
+}
+
+.home-page {
+    width: 100%;
     color: #122638;
 }
 
@@ -338,6 +355,7 @@
 }
 
 @media (max-width: 760px) {
+    .home-main { padding: 26px 22px; }
     .home-hero { grid-template-columns: 1fr; padding: 30px 25px; }
     .home-hero-aside { display: none; }
     .home-module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -345,6 +363,8 @@
 }
 
 @media (max-width: 520px) {
+    .app-header.app-header--minimal { padding-right: 16px; padding-left: 16px; }
+    .home-main { padding: 20px 16px; }
     .home-hero { min-height: auto; padding: 25px 20px; border-radius: 15px; }
     .home-hero h1 { font-size: 32px; }
     .home-module-grid { grid-template-columns: 1fr; }

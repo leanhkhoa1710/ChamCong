@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import AppLayout from "../../../components/layout/AppLayout";
+import Header from "../../../components/layout/Header";
 import { canAccessModule } from "../../../services/auth/permission";
 import { getAuth } from "../../../services/auth/auth";
 import "../home.css";
@@ -48,8 +48,10 @@ const HomePage = () => {
     }).format(new Date());
 
     return (
-        <AppLayout>
-            <div className="home-page">
+        <div className="home-shell">
+            <Header minimal />
+            <main className="home-main">
+              <div className="home-page">
                 <section className="home-hero">
                     <div className="home-hero-copy">
                         <span className="home-eyebrow">MARIXA · PEOPLE OPERATIONS</span>
@@ -86,8 +88,9 @@ const HomePage = () => {
                     </div>
                 </section>
                 <footer className="home-footer"><span>MARIXA</span><span>Chấm công &amp; quản lý nhân sự</span></footer>
-            </div>
-        </AppLayout>
+              </div>
+            </main>
+        </div>
     );
 };
 
