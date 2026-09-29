@@ -1,5 +1,5 @@
 /*
-  Sample data for SQL Server. Run after applying EF Core migrations.
+  Sample data for SQL Server. Run after the EF Core schema migrations have been applied.
   Running this script again resets only the deterministic demo users/employees
   (B000...001-010 and C000...001-020) and their related rows.
 
@@ -9,6 +9,28 @@
 */
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
+
+DECLARE @missingTables nvarchar(2048) = N'';
+SELECT @missingTables = @missingTables
+    + CASE WHEN @missingTables = N'' THEN N'' ELSE N', ' END
+    + v.TableName
+FROM (VALUES
+    (N'ActivationCodes'),(N'AspNetRoles'),(N'AspNetUserClaims'),(N'AspNetUserLogins'),
+    (N'AspNetUserRoles'),(N'AspNetUsers'),(N'AspNetUserTokens'),(N'AttendanceLogs'),
+    (N'Attendances'),(N'Banks'),(N'Departments'),(N'EmployeeBankAccounts'),
+    (N'EmployeeContracts'),(N'EmployeeDependents'),(N'EmployeeInsurances'),(N'Employees'),
+    (N'EmployeeSalaries'),(N'EmployeeShifts'),(N'LeaveRequests'),(N'LeaveTypes'),
+    (N'Payrolls'),(N'Positions'),(N'Shifts')
+) v(TableName)
+WHERE OBJECT_ID(N'dbo.' + v.TableName, N'U') IS NULL;
+
+IF @missingTables <> N''
+BEGIN
+    DECLARE @schemaError nvarchar(2048) =
+        N'Missing required dbo tables: ' + @missingTables
+        + N'. Apply EF Core migrations to Monica_001 before running SampleData.sql.';
+    THROW 51000, @schemaError, 1;
+END;
 
 BEGIN TRANSACTION;
 
@@ -32,26 +54,26 @@ DECLARE @staff TABLE
 );
 
 INSERT INTO @staff VALUES
-(1,'C0000000-0000-0000-0000-000000000001',N'MX001',N'Đinh Văn',N'Tài',N'0947733609',N'sample.tai@marixa.local','B0000000-0000-0000-0000-000000000001',N'Employee',N'ENG',N'STAFF'),
-(2,'C0000000-0000-0000-0000-000000000002',N'MX002',N'Huỳnh Hoàng',N'Đăng',N'0900000002',N'sample.dang@marixa.local','B0000000-0000-0000-0000-000000000002',N'Employee',N'OPS',N'STAFF'),
-(3,'C0000000-0000-0000-0000-000000000003',N'MX003',N'Phùng Vĩnh',N'Luân',N'0900000003',N'sample.luan@marixa.local','B0000000-0000-0000-0000-000000000003',N'Manager',N'ENG',N'MANAGER'),
-(4,'C0000000-0000-0000-0000-000000000004',N'MX004',N'Lê Anh',N'Khoa',N'0900000004',N'sample.khoa@marixa.local','B0000000-0000-0000-0000-000000000004',N'HR',N'HR',N'HR'),
-(5,'C0000000-0000-0000-0000-000000000005',N'MX005',N'Trần Phụng',N'Tuyền',N'0900000005',N'sample.tuyen@marixa.local','B0000000-0000-0000-0000-000000000005',N'Accountant',N'FIN',N'ACCOUNTANT'),
-(6,'C0000000-0000-0000-0000-000000000006',N'MX006',N'Nguyễn Hoàng',N'Nam',N'0900000006',N'sample.admin1@marixa.local','B0000000-0000-0000-0000-000000000006',N'Admin',N'OPS',N'ADMIN'),
-(7,'C0000000-0000-0000-0000-000000000007',N'MX007',N'Trần Thị',N'Mai',N'0900000007',N'sample.admin2@marixa.local','B0000000-0000-0000-0000-000000000007',N'Admin',N'FIN',N'ADMIN'),
-(8,'C0000000-0000-0000-0000-000000000008',N'MX008',N'Nguyễn Phước',N'Long',N'0900000008',N'sample.manager2@marixa.local','B0000000-0000-0000-0000-000000000008',N'Manager',N'OPS',N'MANAGER'),
-(9,'C0000000-0000-0000-0000-000000000009',N'MX009',N'Lâm Ngọc',N'Bích',N'0900000009',N'sample.hr2@marixa.local','B0000000-0000-0000-0000-000000000009',N'HR',N'HR',N'HR'),
-(10,'C0000000-0000-0000-0000-000000000010',N'MX010',N'Võ Minh',N'Tuấn',N'0900000010',N'sample.accountant2@marixa.local','B0000000-0000-0000-0000-000000000010',N'Accountant',N'FIN',N'ACCOUNTANT'),
-(11,'C0000000-0000-0000-0000-000000000011',N'MX011',N'Bùi Minh',N'Anh',N'0910000011',N'minhanh11@marixa.local',NULL,NULL,N'MKT',N'STAFF'),
-(12,'C0000000-0000-0000-0000-000000000012',N'MX012',N'Phạm Quốc',N'Huy',N'0910000012',N'quochuy12@marixa.local',NULL,NULL,N'ENG',N'STAFF'),
-(13,'C0000000-0000-0000-0000-000000000013',N'MX013',N'Hoàng Thị',N'Lan',N'0910000013',N'thilan13@marixa.local',NULL,NULL,N'OPS',N'STAFF'),
-(14,'C0000000-0000-0000-0000-000000000014',N'MX014',N'Đặng Gia',N'Bảo',N'0910000014',N'giabao14@marixa.local',NULL,NULL,N'MKT',N'STAFF'),
-(15,'C0000000-0000-0000-0000-000000000015',N'MX015',N'Vũ Ngọc',N'Hà',N'0910000015',N'ngocha15@marixa.local',NULL,NULL,N'HR',N'STAFF'),
-(16,'C0000000-0000-0000-0000-000000000016',N'MX016',N'Trương Đức',N'Anh',N'0910000016',N'ducanh16@marixa.local',NULL,NULL,N'ENG',N'STAFF'),
-(17,'C0000000-0000-0000-0000-000000000017',N'MX017',N'Nguyễn Thu',N'Trang',N'0910000017',N'thutrang17@marixa.local',NULL,NULL,N'FIN',N'STAFF'),
-(18,'C0000000-0000-0000-0000-000000000018',N'MX018',N'Đỗ Quang',N'Minh',N'0910000018',N'quangminh18@marixa.local',NULL,NULL,N'OPS',N'STAFF'),
-(19,'C0000000-0000-0000-0000-000000000019',N'MX019',N'Lê Thị',N'Hương',N'0910000019',N'thihuong19@marixa.local',NULL,NULL,N'MKT',N'STAFF'),
-(20,'C0000000-0000-0000-0000-000000000020',N'MX020',N'Mai Quốc',N'Khánh',N'0910000020',N'quockhanh20@marixa.local',NULL,NULL,N'ENG',N'STAFF');
+(1,'C0000000-0000-0000-0000-000000000001',N'AD-001',N'Nguyễn Hoàng',N'Nam',N'0900000001',N'sample.admin1@marixa.local','B0000000-0000-0000-0000-000000000001',N'Admin',N'OPS',N'ADMIN'),
+(2,'C0000000-0000-0000-0000-000000000002',N'AD-002',N'Trần Thị',N'Mai',N'0900000002',N'sample.admin2@marixa.local','B0000000-0000-0000-0000-000000000002',N'Admin',N'FIN',N'ADMIN'),
+(3,'C0000000-0000-0000-0000-000000000003',N'QL-001',N'Phùng Vĩnh',N'Luân',N'0900000003',N'sample.luan@marixa.local','B0000000-0000-0000-0000-000000000003',N'Manager',N'ENG',N'MANAGER'),
+(4,'C0000000-0000-0000-0000-000000000004',N'QL-002',N'Nguyễn Phước',N'Long',N'0900000004',N'sample.manager2@marixa.local','B0000000-0000-0000-0000-000000000004',N'Manager',N'OPS',N'MANAGER'),
+(5,'C0000000-0000-0000-0000-000000000005',N'HR-001',N'Lê Anh',N'Khoa',N'0900000005',N'sample.khoa@marixa.local','B0000000-0000-0000-0000-000000000005',N'HR',N'HR',N'HR'),
+(6,'C0000000-0000-0000-0000-000000000006',N'HR-002',N'Lâm Ngọc',N'Bích',N'0900000006',N'sample.hr2@marixa.local','B0000000-0000-0000-0000-000000000006',N'HR',N'HR',N'HR'),
+(7,'C0000000-0000-0000-0000-000000000007',N'KT-001',N'Trần Phụng',N'Tuyền',N'0900000007',N'sample.tuyen@marixa.local','B0000000-0000-0000-0000-000000000007',N'Accountant',N'FIN',N'ACCOUNTANT'),
+(8,'C0000000-0000-0000-0000-000000000008',N'KT-002',N'Võ Minh',N'Tuấn',N'0900000008',N'sample.accountant2@marixa.local','B0000000-0000-0000-0000-000000000008',N'Accountant',N'FIN',N'ACCOUNTANT'),
+(9,'C0000000-0000-0000-0000-000000000009',N'NV-001',N'Đinh Văn',N'Tài',N'0900000009',N'sample.tai@marixa.local','B0000000-0000-0000-0000-000000000009',N'Employee',N'ENG',N'STAFF'),
+(10,'C0000000-0000-0000-0000-000000000010',N'NV-002',N'Huỳnh Hoàng',N'Đăng',N'0900000010',N'sample.dang@marixa.local','B0000000-0000-0000-0000-000000000010',N'Employee',N'OPS',N'STAFF'),
+(11,'C0000000-0000-0000-0000-000000000011',N'NV-003',N'Bùi Minh',N'Anh',N'0910000011',N'minhanh11@marixa.local',NULL,NULL,N'MKT',N'STAFF'),
+(12,'C0000000-0000-0000-0000-000000000012',N'NV-004',N'Phạm Quốc',N'Huy',N'0910000012',N'quochuy12@marixa.local',NULL,NULL,N'ENG',N'STAFF'),
+(13,'C0000000-0000-0000-0000-000000000013',N'NV-005',N'Hoàng Thị',N'Lan',N'0910000013',N'thilan13@marixa.local',NULL,NULL,N'OPS',N'STAFF'),
+(14,'C0000000-0000-0000-0000-000000000014',N'NV-006',N'Đặng Gia',N'Bảo',N'0910000014',N'giabao14@marixa.local',NULL,NULL,N'MKT',N'STAFF'),
+(15,'C0000000-0000-0000-0000-000000000015',N'NV-007',N'Vũ Ngọc',N'Hà',N'0910000015',N'ngocha15@marixa.local',NULL,NULL,N'HR',N'STAFF'),
+(16,'C0000000-0000-0000-0000-000000000016',N'NV-008',N'Trương Đức',N'Anh',N'0910000016',N'ducanh16@marixa.local',NULL,NULL,N'ENG',N'STAFF'),
+(17,'C0000000-0000-0000-0000-000000000017',N'NV-009',N'Nguyễn Thu',N'Trang',N'0910000017',N'thutrang17@marixa.local',NULL,NULL,N'FIN',N'STAFF'),
+(18,'C0000000-0000-0000-0000-000000000018',N'NV-010',N'Đỗ Quang',N'Minh',N'0910000018',N'quangminh18@marixa.local',NULL,NULL,N'OPS',N'STAFF'),
+(19,'C0000000-0000-0000-0000-000000000019',N'NV-011',N'Lê Thị',N'Hương',N'0910000019',N'thihuong19@marixa.local',NULL,NULL,N'MKT',N'STAFF'),
+(20,'C0000000-0000-0000-0000-000000000020',N'NV-012',N'Mai Quốc',N'Khánh',N'0910000020',N'quockhanh20@marixa.local',NULL,NULL,N'ENG',N'STAFF');
 
 DECLARE @sampleEmployeeIds TABLE (Id uniqueidentifier PRIMARY KEY);
 DECLARE @sampleUserIds TABLE (Id uniqueidentifier PRIMARY KEY);
@@ -105,11 +127,11 @@ DELETE FROM dbo.AspNetUsers WHERE Id IN (SELECT Id FROM @sampleUserIds);
 
 DECLARE @roles TABLE (RoleName nvarchar(256), Description nvarchar(max));
 INSERT INTO @roles VALUES
-(N'Employee',N'Nhân viên'),
+(N'Admin',N'Quản trị hệ thống'),
 (N'Manager',N'Quản lý'),
 (N'HR',N'Nhân sự'),
 (N'Accountant',N'Kế toán'),
-(N'Admin',N'Quản trị hệ thống');
+(N'Employee',N'Nhân viên');
 
 INSERT INTO dbo.AspNetRoles (Id,CreatedTime,LastUpdatedTime,Description,Name,NormalizedName,ConcurrencyStamp)
 SELECT NEWID(),@now,@now,r.Description,r.RoleName,UPPER(r.RoleName),CONVERT(nvarchar(36),NEWID())
@@ -191,7 +213,7 @@ INSERT INTO dbo.Employees
 SELECT s.EmployeeId,s.EmployeeCode,s.GivenName,s.FamilyName,
        CASE WHEN s.Seq IN (7,9,11,13,15,17,19) THEN 2 ELSE 1 END,
        s.PhoneNumber,s.Email,s.UserId,d.Id,p.Id,
-       CASE WHEN s.Seq IN (3,8) THEN NULL ELSE 'C0000000-0000-0000-0000-000000000003' END,
+       CASE WHEN s.Seq IN (3,4) THEN NULL ELSE 'C0000000-0000-0000-0000-000000000003' END,
        DATEADD(day,-(s.Seq*30),@today),1,2,1,@now,@now
 FROM @staff s
 JOIN dbo.Departments d ON d.Code=s.DeptCode
@@ -204,12 +226,10 @@ WHERE u.Id IN (SELECT Id FROM @sampleUserIds);
 
 UPDATE d SET ManagerId='C0000000-0000-0000-0000-000000000003'
 FROM dbo.Departments d WHERE d.Code IN (N'ENG',N'MKT');
-UPDATE d SET ManagerId='C0000000-0000-0000-0000-000000000008'
+UPDATE d SET ManagerId='C0000000-0000-0000-0000-000000000004'
 FROM dbo.Departments d WHERE d.Code=N'OPS';
 UPDATE d SET ManagerId='C0000000-0000-0000-0000-000000000004'
-FROM dbo.Departments d WHERE d.Code=N'HR';
-UPDATE d SET ManagerId='C0000000-0000-0000-0000-000000000005'
-FROM dbo.Departments d WHERE d.Code=N'FIN';
+FROM dbo.Departments d WHERE d.Code IN (N'HR',N'FIN');
 
 INSERT INTO dbo.EmployeeContracts (Id,EmployeeId,ContractNumber,ContractType,StartDate,EndDate,Note,CreatedTime,LastUpdatedTime)
 SELECT NEWID(),s.EmployeeId,CONCAT(N'HĐ-',s.EmployeeCode),2,DATEADD(day,-180,@today),DATEADD(year,1,@today),N'Dữ liệu demo',@now,@now
@@ -277,7 +297,7 @@ SELECT NEWID(),s.EmployeeId,w.WorkDate,1,sh.Id,8,8,
        CASE WHEN w.DaySeq<=5 THEN 'C0000000-0000-0000-0000-000000000003' ELSE NULL END,
        CASE WHEN w.DaySeq<=5 THEN DATEADD(hour,18,CAST(w.WorkDate AS datetime2)) ELSE NULL END,@now,@now
 FROM WorkDays w
-JOIN @staff s ON s.Seq=((w.DaySeq-1)%5)+1
+JOIN @staff s ON s.Seq=9+((w.DaySeq-1)%2)
 CROSS JOIN dbo.Shifts sh
 WHERE w.DaySeq<=10 AND sh.Code=N'HC'
 OPTION (MAXRECURSION 40);

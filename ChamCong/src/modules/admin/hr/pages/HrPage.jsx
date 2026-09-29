@@ -53,6 +53,45 @@ const HrPage = () => {
             uncheck ? new Set() : new Set(slice.map((e) => e.id))
         );
 
+    const archiveEmployee = async (employee) => {
+        if ([4, 5].includes(employee.status)) return;
+        if (!window.confirm(`Lưu trữ hồ sơ của ${employee.fullName}?`)) return;
+
+        try {
+            await adminApi.updateEmployee({
+                id: employee.id,
+                employeeCode: employee.employeeCode,
+                givenName: employee.givenName,
+                familyName: employee.familyName,
+                birthDate: employee.birthDate,
+                gender: employee.gender,
+                citizenId: employee.citizenId,
+                citizenIdIssuedDate: employee.citizenIdIssuedDate,
+                citizenIdIssuedPlace: employee.citizenIdIssuedPlace,
+                phoneNumber: employee.phoneNumber,
+                email: employee.email,
+                permanentAddress: employee.permanentAddress,
+                currentAddress: employee.currentAddress,
+                userId: employee.userId,
+                departmentId: employee.departmentId,
+                positionId: employee.positionId,
+                managerId: employee.managerId,
+                startDate: employee.startDate,
+                probationEndDate: employee.probationEndDate,
+                laborType: employee.laborType,
+                status: 4,
+                usePhoneAttendance: employee.usePhoneAttendance,
+                note: employee.note,
+            });
+            await data.reload();
+        } catch (error) {
+            window.alert(
+                "Không thể lưu trữ nhân viên: " +
+                    (error.response?.data?.message || error.message)
+            );
+        }
+    };
+
     // ===== CSV (nhập / xuất / mẫu) =====
     const onTemplate = () =>
         downloadCsv("mau-nhan-vien.csv", hrTemplate());
@@ -155,6 +194,7 @@ const HrPage = () => {
                             }}
                             onView={setViewEmp}
                             onEdit={(e) => setViewEmp(e)}
+                            onArchive={archiveEmployee}
                         />
                         {tab === "archive" && (
                             <p className="hr-note">

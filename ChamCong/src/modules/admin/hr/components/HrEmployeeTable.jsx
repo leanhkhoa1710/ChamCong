@@ -1,7 +1,7 @@
 import { STATUS_LABELS, STATUS_TONES } from "../hooks/useHrFilters";
 import { docCompleteness } from "../hrUtils";
 
-// Bảng nhân sự: checkbox + Họ tên + Mã NV + Phòng ban + Chức vụ + Trạng thái
+// Bảng nhân sự: checkbox + Mã NV + Họ tên + Phòng ban + Chức vụ + Trạng thái
 // + Lương + Hồ sơ % + Còn thiếu + Xem/Sửa/Lưu trữ.
 const HrEmployeeTable = ({
     employees,
@@ -11,6 +11,7 @@ const HrEmployeeTable = ({
     data,
     onView,
     onEdit,
+    onArchive,
 }) => {
     const allSelected =
         employees.length > 0 && employees.every((e) => selected.has(e.id));
@@ -28,8 +29,8 @@ const HrEmployeeTable = ({
                                 aria-label="Chọn tất cả"
                             />
                         </th>
-                        <th>Họ và tên</th>
                         <th>Mã NV</th>
+                        <th>Họ và tên</th>
                         <th>Phòng ban</th>
                         <th>Chức vụ</th>
                         <th>Trạng thái</th>
@@ -49,6 +50,7 @@ const HrEmployeeTable = ({
                     ) : (
                         employees.map((e) => {
                             const comp = docCompleteness(e, data);
+                            const archived = [4, 5].includes(e.status);
                             return (
                                 <tr key={e.id}>
                                     <td className="hr-col-check">
@@ -59,8 +61,8 @@ const HrEmployeeTable = ({
                                             aria-label={"Chọn " + e.fullName}
                                         />
                                     </td>
-                                    <td>{e.fullName}</td>
                                     <td>{e.employeeCode}</td>
+                                    <td>{e.fullName}</td>
                                     <td>{e.departmentName || "—"}</td>
                                     <td>{e.positionName || "—"}</td>
                                     <td>
@@ -100,6 +102,15 @@ const HrEmployeeTable = ({
                                                 onClick={() => onEdit(e)}
                                             >
                                                 Sửa
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="hr-mini-btn hr-mini-btn--archive"
+                                                onClick={() => onArchive(e)}
+                                                disabled={archived}
+                                                title={archived ? "Nhân viên đã được lưu trữ" : "Lưu hồ sơ vào danh sách đã nghỉ"}
+                                            >
+                                                {archived ? "Đã lưu trữ" : "Lưu trữ"}
                                             </button>
                                         </div>
                                     </td>

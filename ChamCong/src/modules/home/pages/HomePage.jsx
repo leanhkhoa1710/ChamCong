@@ -5,7 +5,6 @@ import "../home.css";
 
 const MODULES = [
     { to: "/attendance", icon: "◷", title: "Chấm công", detail: "Vào ca và ra ca", color: "blue" },
-    { to: "/employees", icon: "♙", title: "Nhân sự", detail: "Hồ sơ và danh sách nhân viên", color: "pink" },
     { to: "/attendance-history", icon: "◷", title: "Lịch sử chấm công", detail: "Tra cứu các lượt chấm công", color: "amber" },
     { to: "/statistics", icon: "▥", title: "Thống kê công", detail: "Tổng hợp ngày công", color: "lime" },
     { to: "/leave", icon: "▣", title: "Nghỉ phép", detail: "Theo dõi ngày phép và đơn nghỉ", color: "red" },
@@ -14,6 +13,7 @@ const MODULES = [
     { to: "/insurance", icon: "◇", title: "Bảo hiểm & thuế", detail: "Thông tin bảo hiểm và thuế", color: "pink" },
     { to: "/bank-accounts", icon: "▤", title: "Tài khoản ngân hàng", detail: "Thông tin nhận lương", color: "amber" },
     { to: "/profile", icon: "♙", title: "Hồ sơ", detail: "Thông tin cá nhân của bạn", color: "red" },
+    { to: "/employees", icon: "♙", title: "Nhân sự", detail: "Hồ sơ và danh sách nhân viên", color: "pink" },
     { to: "/admin", icon: "▦", title: "Dashboard", detail: "Điều hành và quản lý hệ thống", color: "blue" },
 ];
 

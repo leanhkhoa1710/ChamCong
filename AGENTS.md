@@ -45,7 +45,6 @@
 
 ## UI/UX Style
 
-- Follow the visual style of https://www.marixa.one/.
 - Clean, minimal, modern and professional.
 - Use clear typography, generous whitespace and strong visual hierarchy.
 - Use light backgrounds, dark text, restrained accent colors and subtle borders/shadows.

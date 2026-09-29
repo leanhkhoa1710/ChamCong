@@ -17,59 +17,61 @@ const HrFilterBar = ({
 
     return (
         <div className="hr-filter-bar">
-            <input
-                type="search"
-                className="hr-input hr-input--search"
-                placeholder="🔍 Tìm tên, mã NV, email..."
-                value={filters.search}
-                onChange={(e) => setters.setSearch(e.target.value)}
-            />
-            <select
-                className="hr-select"
-                value={filters.department}
-                onChange={(e) => setters.setDepartment(e.target.value)}
-            >
-                <option value="">Phòng ban</option>
-                {departments.map((d) => (
-                    <option key={d.id} value={d.id}>
-                        {d.name}
-                    </option>
-                ))}
-            </select>
-            <select
-                className="hr-select"
-                value={filters.position}
-                onChange={(e) => setters.setPosition(e.target.value)}
-            >
-                <option value="">Chức vụ</option>
-                {positions.map((p) => (
-                    <option key={p.id} value={p.id}>
-                        {p.name}
-                    </option>
-                ))}
-            </select>
-            <select
-                className="hr-select"
-                value={filters.status}
-                onChange={(e) => setters.setStatus(e.target.value)}
-            >
-                <option value="">Trạng thái</option>
-                {Object.entries(STATUS_LABELS).map(([v, label]) => (
-                    <option key={v} value={v}>
-                        {label}
-                    </option>
-                ))}
-            </select>
-
-            {hasActiveFilter && (
+            <div className="hr-filter-fields">
+                <input
+                    type="search"
+                    className="hr-input hr-input--search"
+                    placeholder="🔍 Tìm tên, mã NV, email..."
+                    value={filters.search}
+                    onChange={(e) => setters.setSearch(e.target.value)}
+                />
+                <select
+                    className="hr-select"
+                    value={filters.department}
+                    onChange={(e) => setters.setDepartment(e.target.value)}
+                >
+                    <option value="">Phòng ban</option>
+                    {departments.map((d) => (
+                        <option key={d.id} value={d.id}>
+                            {d.name}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    className="hr-select"
+                    value={filters.position}
+                    onChange={(e) => setters.setPosition(e.target.value)}
+                >
+                    <option value="">Chức vụ</option>
+                    {positions.map((p) => (
+                        <option key={p.id} value={p.id}>
+                            {p.name}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    className="hr-select"
+                    value={filters.status}
+                    onChange={(e) => setters.setStatus(e.target.value)}
+                >
+                    <option value="">Trạng thái</option>
+                    {Object.entries(STATUS_LABELS).map(([v, label]) => (
+                        <option key={v} value={v}>
+                            {label}
+                        </option>
+                    ))}
+                </select>
                 <button
                     type="button"
-                    className="hr-btn hr-btn--ghost"
+                    className={`hr-btn hr-btn--ghost hr-clear-filter${hasActiveFilter ? "" : " hr-clear-filter--hidden"}`}
                     onClick={setters.reset}
+                    disabled={!hasActiveFilter}
+                    aria-hidden={!hasActiveFilter}
+                    tabIndex={hasActiveFilter ? 0 : -1}
                 >
                     ✕ Xóa lọc
                 </button>
-            )}
+            </div>
 
             <div className="hr-actions">
                 <button
