@@ -20,7 +20,7 @@ namespace M.API.Controllers
             _employeeInsuranceService = employeeInsuranceService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,

@@ -9,7 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class AttendanceLogController : ControllerBase
     {
         private readonly IAttendanceLogService _attendanceLogService;
@@ -23,6 +23,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves all attendance logs with pagination
         /// </summary>
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,
@@ -43,6 +44,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves attendance log by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -59,6 +61,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Creates a new attendance log
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateAttendanceLogModelView model)
@@ -75,6 +78,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Updates attendance log information
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateAttendanceLogModelView model)
@@ -91,6 +95,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Adjusts an attendance log (xử lý ngoại lệ: quên chấm / chấm sai)
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPost("adjust")]
         public async Task<IActionResult> Adjust(
             [FromBody] AdjustAttendanceLogModelView model)
@@ -107,6 +112,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Soft deletes attendance log by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -122,6 +128,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Permanently deletes attendance log by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

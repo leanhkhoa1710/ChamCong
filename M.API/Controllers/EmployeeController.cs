@@ -22,7 +22,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves all employees with pagination
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,
@@ -83,7 +83,7 @@ namespace M.API.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeModelView model)
@@ -100,7 +100,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Updates employee information
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateEmployeeModelView model)
@@ -117,7 +117,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Soft deletes employee by ID
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -133,7 +133,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Permanently deletes employee by ID
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

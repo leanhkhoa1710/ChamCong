@@ -126,15 +126,22 @@ const HR_ADDForm = ({
     const sel = "hrf-input";
 
     return (
-        <div className="hrf-modal">
-            <div className="hrf-head">
-                <h3>Thêm nhân viên</h3>
-                <button type="button" onClick={onCancel} aria-label="Đóng">
-                    ×
-                </button>
-            </div>
+        <div className="hrf-modal-backdrop" onClick={onCancel}>
+            <section
+                className="hrf-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="hrf-title"
+                onClick={(event) => event.stopPropagation()}
+            >
+                <div className="hrf-head">
+                    <h3 id="hrf-title">Thêm nhân viên</h3>
+                    <button type="button" onClick={onCancel} aria-label="Đóng">
+                        ×
+                    </button>
+                </div>
 
-            <div className="hrf-body">
+                <div className="hrf-body">
                 <Grp t="1. Danh tính">
                     <F l="Mã nhân viên" req>
                         <input className={inp} value={form.employeeCode} onChange={set("employeeCode")} placeholder="NV001" />
@@ -307,28 +314,29 @@ const HR_ADDForm = ({
                         <input className={inp} value={form.endWorkReason} onChange={set("endWorkReason")} />
                     </F>
                 </Grp>
-            </div>
-
-            <div className="hrf-foot">
-                {!canSave && (
-                    <span className="hrf-missing">
-                        Thiếu: {missing.join(", ")} — không thể lưu hồ sơ
-                    </span>
-                )}
-                <div className="hrf-actions">
-                    <button type="button" className="hr-btn hr-btn--ghost" onClick={onCancel}>
-                        Hủy
-                    </button>
-                    <button
-                        type="button"
-                        className="hr-btn hr-btn--primary"
-                        disabled={!canSave}
-                        onClick={save}
-                    >
-                        Lưu hồ sơ
-                    </button>
                 </div>
-            </div>
+
+                <div className="hrf-foot">
+                    {!canSave && (
+                        <span className="hrf-missing">
+                            Thiếu: {missing.join(", ")} — không thể lưu hồ sơ
+                        </span>
+                    )}
+                    <div className="hrf-actions">
+                        <button type="button" className="hr-btn hr-btn--ghost" onClick={onCancel}>
+                            Hủy
+                        </button>
+                        <button
+                            type="button"
+                            className="hr-btn hr-btn--primary"
+                            disabled={!canSave}
+                            onClick={save}
+                        >
+                            Lưu hồ sơ
+                        </button>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };

@@ -2,6 +2,7 @@
 using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.ActivationCodeModelView;
@@ -86,6 +87,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Tạo mã kích hoạt cho một nhân viên (chạy trong quy trình bàn giao).
         /// </summary>
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPost("create-activation-code")]
         public async Task<IActionResult> CreateActivationCode(
             [FromBody] CreateActivationCodeModelView model)

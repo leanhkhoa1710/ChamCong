@@ -23,7 +23,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves all employee contracts with pagination
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,

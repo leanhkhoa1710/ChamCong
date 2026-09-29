@@ -10,11 +10,11 @@ namespace M.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class DepartmeMontroller : ControllerBase
+    public class DepartmentController : ControllerBase
     {
         private readonly IDepartmentService _departmentService;
 
-        public DepartmeMontroller(IDepartmentService departmentService)
+        public DepartmentController(IDepartmentService departmentService)
         {
             _departmentService = departmentService;
         }

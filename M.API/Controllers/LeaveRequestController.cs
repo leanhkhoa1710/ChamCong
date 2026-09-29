@@ -22,7 +22,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves all leave requests with pagination
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {
@@ -86,7 +86,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Updates a leave request
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPut("update")]
         public async Task<IActionResult> Update([FromBody] UpdateLeaveRequestModelView model)
         {

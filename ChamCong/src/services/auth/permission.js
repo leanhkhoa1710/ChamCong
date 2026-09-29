@@ -34,7 +34,6 @@ export const visibleModules = () =>
     MODULES.filter(
         (m) =>
             m.access === "user" &&
-            m.to !== "/attendance" &&
             !m.hideInUserSidebar &&
             canAccessModule(m.to)
     );

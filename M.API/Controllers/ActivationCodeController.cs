@@ -9,7 +9,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class ActivationCodeController : ControllerBase
     {
         private readonly IActivationCodeService _activationCodeService;
@@ -20,6 +20,7 @@ namespace M.API.Controllers
             _activationCodeService = activationCodeService;
         }
 
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {
@@ -32,6 +33,7 @@ namespace M.API.Controllers
                 data: result));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -44,6 +46,7 @@ namespace M.API.Controllers
                 data: result));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateActivationCodeModelView model)
@@ -56,6 +59,7 @@ namespace M.API.Controllers
                 data: "Activation code created successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateActivationCodeModelView model)
@@ -68,6 +72,7 @@ namespace M.API.Controllers
                 data: "Activation code updated successfully!"));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {

@@ -10,7 +10,7 @@ namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,User")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -27,7 +27,7 @@ namespace M.API.Controllers
         /// Retrieves all users with pagination
         /// </summary>
         [HttpGet("get-all")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {
             BasePaginatedList<UserResponseModelView> result = await _userService.GetAllAsync(pageNumber, pageSize);
@@ -41,6 +41,7 @@ namespace M.API.Controllers
         /// Retrieves a user by ID
         /// </summary>
         [HttpGet("get-by-id/{id}")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetById(Guid id)
         {
             UserResponseModelView result = await _userService.GetByIdAsync(id);
@@ -55,6 +56,7 @@ namespace M.API.Controllers
         /// Creates a new user
         /// </summary>
         [HttpPost("create")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Create([FromBody] CreateUserModelView model)
         {
             await _userService.CreateAsync(model);
@@ -69,6 +71,7 @@ namespace M.API.Controllers
         /// Updates user information
         /// </summary>
         [HttpPut("update")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Update([FromBody] UpdateUserModelView model)
         {
             await _userService.UpdateAsync(model);
@@ -85,6 +88,7 @@ namespace M.API.Controllers
         /// Soft deletes a user
         /// </summary>
         [HttpDelete("soft-delete/{id}")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
             await _userService.SoftDeleteAsync(id);
@@ -100,6 +104,7 @@ namespace M.API.Controllers
         /// Permanently deletes a user
         /// </summary>
         [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _userService.DeleteAsync(id);
