@@ -55,6 +55,10 @@ const relatedApi = {
         );
     },
 
+    createLeaveRequest(payload) {
+        return axiosClient.post("/LeaveRequest/create", payload);
+    },
+
     contractsByEmployee(employeeId) {
         return axiosClient.get(
             `/EmployeeContract/by-employee/${employeeId}`

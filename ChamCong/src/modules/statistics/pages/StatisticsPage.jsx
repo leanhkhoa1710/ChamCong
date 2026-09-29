@@ -145,11 +145,39 @@ const StatisticsPage = () => {
 
                 {!loading && !error && (
                     <div className="att-stat-wrap">
-                        <StatKpis ym={ym} stats={stats} onShiftMonth={shiftMonth} />
+                        <div className="att-kpi-bar">
+                            <button
+                                type="button"
+                                className="att-kpi-nav"
+                                onClick={() => shiftMonth(-1)}
+                                aria-label="Tháng trước"
+                            >
+                                &lsaquo;
+                            </button>
+                            <strong className="att-stat-month">
+                                {new Date(ym.y, ym.m, 1)
+                                    .toLocaleDateString("vi-VN", {
+                                        month: "long",
+                                        year: "numeric",
+                                    })
+                                    .toUpperCase()}
+                            </strong>
+                            <button
+                                type="button"
+                                className="att-kpi-nav"
+                                onClick={() => shiftMonth(1)}
+                                aria-label="Tháng sau"
+                            >
+                                &rsaquo;
+                            </button>
+                        </div>
+                        <div className="att-stat-overview">
+                            <StatWarnings warnings={warnings} />
+                            <StatSummary stats={stats} />
+                            <StatKpis ym={ym} stats={stats} />
+                        </div>
                         <StatCalendar ym={ym} weeks={calendar} />
-                        <StatDetailTable monthRows={monthRows} />
-                        <StatWarnings warnings={warnings} />
-                        <StatSummary stats={stats} />
+                        <StatDetailTable monthRows={monthRows} holidayMap={holidayMap} />
                     </div>
                 )}
             </div>

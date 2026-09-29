@@ -1,43 +1,32 @@
 import { hoursShort } from "./statUtils";
 
-// Khối "Tổng giờ" + "Tăng ca" (dưới cùng trang thống kê).
+// Tóm tắt tổng giờ và tăng ca trong hai thẻ gọn.
 const StatSummary = ({ stats }) => {
     const missingHours = Math.max(0, stats.standardMin - stats.hoursWorked);
+    const overtime = stats.otWeekday + stats.otWeekend + stats.otHoliday;
     return (
         <div className="att-stat-bottom">
-            <div className="att-card att-stat-card">
+            <div className="att-card att-stat-card att-stat-compact">
+                <div className="att-stat-tile-head">
+                    <span className="att-stat-tile-icon" aria-hidden="true">◷</span>
+                    <span className="att-stat-tile-arrow" aria-hidden="true">⌄</span>
+                </div>
                 <h2 className="att-stat-title">Tổng giờ</h2>
-                <div className="att-stat-rows">
-                    <div className="att-stat-row">
-                        <span>Giờ chuẩn</span>
-                        <strong>{hoursShort(stats.standardMin)}</strong>
-                    </div>
-                    <div className="att-stat-row">
-                        <span>Giờ thực tế</span>
-                        <strong>{hoursShort(stats.hoursWorked)}</strong>
-                    </div>
-                    <div className="att-stat-row">
-                        <span>Giờ thiếu</span>
-                        <strong>{hoursShort(missingHours)}</strong>
-                    </div>
-                </div>
+                <strong className="att-stat-tile-value">{hoursShort(stats.hoursWorked)}</strong>
+                <p className="att-stat-tile-sub">
+                    Chuẩn {hoursShort(stats.standardMin)} <span>·</span> Thiếu {hoursShort(missingHours)}
+                </p>
             </div>
-            <div className="att-card att-stat-card">
-                <h2 className="att-stat-title">Tăng ca</h2>
-                <div className="att-stat-rows">
-                    <div className="att-stat-row">
-                        <span>Ngày thường</span>
-                        <strong>{hoursShort(stats.otWeekday)}</strong>
-                    </div>
-                    <div className="att-stat-row">
-                        <span>Cuối tuần</span>
-                        <strong>{hoursShort(stats.otWeekend)}</strong>
-                    </div>
-                    <div className="att-stat-row">
-                        <span>Ngày lễ</span>
-                        <strong>{hoursShort(stats.otHoliday)}</strong>
-                    </div>
+            <div className="att-card att-stat-card att-stat-compact">
+                <div className="att-stat-tile-head">
+                    <span className="att-stat-tile-icon" aria-hidden="true">↗</span>
+                    <span className="att-stat-tile-arrow" aria-hidden="true">⌄</span>
                 </div>
+                <h2 className="att-stat-title">Tăng ca</h2>
+                <strong className="att-stat-tile-value">{hoursShort(overtime)}</strong>
+                <p className="att-stat-tile-sub" title={`Ngày thường ${hoursShort(stats.otWeekday)} · Cuối tuần ${hoursShort(stats.otWeekend)} · Lễ ${hoursShort(stats.otHoliday)}`}>
+                    Thường {hoursShort(stats.otWeekday)} <span>·</span> Cuối tuần {hoursShort(stats.otWeekend)} <span>·</span> Lễ {hoursShort(stats.otHoliday)}
+                </p>
             </div>
         </div>
     );
