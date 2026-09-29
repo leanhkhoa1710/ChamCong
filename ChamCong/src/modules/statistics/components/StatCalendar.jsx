@@ -8,7 +8,7 @@ const StatCalendar = ({ ym, weeks }) => {
     });
 
     return (
-        <div className="att-card att-stat-card">
+        <div className="att-card att-stat-card att-stat-calendar">
             <h2 className="att-stat-title">📅 Lịch công {monthName}</h2>
             <div className="att-cal">
                 <div className="att-cal-head">
@@ -31,7 +31,7 @@ const StatCalendar = ({ ym, weeks }) => {
                                     key={ci}
                                     className={`att-cal-cell ${
                                         cell.code === "rest" ? "rest" : ""
-                                    }`}
+                                    } status-${cell.code}`}
                                 >
                                     <span className="att-cal-num">
                                         {cell.date.getDate()}
@@ -59,8 +59,9 @@ const StatCalendar = ({ ym, weeks }) => {
                     <span><i className="att-cal-dot warn" /> Thiếu công</span>
                     <span><i className="att-cal-dot bad" /> Vắng</span>
                     <span><i className="att-cal-dot info" /> Nghỉ phép</span>
-                    <span><i className="att-cal-dot muted" /> Chưa tới</span>
-                    <span><i className="att-cal-dot muted" /> — Cuối tuần / lễ</span>
+                    <span><i className="att-cal-dot nodata" /> Chưa chấm</span>
+                    <span><i className="att-cal-dot future" /> Chưa tới</span>
+                    <span><i className="att-cal-dot rest" /> — Cuối tuần / lễ</span>
                 </div>
             </div>
         </div>

@@ -38,9 +38,9 @@ export const dotClass = (code) =>
         short: "warn",
         absent: "bad",
         leave: "info",
-        future: "muted",
-        nodata: "muted",
-        rest: "muted",
+        future: "future",
+        nodata: "nodata",
+        rest: "rest",
     })[code] || "muted";
 
 export const dayStatusText = (code) =>

@@ -601,7 +601,11 @@
     align-items: center;
     justify-content: center;
     gap: 16px;
-    margin-bottom: 18px;
+    margin-bottom: 0;
+    padding: 10px 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    background: #eff6ff;
 }
 
 .att-kpi-bar strong {
@@ -663,7 +667,19 @@
 .att-stat-wrap {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 12px;
+}
+
+.att-stat-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 190px));
+    gap: 10px;
+    align-items: stretch;
+}
+
+.att-stat-overview .att-stat-bottom,
+.att-stat-overview .att-stat-kpi-grid {
+    display: contents;
 }
 
 .att-stat-month {
@@ -678,7 +694,9 @@
 }
 
 .att-stat-kpi {
-    gap: 8px;
+    gap: 3px;
+    padding: 11px 12px;
+    min-height: 116px;
 }
 
 .att-stat-value {
@@ -689,7 +707,7 @@
 
 .att-stat-value strong {
     font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
-    font-size: 30px;
+    font-size: 23px;
     font-weight: 800;
     color: #0e1a26;
     line-height: 1;
@@ -702,13 +720,13 @@
 }
 
 .att-stat-unit {
-    font-size: 13px;
+    font-size: 11px;
     color: #5a6b7b;
 }
 
 .att-stat-bar {
     width: 100%;
-    height: 8px;
+    height: 6px;
     border-radius: 999px;
     background: #eef2f6;
     overflow: hidden;
@@ -737,12 +755,13 @@
 }
 
 .att-stat-sub {
-    font-size: 13px;
+    font-size: 10px;
     color: #5a6b7b;
 }
 
 .att-stat-card {
     display: block;
+    padding: 12px 13px;
 }
 
 .att-stat-title {
@@ -761,7 +780,7 @@
 .att-cal-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    gap: 6px;
 }
 
 .att-cal-head {
@@ -775,28 +794,63 @@
     color: #5a6b7b;
     text-align: center;
     text-transform: uppercase;
+    padding: 7px 4px;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #005b94;
 }
 
 .att-cal-row {
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .att-cal-cell {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 8px 4px;
+    gap: 3px;
+    padding: 5px 4px;
     border: 1px solid #eef2f6;
     border-radius: 8px;
     background: #fbfcfe;
-    min-height: 58px;
+    min-height: 44px;
     justify-content: center;
 }
 
 .att-cal-cell.rest {
     background: transparent;
     border-color: transparent;
+}
+
+.att-cal-cell.status-full {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.att-cal-cell.status-short,
+.att-cal-cell.status-nodata {
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+
+.att-cal-cell.status-absent {
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+.att-cal-cell.status-leave {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.att-cal-cell.status-future {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.att-cal-cell.status-rest {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
 }
 
 .att-cal-num {
@@ -833,6 +887,18 @@
 
 .att-cal-dot.muted {
     color: #c4cdd6;
+}
+
+.att-cal-dot.nodata {
+    color: #d97706;
+}
+
+.att-cal-dot.future {
+    color: #64748b;
+}
+
+.att-cal-dot.rest {
+    color: #94a3b8;
 }
 
 .att-cal-legend {
@@ -875,6 +941,18 @@
     color: #c4cdd6;
 }
 
+.att-cal-legend i.nodata {
+    color: #d97706;
+}
+
+.att-cal-legend i.future {
+    color: #64748b;
+}
+
+.att-cal-legend i.rest {
+    color: #94a3b8;
+}
+
 /* Detail table */
 .att-stat-table th,
 .att-stat-table td {
@@ -885,44 +963,72 @@
 .att-stat-warn {
     border: 1px solid #f5c2c2;
     background: #fff8f8;
+    padding: 11px 12px;
+    min-height: 116px;
 }
 
-.att-stat-warn-list {
-    margin: 0;
-    padding: 0 0 14px 18px;
-    font-size: 14px;
-    color: #38506a;
+.att-stat-tile-head {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
 
-.att-stat-warn-foot {
-    text-align: center;
-}
-
-.att-stat-warn-foot a {
-    display: inline-block;
-    padding: 9px 18px;
-    border: 1px solid #d1d5db;
+.att-stat-tile-icon {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
     border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #182a3a;
+    background: #e0f2fe;
+    color: #0284c7;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.att-stat-tile-icon.warn {
+    background: #fff1f2;
+    color: #be123c;
+}
+
+.att-stat-tile-arrow {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1;
     text-decoration: none;
-    transition: border-color 0.15s, color 0.15s;
 }
 
-.att-stat-warn-foot a:hover {
-    border-color: #005b94;
-    color: #005b94;
+.att-stat-warn .att-stat-title,
+.att-stat-kpi .att-kpi-label {
+    display: block;
+    margin: 0 0 3px;
+    font-size: 12px;
+    line-height: 1.25;
 }
 
-/* Bottom two cards */
-.att-stat-bottom {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+.att-stat-tile-value {
+    display: block;
+    color: #0e1a26;
+    font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
+    font-size: 20px;
+    line-height: 1.1;
+}
+
+.att-stat-tile-sub {
+    display: -webkit-box;
+    margin: 4px 0 0;
+    overflow: hidden;
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.3;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.att-stat-compact {
+    min-height: 116px;
+    padding: 11px 12px;
 }
 
 .att-stat-rows {
@@ -1007,15 +1113,19 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .att-stat-kpi-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .att-stat-bottom {
-        grid-template-columns: 1fr;
-    }
-
     .att-kpi strong {
         font-size: 24px;
+    }
+}
+
+@media (max-width: 560px) {
+    .att-stat-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 380px) {
+    .att-stat-overview {
+        grid-template-columns: 1fr;
     }
 }
