@@ -1,28 +1,12 @@
-// 4 thẻ KPI quản lý nhân sự (nền sáng, accent marixa).
+// 2 thẻ KPI nhân sự (đã bỏ 2 KPI chấm công).
 const HrKpiCards = ({ kpis }) => {
     const cards = [
-        {
-            icon: "✓",
-            title: "Đã chấm công hôm nay",
-            value: kpis.checkedInToday,
-            of: kpis.activeCount,
-            sub: `trên ${kpis.activeCount} người đang làm việc · ${kpis.logsToday} lượt trong ca`,
-            tone: "neutral",
-        },
-        {
-            icon: "⚠",
-            title: "Lượt chấm cần duyệt tay",
-            value: kpis.needsManual,
-            of: kpis.logsToday,
-            sub: `trên ${kpis.logsToday} lượt chấm hôm nay`,
-            tone: "warn",
-        },
         {
             icon: "📄",
             title: "Hợp đồng sắp hết hạn",
             value: kpis.noContractEnd,
             of: kpis.activeCount,
-            sub: `Chưa có số hạn trong ${kpis.noContractEnd} người được nhập ngày hết hợp đồng`,
+            sub: `${kpis.noContractEnd} người chưa có hợp đồng / chưa nhập ngày hết hạn`,
             tone: "warn",
         },
         {

@@ -11,7 +11,7 @@
 // Sidebar và route guard đều đọc từ đây -> thống nhất nguồn quyền.
 // ============================================================
 export const MODULES = [
-    { to: "/attendance", label: "Trang chủ", access: "user" },
+    { to: "/attendance", label: "Chấm công", access: "user" },
     { to: "/attendance-history", label: "Lịch sử chấm công", access: "user" },
     { to: "/statistics", label: "Thống kê công", access: "user" },
     { to: "/leave", label: "Nghỉ phép", access: "user" },
@@ -20,12 +20,24 @@ export const MODULES = [
     { to: "/insurance", label: "Bảo hiểm & thuế", access: "user" },
     { to: "/bank-accounts", label: "Tài khoản ngân hàng", access: "user" },
     { to: "/profile", label: "Hồ sơ", access: "user" },
-    // Khu quản trị (admin)
+    // Khu quản trị (admin) là một trang riêng, bắt đầu tại dashboard.
     { to: "/admin", label: "Dashboard", access: "admin" },
-    // Nhân sự: chỉ HR (Nhân sự), Manager (Quản lý), Admin
-    { to: "/employees", label: "Nhân sự", roles: ["HR", "Manager", "Admin"] },
+    // Nhân sự: chỉ HR (Nhân sự), Manager (Quản lý), Admin.
+    // hideInUserSidebar: không hiện trong sidebar /attendance (đã có ở sidebar admin).
+    {
+        to: "/employees",
+        label: "Nhân sự",
+        roles: ["HR", "Manager", "Admin"],
+        hideInUserSidebar: true,
+    },
     { to: "/admin/attendance-history", label: "Chấm công (QL)", access: "admin" },
     { to: "/admin/statistics", label: "Thống kê công (QL)", access: "admin" },
+    { to: "/admin/contracts", label: "Hợp đồng", access: "admin" },
+    { to: "/admin/leaves", label: "Nghỉ phép", access: "admin" },
+    { to: "/admin/payroll", label: "Lương", access: "admin" },
+    { to: "/admin/resigned", label: "Nghỉ việc", access: "admin" },
+    { to: "/admin/reports", label: "Báo cáo", access: "admin" },
+    { to: "/admin/accounts", label: "Cấp tài khoản", access: "admin" },
 ];
 
 export const moduleByPath = (path) =>

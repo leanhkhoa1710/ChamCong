@@ -6,8 +6,7 @@ import "../admin.css";
 
 const COLLAPSE_KEY = "marixa_sidebar_collapsed";
 
-// Layout dùng chung 3 trang quản trị (Nhân sự / Chấm công QL / Thống kê QL):
-// header nav 100% width + sidebar 3 mục (kéo ra/vào) + main.
+// Layout độc lập cho khu quản trị: header + sidebar Dashboard + nội dung trang.
 const AdminAppLayout = ({ title, subtitle, children }) => {
     const [collapsed, setCollapsed] = useState(() => {
         try {

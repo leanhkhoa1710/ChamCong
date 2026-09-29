@@ -29,5 +29,7 @@ export const canAccessModule = (to) => {
     return true;
 };
 
-// Danh sách module hiển thị trên sidebar cho tài khoản hiện tại.
-export const visibleModules = () => MODULES.filter((m) => canAccessModule(m.to));
+// Danh sách module hiển thị trên sidebar /attendance (khu nhân viên):
+// bỏ các module có hideInUserSidebar (đã nằm trong sidebar admin).
+export const visibleModules = () =>
+    MODULES.filter((m) => !m.hideInUserSidebar && canAccessModule(m.to));

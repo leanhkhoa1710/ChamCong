@@ -24,6 +24,9 @@ const adminApi = {
     activationCodes() {
         return axiosClient.get(`/ActivationCode/get-all?${P}`);
     },
+    users() {
+        return axiosClient.get(`/User/get-all?${P}`);
+    },
     // Thêm: dữ liệu cần cho bộ lọc + KPI
     departments() {
         return axiosClient.get(`/Department/get-all?${P}`);
@@ -39,6 +42,46 @@ const adminApi = {
     },
     salaries() {
         return axiosClient.get(`/EmployeeSalary/get-all?${P}`);
+    },
+    banks() {
+        return axiosClient.get(`/Bank/get-all?${P}`);
+    },
+    createActivationCode(payload) {
+        return axiosClient.post("/Auth/create-activation-code", payload);
+    },
+    // === Quản trị: chấm công / hợp đồng / nghỉ phép / tài khoản ===
+    attendances() {
+        return axiosClient.get(`/Attendance/get-all?${P}`);
+    },
+    approveAttendance(payload) {
+        return axiosClient.post("/Attendance/approve", payload);
+    },
+    createContract(payload) {
+        return axiosClient.post("/EmployeeContract/create", payload);
+    },
+    updateLeave(payload) {
+        return axiosClient.put("/LeaveRequest/update", payload);
+    },
+    updatePayroll(payload) {
+        return axiosClient.put("/Payroll/update", payload);
+    },
+    createUser(payload) {
+        return axiosClient.post("/User/create", payload);
+    },
+    createEmployee(payload) {
+        return axiosClient.post("/Employee/create", payload);
+    },
+    updateEmployee(payload) {
+        return axiosClient.put("/Employee/update", payload);
+    },
+    createSalary(payload) {
+        return axiosClient.post("/EmployeeSalary/create", payload);
+    },
+    createInsurance(payload) {
+        return axiosClient.post("/EmployeeInsurance/create", payload);
+    },
+    createBankAccount(payload) {
+        return axiosClient.post("/EmployeeBankAccount/create", payload);
     },
 };
 

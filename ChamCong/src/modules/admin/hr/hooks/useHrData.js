@@ -4,11 +4,10 @@ import adminApi from "../../api/adminApi";
 const items = (r) =>
     r?.status === "fulfilled" ? r.value.data.data?.items || [] : [];
 
-// Kéo toàn bộ dữ liệu HR (dùng lại 1 lần, chia sẻ cho KPI + filter + bảng).
+// Kéo dữ liệu HR (không còn logs chấm công - đã bỏ KPI chấm công).
 export const useHrData = () => {
     const [data, setData] = useState({
         employees: [],
-        logs: [],
         contracts: [],
         departments: [],
         positions: [],
@@ -24,7 +23,6 @@ export const useHrData = () => {
             try {
                 const r = await Promise.allSettled([
                     adminApi.employees(),
-                    adminApi.attendanceLogs(),
                     adminApi.contracts(),
                     adminApi.departments(),
                     adminApi.positions(),
@@ -34,13 +32,12 @@ export const useHrData = () => {
                 ]);
                 setData({
                     employees: items(r[0]),
-                    logs: items(r[1]),
-                    contracts: items(r[2]),
-                    departments: items(r[3]),
-                    positions: items(r[4]),
-                    salaries: items(r[5]),
-                    insurance: items(r[6]),
-                    bankAccounts: items(r[7]),
+                    contracts: items(r[1]),
+                    departments: items(r[2]),
+                    positions: items(r[3]),
+                    salaries: items(r[4]),
+                    insurance: items(r[5]),
+                    bankAccounts: items(r[6]),
                 });
             } catch (e) {
                 setError(

@@ -356,3 +356,165 @@
         gap: 10px;
     }
 }
+
+/* ===== TRANG CHỦ ADMIN (đồng hồ vàng + lưới chức năng) ===== */
+.admhome {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.admhome-clock-card {
+    display: flex;
+    justify-content: center;
+    padding: 6px;
+}
+
+.admhome-clock {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    width: 100%;
+    max-width: 520px;
+    padding: 26px 30px;
+    border-radius: 16px;
+    background: #f7c644;
+    box-shadow: 0 10px 30px rgba(247, 198, 68, 0.35);
+}
+
+.admhome-clock-face {
+    position: relative;
+    flex: 0 0 auto;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: inset 0 2px 6px rgba(14, 26, 38, 0.08);
+}
+
+.admhome-clock-tick {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    margin: -2px;
+    border-radius: 50%;
+    background: #f7c644;
+}
+
+.admhome-clock-hand {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 4px;
+    background: #182a3a;
+}
+
+.admhome-clock-hand--hour {
+    width: 5px;
+    height: 24px;
+    margin-left: -2.5px;
+    background: #0e1a26;
+}
+
+.admhome-clock-hand--minute {
+    width: 3px;
+    height: 34px;
+    margin-left: -1.5px;
+}
+
+.admhome-clock-pin {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -5px;
+    border-radius: 50%;
+    background: #0e1a26;
+}
+
+.admhome-clock-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #182a3a;
+}
+
+.admhome-clock-meta strong {
+    font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.02em;
+}
+
+.admhome-clock-meta span {
+    font-size: 13px;
+    color: #3d3418;
+}
+
+.admhome-clock-tz {
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.65;
+}
+
+.admhome-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.admhome-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 22px 14px 18px;
+    border: 1px solid #eef2f6;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    font-family: inherit;
+}
+
+.admhome-tile:hover {
+    border-color: #f7c644;
+    box-shadow: 0 8px 22px rgba(247, 198, 68, 0.22);
+    transform: translateY(-2px);
+}
+
+.admhome-tile-ico {
+    font-size: 30px;
+    line-height: 1;
+}
+
+.admhome-tile-label {
+    margin-top: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #0e1a26;
+}
+
+.admhome-tile-sub {
+    font-size: 12px;
+    color: #5a6b7b;
+}
+
+@media (max-width: 720px) {
+    .admhome-clock {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .admhome-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
