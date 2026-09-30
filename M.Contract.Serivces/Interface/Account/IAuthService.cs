@@ -19,5 +19,7 @@ namespace M.Contract.Services.Interface
         // Tạo mã kích hoạt cho nhân viên (bàn giao / kích hoạt)
         Task<ActivationCodeResponseModelView> CreateActivationCodeAsync(
             CreateActivationCodeModelView model);
+
+        Task VerifyAndLinkEmployeeAccountAsync(VerifyEmployeeActivationModelView model);
     }
 }

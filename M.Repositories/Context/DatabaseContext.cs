@@ -91,6 +91,14 @@ namespace M.Repositories.Context
 
         public DbSet<ActivationCode> ActivationCodes { get; set; }
 
+        public DbSet<EmployeeReport> EmployeeReports { get; set; }
+
+        public DbSet<EmployeeReportVersion> EmployeeReportVersions { get; set; }
+
+        public DbSet<EmployeeReportAttachment> EmployeeReportAttachments { get; set; }
+
+        public DbSet<EmployeeReportEvent> EmployeeReportEvents { get; set; }
+
 
         // =====================================================
         // RELATIONSHIPS
@@ -185,6 +193,21 @@ namespace M.Repositories.Context
                 .HasOne(l => l.Attendance)
                 .WithMany(a => a.AttendanceLogs)
                 .HasForeignKey(l => l.AttendanceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<EmployeeReport>()
+                .HasOne(r => r.Employee).WithMany().HasForeignKey(r => r.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<EmployeeReport>()
+                .HasIndex(r => r.ReportCode).IsUnique();
+            builder.Entity<EmployeeReportVersion>()
+                .HasOne(v => v.Report).WithMany(r => r.Versions).HasForeignKey(v => v.ReportId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<EmployeeReportAttachment>()
+                .HasOne(a => a.Version).WithMany(v => v.Attachments).HasForeignKey(a => a.VersionId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<EmployeeReportEvent>()
+                .HasOne(e => e.Report).WithMany(r => r.Events).HasForeignKey(e => e.ReportId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // =========================================================

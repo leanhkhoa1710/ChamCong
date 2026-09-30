@@ -7,10 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-// Cho phép upload ảnh chấm công tối đa 5MB
+// File báo cáo tối đa 20MB (upload ảnh vẫn được giới hạn riêng trong API chấm công).
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 5 * 1024 * 1024;
+    options.MultipartBodyLengthLimit = 21 * 1024 * 1024;
 });
 
 var jwtKey = builder.Configuration["JwtSettings:Key"]

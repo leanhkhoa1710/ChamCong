@@ -101,5 +101,17 @@ namespace M.API.Controllers
                 data: result
             ));
         }
+
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpPost("verify-employee-activation")]
+        public async Task<IActionResult> VerifyEmployeeActivation(
+            [FromBody] VerifyEmployeeActivationModelView model)
+        {
+            await _authService.VerifyAndLinkEmployeeAccountAsync(model);
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Đã xác minh mã và liên kết tài khoản. Nhân viên cần đặt mật khẩu để kích hoạt."));
+        }
     }
 }

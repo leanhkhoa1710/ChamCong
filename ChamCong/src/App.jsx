@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./modules/login/pages/LoginPage";
 import ActivatePage from "./modules/activate/pages/ActivatePage";
 import HrPage from "./modules/admin/hr/pages/HrPage";
+import ReportsPage from "./modules/admin/hr/pages/ReportsPage";
 import AttendancePage from "./modules/attendance/pages/AttendancePage";
 import LeavePage from "./modules/leave/pages/LeavePage";
 import ContractPage from "./modules/contracts/pages/ContractPage";
@@ -24,6 +25,7 @@ import {
 import AccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
 import HomePage from "./modules/home/pages/HomePage";
 import RequireModule from "./components/common/RequireModule";
+import MyReportsPage from "./modules/reports/MyReportsPage";
 
 const guarded = (to, el) => <RequireModule to={to}>{el}</RequireModule>;
 
@@ -71,10 +73,7 @@ function App() {
                 />
                 <Route
                     path="/employees/reports"
-                    element={guarded(
-                        "/employees/reports",
-                        <ReportPage hrMode />
-                    )}
+                    element={guarded("/employees/reports", <ReportsPage />)}
                 />
                 <Route
                     path="/employees/accounts"
@@ -131,6 +130,7 @@ function App() {
                 />
                 <Route path="/statistics" element={<StatisticsPage />} />
                 <Route path="/leave" element={<LeavePage />} />
+                <Route path="/reports" element={guarded("/reports", <MyReportsPage />)} />
                 <Route path="/contracts" element={<ContractPage />} />
                 <Route path="/salary" element={<SalaryPage />} />
                 <Route path="/insurance" element={<InsurancePage />} />

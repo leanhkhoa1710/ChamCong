@@ -15,6 +15,7 @@ export const MODULES = [
     { to: "/attendance-history", label: "Lịch sử chấm công", access: "user" },
     { to: "/statistics", label: "Thống kê công", access: "user" },
     { to: "/leave", label: "Nghỉ phép", access: "user" },
+    { to: "/reports", label: "Báo cáo của tôi", access: "user" },
     { to: "/contracts", label: "Hợp đồng", access: "user" },
     { to: "/salary", label: "Bảng lương", access: "user" },
     { to: "/insurance", label: "Bảo hiểm & thuế", access: "user" },

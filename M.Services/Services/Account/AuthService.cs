@@ -383,6 +383,7 @@ namespace M.Services.Service
                     "Activation code already exists.");
             }
 
+            // (1) Đảm bảo nhân viên có tài khoản đăng nhập trước khi cấp mã
             // Đảm bảo nhân viên có tài khoản đăng nhập (ApplicationUser)
             // trước khi cấp mã - tránh mã không gắn được user.
             if (employee.UserId == null)
@@ -391,17 +392,82 @@ namespace M.Services.Service
                 await _dbContext.SaveChangesAsync();
             }
 
+            // (2) Vô hiệu hóa các mã kích hoạt cũ (chưa dùng, chưa hết hạn)
+            DateTime now = DateTime.Now;
+            List<ActivationCode> previousCodes = await _dbContext.Set<ActivationCode>()
+                .Where(x => x.EmployeeId == employee.Id && !x.IsUsed && x.ExpiresAt > now && !x.DeletedTime.HasValue)
+                .ToListAsync();
+            foreach (ActivationCode previousCode in previousCodes)
+            {
+                previousCode.ExpiresAt = now;
+                previousCode.LastUpdatedTime = now;            }
+
             ActivationCode entity = model.ToEntity();
             entity.EmployeeId = employee.Id;
             entity.UserId = employee.UserId;
             entity.Code = model.Code.Trim();
-            entity.CreatedBy = "System";
+            entity.CreatedBy = employee.UserId.HasValue ? "Reissue" : "System";
             entity.CreatedTime = CoreHelper.SystemTimeNow;
 
             await _dbContext.Set<ActivationCode>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
 
             return entity.ToViewModel();
+        }
+
+        public async Task VerifyAndLinkEmployeeAccountAsync(VerifyEmployeeActivationModelView model)
+        {
+            var employee = await _dbContext.Employees.FirstOrDefaultAsync(e =>
+                e.Id == model.EmployeeId && !e.DeletedTime.HasValue)
+                ?? throw new ErrorException(404, ResponseCodeConstants.NOT_FOUND, "Không tìm thấy nhân viên.");
+
+            var code = await _dbContext.Set<ActivationCode>().FirstOrDefaultAsync(c =>
+                c.EmployeeId == employee.Id && c.Code == model.Code.Trim() && !c.DeletedTime.HasValue)
+                ?? throw new ErrorException(400, ResponseCodeConstants.BAD_REQUEST, "Mã kích hoạt không khớp với nhân viên.");
+
+            if (code.IsUsed || code.UsedAt.HasValue)
+                throw new ErrorException(400, ResponseCodeConstants.BAD_REQUEST, "Mã kích hoạt đã được sử dụng.");
+            if (code.ExpiresAt <= DateTime.Now)
+                throw new ErrorException(400, ResponseCodeConstants.BAD_REQUEST, "Mã kích hoạt đã hết hạn.");
+            if (employee.UserId.HasValue)
+            {
+                if (code.UserId.HasValue && code.UserId != employee.UserId)
+                    throw new ErrorException(400, ResponseCodeConstants.BAD_REQUEST, "Mã kích hoạt không thuộc tài khoản của nhân viên.");
+
+                code.UserId = employee.UserId;
+                await _dbContext.SaveChangesAsync();
+                return;
+            }
+
+            var username = employee.EmployeeCode.Trim();
+            if (await _userManager.FindByNameAsync(username) != null)
+                throw new ErrorException(400, ResponseCodeConstants.BAD_REQUEST, "Mã nhân viên đã được dùng làm tên đăng nhập.");
+
+            var user = new ApplicationUser
+            {
+                UserName = username,
+                Email = string.IsNullOrWhiteSpace(employee.Email) ? null : employee.Email.Trim(),
+                EmailConfirmed = !string.IsNullOrWhiteSpace(employee.Email)
+            };
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+                throw new ErrorException(400, ResponseCodeConstants.BAD_REQUEST,
+                    createResult.Errors.FirstOrDefault()?.Description ?? "Không thể tạo tài khoản.");
+
+            if (await _roleManager.RoleExistsAsync("Employee"))
+            {
+                var roleResult = await _userManager.AddToRoleAsync(user, "Employee");
+                if (!roleResult.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+                    throw new ErrorException(400, ResponseCodeConstants.BAD_REQUEST,
+                        roleResult.Errors.FirstOrDefault()?.Description ?? "Không thể gán quyền nhân viên.");
+                }
+            }
+
+            employee.UserId = user.Id;
+            code.UserId = user.Id;
+            await _dbContext.SaveChangesAsync();
         }
 
         #endregion

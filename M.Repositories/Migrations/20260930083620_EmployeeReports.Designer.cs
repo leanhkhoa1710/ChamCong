@@ -4,6 +4,7 @@ using M.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace M.Repositories.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260930083620_EmployeeReports")]
+    partial class EmployeeReports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -705,10 +708,6 @@ namespace M.Repositories.Migrations
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Issues")
-                        .HasMaxLength(6000)
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("LastUpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -719,16 +718,8 @@ namespace M.Repositories.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<string>("Overview")
-                        .HasMaxLength(6000)
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Period")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Recommendations")
-                        .HasMaxLength(6000)
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReportCode")
                         .IsRequired()
@@ -739,10 +730,6 @@ namespace M.Repositories.Migrations
                         .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
-
-                    b.Property<string>("Results")
-                        .HasMaxLength(6000)
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ReviewedAt")
                         .HasColumnType("datetime2");
@@ -784,16 +771,6 @@ namespace M.Repositories.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid?>("UpperRecipientEmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UpperRequest")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime?>("UpperRequestDeadline")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("UpperStoredName")
                         .HasColumnType("nvarchar(max)");
 
@@ -805,114 +782,6 @@ namespace M.Repositories.Migrations
                         .IsUnique();
 
                     b.ToTable("EmployeeReports");
-                });
-
-            modelBuilder.Entity("M.Contract.Repositories.Entities.EmployeeReportAttachment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("StoredName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("VersionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VersionId");
-
-                    b.ToTable("EmployeeReportAttachments");
-                });
-
-            modelBuilder.Entity("M.Contract.Repositories.Entities.EmployeeReportEvent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActionName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid?>("ActorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActorName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime?>("Deadline")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime>("OccurredAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Recipient")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<Guid>("ReportId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReportId");
-
-                    b.ToTable("EmployeeReportEvents");
                 });
 
             modelBuilder.Entity("M.Contract.Repositories.Entities.EmployeeReportVersion", b =>
@@ -1987,28 +1856,6 @@ namespace M.Repositories.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("M.Contract.Repositories.Entities.EmployeeReportAttachment", b =>
-                {
-                    b.HasOne("M.Contract.Repositories.Entities.EmployeeReportVersion", "Version")
-                        .WithMany("Attachments")
-                        .HasForeignKey("VersionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Version");
-                });
-
-            modelBuilder.Entity("M.Contract.Repositories.Entities.EmployeeReportEvent", b =>
-                {
-                    b.HasOne("M.Contract.Repositories.Entities.EmployeeReport", "Report")
-                        .WithMany("Events")
-                        .HasForeignKey("ReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Report");
-                });
-
             modelBuilder.Entity("M.Contract.Repositories.Entities.EmployeeReportVersion", b =>
                 {
                     b.HasOne("M.Contract.Repositories.Entities.EmployeeReport", "Report")
@@ -2209,14 +2056,7 @@ namespace M.Repositories.Migrations
 
             modelBuilder.Entity("M.Contract.Repositories.Entities.EmployeeReport", b =>
                 {
-                    b.Navigation("Events");
-
                     b.Navigation("Versions");
-                });
-
-            modelBuilder.Entity("M.Contract.Repositories.Entities.EmployeeReportVersion", b =>
-                {
-                    b.Navigation("Attachments");
                 });
 
             modelBuilder.Entity("M.Contract.Repositories.Entities.LeaveType", b =>
