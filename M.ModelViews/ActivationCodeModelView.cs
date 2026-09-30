@@ -22,6 +22,8 @@ namespace ModelViews.ActivationCodeModelView
 
         public string? ActivatedBy { get; set; }
 
+        public string? CreatedBy { get; set; }
+
         public bool IsUsed { get; set; }
 
         public DateTimeOffset CreatedTime { get; set; }
@@ -56,5 +58,16 @@ namespace ModelViews.ActivationCodeModelView
         public string Code { get; set; } = string.Empty;
 
         public DateTime? ExpiresAt { get; set; }
+    }
+
+    public class VerifyEmployeeActivationModelView
+    {
+        [Required]
+        public Guid EmployeeId { get; set; }
+
+        [Required]
+        [MinLength(6)]
+        [MaxLength(50)]
+        public string Code { get; set; } = string.Empty;
     }
 }

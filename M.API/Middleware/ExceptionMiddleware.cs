@@ -3,7 +3,7 @@ using System.Net;
 
 namespace M.API.Middleware
 {
-    public class ExceptionMiddleware(RequestDelegate next)
+    public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         private readonly RequestDelegate _next = next;
 
@@ -17,8 +17,9 @@ namespace M.API.Middleware
             {
                 await HandleExceptionAsync(context, ex.StatusCode, ex.ErrorDetail.ErrorCode, ex.ErrorDetail.ErrorMessage?.ToString());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError(ex, "Unhandled API exception for {Method} {Path}", context.Request.Method, context.Request.Path);
                 await HandleExceptionAsync(context, (int)HttpStatusCode.InternalServerError,
                     ResponseCodeConstants.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
             }

@@ -49,9 +49,48 @@ const adminApi = {
     createActivationCode(payload) {
         return axiosClient.post("/Auth/create-activation-code", payload);
     },
+    verifyEmployeeActivation(payload) {
+        return axiosClient.post("/Auth/verify-employee-activation", payload);
+    },
     // === Quản trị: chấm công / hợp đồng / nghỉ phép / tài khoản ===
     attendances() {
         return axiosClient.get(`/Attendance/get-all?${P}`);
+    },
+    employeeReports(params = {}) {
+        return axiosClient.get("/EmployeeReport/get-all", { params });
+    },
+    reviewEmployeeReport(id, payload) {
+        return axiosClient.post(`/EmployeeReport/review/${id}`, payload);
+    },
+    forwardEmployeeReport(id, payload) {
+        return axiosClient.post(`/EmployeeReport/forward/${id}`, payload);
+    },
+    upperDecision(id, payload) {
+        return axiosClient.post(`/EmployeeReport/upper-decision/${id}`, payload);
+    },
+    respondToUpperRequest(id, payload) {
+        return axiosClient.post(`/EmployeeReport/respond/${id}`, payload);
+    },
+    completeEmployeeReport(id) {
+        return axiosClient.post(`/EmployeeReport/complete/${id}`);
+    },
+    reportViewed(id) {
+        return axiosClient.post(`/EmployeeReport/viewed/${id}`);
+    },
+    uploadReportToUpper(id, formData) {
+        return axiosClient.post(`/EmployeeReport/upper/${id}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+    },
+    markReportSent(id) {
+        return axiosClient.post(`/EmployeeReport/mark-sent/${id}`);
+    },
+    downloadEmployeeReport(versionId) {
+        return axiosClient.get(`/EmployeeReport/download/${versionId}`, { responseType: "blob" });
+    },
+    downloadReportAttachment(id) {
+        return axiosClient.get(`/EmployeeReport/download-attachment/${id}`, { responseType: "blob" });
+    },
+    downloadUpperReport(id) {
+        return axiosClient.get(`/EmployeeReport/upper-download/${id}`, { responseType: "blob" });
     },
     approveAttendance(payload) {
         return axiosClient.post("/Attendance/approve", payload);

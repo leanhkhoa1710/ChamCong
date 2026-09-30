@@ -22,6 +22,7 @@ namespace M.Services.Mappings
                 ExpiresAt = entity.ExpiresAt,
                 UsedAt = entity.UsedAt,
                 ActivatedBy = entity.ActivatedBy,
+                CreatedBy = entity.CreatedBy,
                 IsUsed = entity.IsUsed,
                 CreatedTime = entity.CreatedTime,
                 LastUpdatedTime = entity.LastUpdatedTime
@@ -40,7 +41,7 @@ namespace M.Services.Mappings
             {
                 Code = model.Code,
                 EmployeeId = model.EmployeeId,
-                ExpiresAt = DateTime.Now.AddMinutes(model.ValidMinutes ?? 4320)
+                ExpiresAt = DateTime.Now.AddMinutes(model.ValidMinutes ?? 1440)
             };
 
             return entity;
