@@ -435,6 +435,33 @@
     cursor: pointer;
 }
 
+/* Header row: tiêu đề + nút × (cho modal Đổi mật khẩu) */
+.att-guide-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.att-head-close {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    color: #64748b;
+    border: none;
+    border-radius: 8px;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.att-head-close:hover {
+    background: #f1f5f9;
+    color: #0e1a26;
+}
+
 /* Hero actions */
 .att-hero-actions {
     display: flex;

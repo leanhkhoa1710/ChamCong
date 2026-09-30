@@ -277,7 +277,6 @@ const AdminContractPage = () => {
                         {showModal && (
                             <div
                                 className="att-form-modal"
-                                onClick={() => setShowModal(false)}
                             >
                                 <div
                                     className="att-form"

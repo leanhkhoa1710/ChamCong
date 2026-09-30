@@ -87,7 +87,7 @@ const LeaveFormModal = ({ types, remaining, onClose, onSubmit }) => {
     };
 
     return (
-        <div className="leave-modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+        <div className="leave-modal-backdrop">
             <section className="leave-modal" role="dialog" aria-modal="true" aria-labelledby="leave-form-title">
                 <header className="leave-modal-head">
                     <h2 id="leave-form-title">Tạo đơn nghỉ phép</h2>
@@ -128,7 +128,7 @@ const LeaveDetailsModal = ({ request, onClose }) => {
     const created = request.createdTime ? new Date(request.createdTime) : null;
     const approved = request.approvedAt ? new Date(request.approvedAt) : null;
     return (
-        <div className="leave-modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+        <div className="leave-modal-backdrop">
             <section className="leave-modal leave-detail-modal" role="dialog" aria-modal="true" aria-labelledby="leave-detail-title">
                 <header className="leave-modal-head">
                     <h2 id="leave-detail-title">Chi tiết đơn</h2>

@@ -304,6 +304,14 @@ namespace M.Services.Service
                         ResponseCodeConstants.NOT_FOUND,
                         "Employee not found.");
 
+                // Mã có thể được cấp trước khi hệ thống "đảm bảo tài khoản":
+                // tự tạo user cho nhân viên (username = Mã NV) rồi tiếp tục.
+                if (employee.UserId == null)
+                {
+                    await EnsureUserForAsync(employee, "Hactv");
+                    await _dbContext.SaveChangesAsync();
+                }
+
                 userId = employee.UserId;
             }
 
@@ -373,6 +381,14 @@ namespace M.Services.Service
                     StatusCodes.Status400BadRequest,
                     ResponseCodeConstants.BAD_REQUEST,
                     "Activation code already exists.");
+            }
+
+            // Đảm bảo nhân viên có tài khoản đăng nhập (ApplicationUser)
+            // trước khi cấp mã - tránh mã không gắn được user.
+            if (employee.UserId == null)
+            {
+                await EnsureUserForAsync(employee, "Hactv");
+                await _dbContext.SaveChangesAsync();
             }
 
             ActivationCode entity = model.ToEntity();
@@ -456,6 +472,78 @@ namespace M.Services.Service
         #endregion
 
         #region Private
+
+        // Đảm bảo nhân viên có tài khoản ApplicationUser (tạo mới nếu thiếu).
+        // - Username: Mã NV (VD: NV-003) nếu còn trống, nếu trùng thì thêm hậu tố.
+        // - Role: Employee (nếu tồn tại).
+        // - Email: lấy từ hồ sơ nhân viên.
+        // - Mật khẩu tạm: không đặt — nhân viên sẽ tự đặt qua kích hoạt
+        //   (hoặc admin đặt riêng).
+        private async Task EnsureUserForAsync(Employee employee, string passwordSuffix = "Hactv")
+        {
+            if (employee.UserId != null) return;
+
+            string baseName = !string.IsNullOrWhiteSpace(employee.EmployeeCode)
+                ? employee.EmployeeCode
+                : "NV-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
+
+            // Trùng username? thêm hậu tố số duy nhất
+            string candidate = baseName;
+            int i = 1;
+            while (await _userManager.FindByNameAsync(candidate) != null)
+            {
+                candidate = baseName + "-" + i++;
+            }
+
+            string email = !string.IsNullOrWhiteSpace(employee.Email)
+                ? employee.Email.Trim()
+                : $"{candidate.ToLowerInvariant()}@local";
+
+            // Trùng email? thêm hậu tố số để luôn tạo được
+            string finalEmail = email;
+            int j = 1;
+            while (await _userManager.FindByEmailAsync(finalEmail) != null)
+            {
+                finalEmail = email.Contains("@")
+                    ? email.Replace("@", $"-{j}@")
+                    : email + "-" + j;
+                j++;
+            }
+
+            ApplicationUser user = new()
+            {
+                UserName = candidate,
+                Email = finalEmail,
+                EmailConfirmed = false,
+                CreatedBy = "System"
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new ErrorException(
+                    StatusCodes.Status500InternalServerError,
+                    "CREATE_USER_FAILED",
+                    result.Errors.FirstOrDefault()?.Description
+                    ?? "Failed to create user account");
+            }
+
+            if (await _roleManager.RoleExistsAsync("Employee"))
+            {
+                await _userManager.AddToRoleAsync(user, "Employee");
+            }
+
+            // Đồng bộ quan hệ user <-> employee ở CẢ 2 phía:
+            // - Employees.UserId (chính)
+            // - AspNetUsers.EmployeeId (cột tương ứng)
+            // - Số điện thoại (hỗ trợ đăng nhập linh hoạt)
+            employee.UserId = user.Id;
+            user.EmployeeId = employee.Id;
+            if (!string.IsNullOrWhiteSpace(employee.PhoneNumber))
+            {
+                user.PhoneNumber = employee.PhoneNumber;
+            }
+        }
 
         // Chính sách mật khẩu: tối thiểu 10 ký tự, có chữ hoa, chữ thường,
         // chữ số và ký tự đặc biệt.

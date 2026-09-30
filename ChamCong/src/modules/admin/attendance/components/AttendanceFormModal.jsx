@@ -71,7 +71,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
     };
 
     return (
-        <div className="att-guide-overlay" onClick={onClose}>
+        <div className="att-guide-overlay">
             <div className="att-form-modal" onClick={(e) => e.stopPropagation()}>
                 <h2>{row ? "Sửa bản ghi chấm công" : "Thêm bản ghi chấm công"}</h2>
                 <form onSubmit={submit} className="att-form">

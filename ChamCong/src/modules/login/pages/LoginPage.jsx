@@ -1,8 +1,12 @@
+import { useLocation, Link } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 import logo from "../../../assets/images/marixa-logo.png";
 import "../login.css";
 
 const LoginPage = () => {
+    const location = useLocation();
+    const activated = location.state?.activated === true;
+
     return (
         <div className="login-page">
             <div className="login-brand">
@@ -14,14 +18,23 @@ const LoginPage = () => {
                 <p>Mọi module. Một hệ thống. Quản lý chấm công, hợp đồng, nghỉ phép và bảng lương của doanh nghiệp trên một nền tảng duy nhất.</p>
                 <div className="login-brand-badge">
                     <span className="badge-dot" />
-                   Attendance Module
+                    Attendance Module
                 </div>
             </div>
             <div className="login-content">
                 <div className="login-card">
                     <h1>Đăng nhập</h1>
                     <p className="login-subtitle">Vui lòng nhập thông tin tài khoản để tiếp tục</p>
+                    {activated && (
+                        <div className="activate-success">
+                            ✓ Tài khoản đã được kích hoạt. Hãy đăng nhập bằng mật khẩu mới của bạn.
+                        </div>
+                    )}
                     <LoginForm />
+                    <p className="activate-link">
+                        Mới nhận mã kích hoạt?{" "}
+                        <Link to="/kich-hoat">Kích hoạt tài khoản</Link>
+                    </p>
                 </div>
             </div>
         </div>

@@ -13,6 +13,7 @@ const MODULES = [
     { to: "/insurance", icon: "◇", title: "Bảo hiểm & thuế", detail: "Thông tin bảo hiểm và thuế", color: "pink" },
     { to: "/bank-accounts", icon: "▤", title: "Tài khoản ngân hàng", detail: "Thông tin nhận lương", color: "amber" },
     { to: "/profile", icon: "♙", title: "Hồ sơ", detail: "Thông tin cá nhân của bạn", color: "red" },
+    { to: "/kich-hoat", icon: "◈", title: "Kích hoạt tài khoản", detail: "Nhập mã kích hoạt để đặt mật khẩu", color: "blue" },
     { to: "/employees", icon: "♙", title: "Nhân sự", detail: "Hồ sơ và danh sách nhân viên", color: "pink" },
     { to: "/admin", icon: "▦", title: "Dashboard", detail: "Điều hành và quản lý hệ thống", color: "blue" },
 ];

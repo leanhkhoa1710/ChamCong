@@ -36,6 +36,10 @@ namespace M.Services.Service
                 .Include(x => x.Employee)
                 .Include(x => x.PlannedShift)
                 .Include(x => x.Approver)
+                // Đồng bộ với ByEmployeeIdAsync: giờ vào/ra (CheckInTime/
+                // CheckOutTime) được mapping từ AttendanceLogs, nếu thiếu
+                // Include thì các trang dùng get-all (admin) hiện "— —".
+                .Include(x => x.AttendanceLogs)
                 .OrderBy(x => x.CreatedTime);
 
             int totalItems = await query.CountAsync();

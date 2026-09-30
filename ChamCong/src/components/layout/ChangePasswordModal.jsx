@@ -34,9 +34,19 @@ const ChangePasswordModal = ({ onClose }) => {
     };
 
     return (
-        <div className="att-guide-overlay" onClick={onClose}>
+        <div className="att-guide-overlay">
             <div className="att-guide" onClick={(e) => e.stopPropagation()}>
-                <h2>Đổi mật khẩu</h2>
+                <div className="att-guide-head">
+                    <h2>Đổi mật khẩu</h2>
+                    <button
+                        type="button"
+                        className="att-head-close"
+                        onClick={() => onClose()}
+                        aria-label="Đóng"
+                    >
+                        ×
+                    </button>
+                </div>
                 {error && <div className="att-error">{error}</div>}
                 <form
                     onSubmit={submit}

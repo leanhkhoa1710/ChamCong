@@ -12,6 +12,10 @@ namespace M.Contract.Repositories.Entity
 
         public virtual Employee? Employee { get; set; }
 
+        // Mã nhân viên liên kết (cột AspNetUsers.EmployeeId, có sẵn từ migration gốc).
+        // Được đồng bộ với Employees.UserId khi tạo/cấp tài khoản.
+        public Guid? EmployeeId { get; set; }
+
 
         // =========================================================
         // AUDIT

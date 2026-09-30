@@ -1,6 +1,26 @@
 import { useState } from "react";
 import adminApi from "../../api/adminApi";
 
+// Component con định nghĩa ở MODULE-LEVEL (ngoài component) để giữ identity ổn định
+// qua từng lần render. Nếu định nghĩa bên trong thân HR_ADDForm thì mỗi keystroke
+// sẽ tạo hàm mới → React unmount/remount cây con (kèm input) → mất focus,
+// không nhập liên tục được.
+const Grp = ({ t, children }) => (
+    <div className="hrf-group">
+        <h3>{t}</h3>
+        {children}
+    </div>
+);
+const F = ({ l, req, children }) => (
+    <label className="hrf-field">
+        <span>
+            {l}
+            {req && <i className="req">*</i>}
+        </span>
+        {children}
+    </label>
+);
+
 // Form "Thêm nhân viên" 10 nhóm, đánh dấu * cho bắt buộc.
 // Chỉ cho lưu khi đủ: Mã NV + Họ và tên (group 1) + Điều kiện làm việc.
 const HR_ADDForm = ({
@@ -107,26 +127,11 @@ const HR_ADDForm = ({
         }
     };
 
-    const Grp = ({ t, children }) => (
-        <div className="hrf-group">
-            <h3>{t}</h3>
-            {children}
-        </div>
-    );
-    const F = ({ l, req, children }) => (
-        <label className="hrf-field">
-            <span>
-                {l}
-                {req && <i className="req">*</i>}
-            </span>
-            {children}
-        </label>
-    );
     const inp = "hrf-input";
     const sel = "hrf-input";
 
     return (
-        <div className="hrf-modal-backdrop" onClick={onCancel}>
+        <div className="hrf-modal-backdrop">
             <section
                 className="hrf-modal"
                 role="dialog"

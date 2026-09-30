@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./modules/login/pages/LoginPage";
+import ActivatePage from "./modules/activate/pages/ActivatePage";
 import HrPage from "./modules/admin/hr/pages/HrPage";
 import AttendancePage from "./modules/attendance/pages/AttendancePage";
 import LeavePage from "./modules/leave/pages/LeavePage";
@@ -31,6 +32,7 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/kich-hoat" element={<ActivatePage />} />
                 <Route path="/" element={<Navigate to="/Home" replace />} />
                 <Route path="/Home" element={<HomePage />} />
 
