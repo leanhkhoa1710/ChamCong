@@ -35,7 +35,12 @@ const daysBetween = (from, to) => {
 
 const statusOf = (status) => STATUS[status] || { label: "Không rõ", className: "pending" };
 const roundDays = (value) => Math.round(value * 100) / 100;
-const formatDays = (value) => String(roundDays(Number(value) || 0));
+const formatDayCount = (value, language) => {
+    const days = roundDays(Number(value) || 0);
+    if (language === "zh") return `${days} 天`;
+    if (language === "en") return `${days} ${days === 1 ? "day" : "days"}`;
+    return `${days} ngày`;
+};
 
 const rangeInYear = (request, year) => {
     const start = localDate(request.fromDate);
@@ -51,7 +56,7 @@ const rangeInYear = (request, year) => {
     return (daysBetween(dateInput(clippedStart), dateInput(clippedEnd)) / calendarDays) * requestDays;
 };
 
-const LeaveFormModal = ({ types, remaining, onClose, onSubmit }) => {
+const LeaveFormModal = ({ types, remaining, language, onClose, onSubmit }) => {
     const today = dateInput(new Date());
     const [form, setForm] = useState({
         leaveTypeId: types[0]?.id || "",
@@ -110,9 +115,9 @@ const LeaveFormModal = ({ types, remaining, onClose, onSubmit }) => {
                             <label key={value}><input type="radio" name="period" value={value} checked={form.period === value} onChange={() => update("period", value)} />{label}</label>
                         ))}
                     </fieldset>
-                    <div className="leave-days-preview"><span>Tổng số ngày</span><strong>{formatDays(totalDays)} ngày</strong></div>
+                    <div className="leave-days-preview"><span>Tổng số ngày</span><strong>{formatDayCount(totalDays, language)}</strong></div>
                     <label>Lý do <span>*</span><textarea required rows="3" maxLength="500" value={form.reason} onChange={(e) => update("reason", e.target.value)} placeholder="Nhập lý do xin nghỉ phép" /></label>
-                    {remaining != null && <div className="leave-balance-note">ℹ️ Bạn còn {remaining} ngày phép. Sau khi đăng ký còn {Math.max(0, remaining - totalDays)} ngày.</div>}
+                    {remaining != null && <div className="leave-balance-note">{language === "zh" ? `ℹ️ 您还剩 ${remaining} 天年假。提交后还剩 ${Math.max(0, remaining - totalDays)} 天。` : language === "en" ? `ℹ️ You have ${formatDayCount(remaining, language)} of leave remaining. After this request, you will have ${formatDayCount(Math.max(0, remaining - totalDays), language)} left.` : `ℹ️ Bạn còn ${remaining} ngày phép. Sau khi đăng ký còn ${Math.max(0, remaining - totalDays)} ngày.`}</div>}
                     {error && <p className="leave-form-error">{error}</p>}
                     <footer className="leave-modal-actions">
                         <button type="button" className="leave-btn secondary" onClick={onClose} disabled={saving}>Hủy</button>
@@ -124,7 +129,7 @@ const LeaveFormModal = ({ types, remaining, onClose, onSubmit }) => {
     );
 };
 
-const LeaveDetailsModal = ({ request, onClose, locale }) => {
+const LeaveDetailsModal = ({ request, onClose, locale, language }) => {
     const status = statusOf(request.status);
     const created = request.createdTime ? new Date(request.createdTime) : null;
     const approved = request.approvedAt ? new Date(request.approvedAt) : null;
@@ -137,13 +142,13 @@ const LeaveDetailsModal = ({ request, onClose, locale }) => {
                 </header>
                 <div className="leave-detail-body">
                     <div className="leave-detail-type"><strong>{request.leaveTypeName || "Nghỉ phép"}</strong><span className={`leave-status ${status.className}`}>{status.label}</span></div>
-                    <p className="leave-detail-dates">📅 {formatDate(request.fromDate, locale)} → {formatDate(request.toDate, locale)} <span>·</span> {request.totalDays ?? daysBetween(request.fromDate, request.toDate)} ngày</p>
+                    <p className="leave-detail-dates">📅 {formatDate(request.fromDate, locale)} → {formatDate(request.toDate, locale)} <span>·</span> {formatDayCount(request.totalDays ?? daysBetween(request.fromDate, request.toDate), language)}</p>
                     <div className="leave-detail-field"><span>Lý do</span><p>{request.reason || "—"}</p></div>
                     <div className="leave-detail-field"><span>Người duyệt</span><p>{request.approverName || "Chưa có thông tin"}</p></div>
                     <div className="leave-timeline">
                         <h3>Lịch sử</h3>
-                        <div className="leave-timeline-item"><i /> <div><strong>Tạo và gửi đơn</strong><span>{created ? created.toLocaleString("vi-VN") : "—"}</span></div></div>
-                        <div className="leave-timeline-item"><i className={approved ? "complete" : ""} /> <div><strong>{approved ? status.label : "Chờ quản lý duyệt"}</strong><span>{approved ? approved.toLocaleString("vi-VN") : "Chưa xử lý"}</span></div></div>
+                        <div className="leave-timeline-item"><i /> <div><strong>Tạo và gửi đơn</strong><span>{created ? created.toLocaleString(locale) : "—"}</span></div></div>
+                        <div className="leave-timeline-item"><i className={approved ? "complete" : ""} /> <div><strong>{approved ? status.label : "Chờ quản lý duyệt"}</strong><span>{approved ? approved.toLocaleString(locale) : "Chưa xử lý"}</span></div></div>
                     </div>
                 </div>
             </section>
@@ -282,10 +287,10 @@ const LeavePage = () => {
                 {loading ? <div className="att-loading">Đang tải...</div> : (
                     <>
                         <section className="leave-stats" aria-label="Tổng quan phép năm">
-                            <div className="leave-stat-card"><span>Phép năm</span><strong>{annualType ? `${formatDays(annualType.maxDays)} ngày` : "Chưa cấu hình"}</strong></div>
-                            <div className="leave-stat-card"><span>Đã sử dụng</span><strong>{annualType ? `${formatDays(used)} ngày` : "—"}</strong></div>
-                            <div className="leave-stat-card"><span>Đang chờ</span><strong>{annualType ? `${formatDays(pending)} ngày` : "—"}</strong></div>
-                            <div className="leave-stat-card"><span>Còn lại</span><strong>{remaining == null ? "—" : `${formatDays(remaining)} ngày`}</strong></div>
+                            <div className="leave-stat-card"><span>Phép năm</span><strong>{annualType ? formatDayCount(annualType.maxDays, language) : "Chưa cấu hình"}</strong></div>
+                            <div className="leave-stat-card"><span>Đã sử dụng</span><strong>{annualType ? formatDayCount(used, language) : "—"}</strong></div>
+                            <div className="leave-stat-card"><span>Đang chờ</span><strong>{annualType ? formatDayCount(pending, language) : "—"}</strong></div>
+                            <div className="leave-stat-card"><span>Còn lại</span><strong>{remaining == null ? "—" : formatDayCount(remaining, language)}</strong></div>
                         </section>
                         <section className="leave-requests">
                             <div className="leave-section-head"><h2>Lịch nghỉ của tôi</h2><div className="leave-view-switch"><button type="button" className={view === "list" ? "active" : ""} onClick={() => setView("list")}>Danh sách</button><button type="button" className={view === "calendar" ? "active" : ""} onClick={() => setView("calendar")}>Lịch</button></div></div>
@@ -298,7 +303,7 @@ const LeavePage = () => {
                                         <label>Từ ngày<input type="date" value={fromFilter} onChange={(e) => { setFromFilter(e.target.value); setPage(1); }} /></label>
                                         <label>Đến ngày<input type="date" value={toFilter} onChange={(e) => { setToFilter(e.target.value); setPage(1); }} /></label>
                                     </div>
-                                    <div className="att-card leave-table-card"><div className="att-table-wrap"><table className="att-table leave-table"><thead><tr><th>Loại nghỉ</th><th>Thời gian</th><th>Số ngày</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>{pageItems.map((request) => { const status = statusOf(request.status); return <tr key={request.id}><td><strong>{request.leaveTypeName || "Nghỉ phép"}</strong></td><td>{formatDate(request.fromDate, locale)}<span className="leave-date-end">→ {formatDate(request.toDate, locale)}</span></td><td>{request.totalDays ?? daysBetween(request.fromDate, request.toDate)} ngày</td><td><span className={`leave-status ${status.className}`}>{status.label}</span></td><td><button type="button" className="leave-view-btn" onClick={() => setSelectedRequest(request)}>Xem</button></td></tr>; })}{!pageItems.length && <tr><td colSpan="5" className="leave-empty">Không tìm thấy đơn nghỉ phép phù hợp.</td></tr>}</tbody></table></div></div>
+                                    <div className="att-card leave-table-card"><div className="att-table-wrap"><table className="att-table leave-table"><thead><tr><th>Loại nghỉ</th><th>Thời gian</th><th>Số ngày</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>{pageItems.map((request) => { const status = statusOf(request.status); return <tr key={request.id}><td><strong>{request.leaveTypeName || "Nghỉ phép"}</strong></td><td>{formatDate(request.fromDate, locale)}<span className="leave-date-end">→ {formatDate(request.toDate, locale)}</span></td><td>{formatDayCount(request.totalDays ?? daysBetween(request.fromDate, request.toDate), language)}</td><td><span className={`leave-status ${status.className}`}>{status.label}</span></td><td><button type="button" className="leave-view-btn" onClick={() => setSelectedRequest(request)}>Xem</button></td></tr>; })}{!pageItems.length && <tr><td colSpan="5" className="leave-empty">Không tìm thấy đơn nghỉ phép phù hợp.</td></tr>}</tbody></table></div></div>
                                     <footer className="leave-pagination"><span>Hiển thị {pageItems.length} / {filtered.length} đơn</span><div><button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1}>‹</button>{Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => <button type="button" key={number} className={page === number ? "active" : ""} onClick={() => setPage(number)}>{number}</button>)}<button type="button" onClick={() => setPage((current) => Math.min(pageCount, current + 1))} disabled={page === pageCount}>›</button></div></footer>
                                 </>
                             ) : <LeaveCalendar month={month} requests={filtered} onShift={changeMonth} locale={locale} />}
@@ -306,8 +311,8 @@ const LeavePage = () => {
                     </>
                 )}
             </div>
-            {showForm && <LeaveFormModal types={types} remaining={remaining} onClose={() => setShowForm(false)} onSubmit={createRequest} />}
-            {selectedRequest && <LeaveDetailsModal request={selectedRequest} onClose={() => setSelectedRequest(null)} locale={locale} />}
+            {showForm && <LeaveFormModal types={types} remaining={remaining} language={language} onClose={() => setShowForm(false)} onSubmit={createRequest} />}
+            {selectedRequest && <LeaveDetailsModal request={selectedRequest} onClose={() => setSelectedRequest(null)} locale={locale} language={language} />}
         </AppLayout>
     );
 };
