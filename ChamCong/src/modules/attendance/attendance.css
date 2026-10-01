@@ -1,6 +1,6 @@
 /* Sidebar (nằm trong app-body, sticky dưới header nav) */
 .att-sidebar {
-    width: 280px;
+    width: 230px;
     flex-shrink: 0;
     background: #fff;
     border-right: 1px solid #e8edf2;

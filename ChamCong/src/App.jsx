@@ -35,8 +35,8 @@ function App() {
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/kich-hoat" element={<ActivatePage />} />
-                <Route path="/" element={<Navigate to="/Home" replace />} />
-                <Route path="/Home" element={<HomePage />} />
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                <Route path="/home" element={<HomePage />} />
 
                 {/* Khu quản trị */}
                 <Route
@@ -137,7 +137,7 @@ function App() {
                 <Route path="/bank-accounts" element={<BankPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
 
-                <Route path="*" element={<Navigate to="/Home" replace />} />
+                <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>
         </BrowserRouter>
     );
