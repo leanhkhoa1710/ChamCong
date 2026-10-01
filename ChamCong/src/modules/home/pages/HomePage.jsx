@@ -9,6 +9,7 @@ const MODULES = [
     { to: "/statistics", icon: "▥", title: "Thống kê công", detail: "Tổng hợp ngày công", color: "lime" },
     { to: "/leave", icon: "▣", title: "Nghỉ phép", detail: "Theo dõi ngày phép và đơn nghỉ", color: "red" },
     { to: "/reports", icon: "▤", title: "Báo cáo", detail: "Nộp báo cáo và theo dõi kết quả duyệt", color: "blue" },
+    { to: "/promotions", icon: "↗", title: "Đề xuất thăng chức", detail: "Gửi nguyện vọng phát triển nghề nghiệp", color: "lime" },
     { to: "/contracts", icon: "▤", title: "Hợp đồng", detail: "Thông tin và thời hạn hợp đồng", color: "blue" },
     { to: "/salary", icon: "＄", title: "Bảng lương", detail: "Xem lương theo kỳ", color: "lime" },
     { to: "/insurance", icon: "◇", title: "Bảo hiểm & thuế", detail: "Thông tin bảo hiểm và thuế", color: "pink" },

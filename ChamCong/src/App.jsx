@@ -26,6 +26,7 @@ import AccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuanceP
 import HomePage from "./modules/home/pages/HomePage";
 import RequireModule from "./components/common/RequireModule";
 import MyReportsPage from "./modules/reports/MyReportsPage";
+import PromotionsPage from "./modules/admin/hr/pages/PromotionsPage";
 
 const guarded = (to, el) => <RequireModule to={to}>{el}</RequireModule>;
 
@@ -82,6 +83,7 @@ function App() {
                         <AccountIssuancePage hrMode />
                     )}
                 />
+                <Route path="/employees/promotions" element={guarded("/employees/promotions", <PromotionsPage />)} />
                 <Route
                     path="/admin/attendance-history"
                     element={guarded(
@@ -131,6 +133,7 @@ function App() {
                 <Route path="/statistics" element={<StatisticsPage />} />
                 <Route path="/leave" element={<LeavePage />} />
                 <Route path="/reports" element={guarded("/reports", <MyReportsPage />)} />
+                <Route path="/promotions" element={guarded("/promotions", <PromotionsPage selfMode />)} />
                 <Route path="/contracts" element={<ContractPage />} />
                 <Route path="/salary" element={<SalaryPage />} />
                 <Route path="/insurance" element={<InsurancePage />} />

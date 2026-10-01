@@ -1,8 +1,10 @@
 import { dotClass, dayStatusText } from "./statUtils";
+import { useLanguage, localeForLanguage } from "../../../services/i18n/LanguageProvider";
 
 // Lệnh công tháng: lưới T2..CN + chấm trạng thái + chú giải.
 const StatCalendar = ({ ym, weeks }) => {
-    const monthName = new Date(ym.y, ym.m, 1).toLocaleDateString("vi-VN", {
+    const { language } = useLanguage();
+    const monthName = new Date(ym.y, ym.m, 1).toLocaleDateString(localeForLanguage(language), {
         month: "long",
         year: "numeric",
     });

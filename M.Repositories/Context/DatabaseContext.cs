@@ -99,6 +99,8 @@ namespace M.Repositories.Context
 
         public DbSet<EmployeeReportEvent> EmployeeReportEvents { get; set; }
 
+        public DbSet<EmployeePromotion> EmployeePromotions { get; set; }
+
 
         // =====================================================
         // RELATIONSHIPS
@@ -107,6 +109,13 @@ namespace M.Repositories.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<EmployeePromotion>()
+                .HasOne<Employee>()
+                .WithMany()
+                .HasForeignKey(x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<EmployeePromotion>().HasIndex(x => new { x.EmployeeId, x.Status });
 
             // =========================================================
             // EMPLOYEE - DEPARTMENT

@@ -11,7 +11,7 @@ namespace M.API.Seed
     /// </summary>
     public static class RoleSeeder
     {
-        private static readonly string[] Roles = { "Admin", "Employee" };
+        private static readonly string[] Roles = { "Admin", "Employee", "Manager", "HR" };
 
         public static async Task SeedAsync(IServiceProvider services)
         {

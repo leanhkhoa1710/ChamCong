@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../../attendance/api/relatedApi";
+import { useLanguage, localeForLanguage } from "../../../services/i18n/LanguageProvider";
 import "../../attendance/attendance.css";
 import "../leave.css";
 
@@ -24,8 +25,8 @@ const dateInput = (date) => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
-const formatDate = (value) =>
-    localDate(value)?.toLocaleDateString("vi-VN") || "—";
+const formatDate = (value, locale = "vi-VN") =>
+    localDate(value)?.toLocaleDateString(locale) || "—";
 
 const daysBetween = (from, to) => {
     if (!from || !to || to < from) return 0;
@@ -123,7 +124,7 @@ const LeaveFormModal = ({ types, remaining, onClose, onSubmit }) => {
     );
 };
 
-const LeaveDetailsModal = ({ request, onClose }) => {
+const LeaveDetailsModal = ({ request, onClose, locale }) => {
     const status = statusOf(request.status);
     const created = request.createdTime ? new Date(request.createdTime) : null;
     const approved = request.approvedAt ? new Date(request.approvedAt) : null;
@@ -136,7 +137,7 @@ const LeaveDetailsModal = ({ request, onClose }) => {
                 </header>
                 <div className="leave-detail-body">
                     <div className="leave-detail-type"><strong>{request.leaveTypeName || "Nghỉ phép"}</strong><span className={`leave-status ${status.className}`}>{status.label}</span></div>
-                    <p className="leave-detail-dates">📅 {formatDate(request.fromDate)} → {formatDate(request.toDate)} <span>·</span> {request.totalDays ?? daysBetween(request.fromDate, request.toDate)} ngày</p>
+                    <p className="leave-detail-dates">📅 {formatDate(request.fromDate, locale)} → {formatDate(request.toDate, locale)} <span>·</span> {request.totalDays ?? daysBetween(request.fromDate, request.toDate)} ngày</p>
                     <div className="leave-detail-field"><span>Lý do</span><p>{request.reason || "—"}</p></div>
                     <div className="leave-detail-field"><span>Người duyệt</span><p>{request.approverName || "Chưa có thông tin"}</p></div>
                     <div className="leave-timeline">
@@ -150,7 +151,7 @@ const LeaveDetailsModal = ({ request, onClose }) => {
     );
 };
 
-const LeaveCalendar = ({ month, requests, onShift }) => {
+const LeaveCalendar = ({ month, requests, onShift, locale }) => {
     const first = new Date(month.getFullYear(), month.getMonth(), 1);
     const offset = (first.getDay() + 6) % 7;
     const dayCount = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
@@ -167,7 +168,7 @@ const LeaveCalendar = ({ month, requests, onShift }) => {
         <div className="att-card leave-calendar-card">
             <div className="leave-calendar-head">
                 <h2>Lịch nghỉ của tôi</h2>
-                <div className="leave-calendar-nav"><button type="button" onClick={() => onShift(-1)} aria-label="Tháng trước">‹</button><strong>{month.toLocaleDateString("vi-VN", { month: "long", year: "numeric" })}</strong><button type="button" onClick={() => onShift(1)} aria-label="Tháng sau">›</button></div>
+                <div className="leave-calendar-nav"><button type="button" onClick={() => onShift(-1)} aria-label="Tháng trước">‹</button><strong>{month.toLocaleDateString(locale, { month: "long", year: "numeric" })}</strong><button type="button" onClick={() => onShift(1)} aria-label="Tháng sau">›</button></div>
             </div>
             <div className="leave-calendar-grid">
                 {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((day) => <strong key={day}>{day}</strong>)}
@@ -177,12 +178,14 @@ const LeaveCalendar = ({ month, requests, onShift }) => {
                     return <div key={index} className={`leave-calendar-day${day ? "" : " empty"}`}><span>{day || ""}</span>{entries.map((entry) => <i key={entry.id} className={statusOf(entry.status).className} title={`${entry.leaveTypeName || "Nghỉ phép"} · ${statusOf(entry.status).label}`} />)}</div>;
                 })}
             </div>
-            {monthRequests.length > 0 && <ul className="leave-calendar-list">{monthRequests.map((request) => <li key={request.id}><i className={statusOf(request.status).className} /><span>{formatDate(request.fromDate)} – {formatDate(request.toDate)} · {request.leaveTypeName || "Nghỉ phép"}</span><b>{statusOf(request.status).label}</b></li>)}</ul>}
+            {monthRequests.length > 0 && <ul className="leave-calendar-list">{monthRequests.map((request) => <li key={request.id}><i className={statusOf(request.status).className} /><span>{formatDate(request.fromDate, locale)} – {formatDate(request.toDate, locale)} · {request.leaveTypeName || "Nghỉ phép"}</span><b>{statusOf(request.status).label}</b></li>)}</ul>}
         </div>
     );
 };
 
 const LeavePage = () => {
+    const { language } = useLanguage();
+    const locale = localeForLanguage(language);
     const auth = getAuth();
     const employeeId = auth?.employeeId;
     const userId = auth?.userId;
@@ -295,16 +298,16 @@ const LeavePage = () => {
                                         <label>Từ ngày<input type="date" value={fromFilter} onChange={(e) => { setFromFilter(e.target.value); setPage(1); }} /></label>
                                         <label>Đến ngày<input type="date" value={toFilter} onChange={(e) => { setToFilter(e.target.value); setPage(1); }} /></label>
                                     </div>
-                                    <div className="att-card leave-table-card"><div className="att-table-wrap"><table className="att-table leave-table"><thead><tr><th>Loại nghỉ</th><th>Thời gian</th><th>Số ngày</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>{pageItems.map((request) => { const status = statusOf(request.status); return <tr key={request.id}><td><strong>{request.leaveTypeName || "Nghỉ phép"}</strong></td><td>{formatDate(request.fromDate)}<span className="leave-date-end">→ {formatDate(request.toDate)}</span></td><td>{request.totalDays ?? daysBetween(request.fromDate, request.toDate)} ngày</td><td><span className={`leave-status ${status.className}`}>{status.label}</span></td><td><button type="button" className="leave-view-btn" onClick={() => setSelectedRequest(request)}>Xem</button></td></tr>; })}{!pageItems.length && <tr><td colSpan="5" className="leave-empty">Không tìm thấy đơn nghỉ phép phù hợp.</td></tr>}</tbody></table></div></div>
+                                    <div className="att-card leave-table-card"><div className="att-table-wrap"><table className="att-table leave-table"><thead><tr><th>Loại nghỉ</th><th>Thời gian</th><th>Số ngày</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>{pageItems.map((request) => { const status = statusOf(request.status); return <tr key={request.id}><td><strong>{request.leaveTypeName || "Nghỉ phép"}</strong></td><td>{formatDate(request.fromDate, locale)}<span className="leave-date-end">→ {formatDate(request.toDate, locale)}</span></td><td>{request.totalDays ?? daysBetween(request.fromDate, request.toDate)} ngày</td><td><span className={`leave-status ${status.className}`}>{status.label}</span></td><td><button type="button" className="leave-view-btn" onClick={() => setSelectedRequest(request)}>Xem</button></td></tr>; })}{!pageItems.length && <tr><td colSpan="5" className="leave-empty">Không tìm thấy đơn nghỉ phép phù hợp.</td></tr>}</tbody></table></div></div>
                                     <footer className="leave-pagination"><span>Hiển thị {pageItems.length} / {filtered.length} đơn</span><div><button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1}>‹</button>{Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => <button type="button" key={number} className={page === number ? "active" : ""} onClick={() => setPage(number)}>{number}</button>)}<button type="button" onClick={() => setPage((current) => Math.min(pageCount, current + 1))} disabled={page === pageCount}>›</button></div></footer>
                                 </>
-                            ) : <LeaveCalendar month={month} requests={filtered} onShift={changeMonth} />}
+                            ) : <LeaveCalendar month={month} requests={filtered} onShift={changeMonth} locale={locale} />}
                         </section>
                     </>
                 )}
             </div>
             {showForm && <LeaveFormModal types={types} remaining={remaining} onClose={() => setShowForm(false)} onSubmit={createRequest} />}
-            {selectedRequest && <LeaveDetailsModal request={selectedRequest} onClose={() => setSelectedRequest(null)} />}
+            {selectedRequest && <LeaveDetailsModal request={selectedRequest} onClose={() => setSelectedRequest(null)} locale={locale} />}
         </AppLayout>
     );
 };

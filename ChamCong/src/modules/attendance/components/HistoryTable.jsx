@@ -1,5 +1,6 @@
 import { formatVnTime } from "../../../utils/vnTime";
 import PhotoCell from "./PhotoCell";
+import { useLanguage, localeForLanguage } from "../../../services/i18n/LanguageProvider";
 
 const statusLabel = (s) =>
     ({
@@ -41,6 +42,7 @@ const approvalClass = (s) =>
     ({ 0: "warn", 1: "ok", 2: "bad" })[s] || "";
 
 const HistoryTable = ({ history }) => {
+    const { language } = useLanguage();
     if (!history || history.length === 0) {
         return (
             <section className="att-card">
@@ -68,9 +70,7 @@ const HistoryTable = ({ history }) => {
                         {history.map((row) => (
                             <tr key={row.id}>
                                 <td>
-                                    {new Date(row.attendanceDate).toLocaleDateString(
-                                        "vi-VN"
-                                    )}
+                                    {new Date(row.attendanceDate).toLocaleDateString(localeForLanguage(language))}
                                 </td>
                                 <td>{formatShift(row)}</td>
                                 <td>
