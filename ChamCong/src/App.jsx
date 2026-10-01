@@ -27,6 +27,7 @@ import HomePage from "./modules/home/pages/HomePage";
 import RequireModule from "./components/common/RequireModule";
 import MyReportsPage from "./modules/reports/MyReportsPage";
 import PromotionsPage from "./modules/admin/hr/pages/PromotionsPage";
+import HandoverPage from "./modules/handover/pages/HandoverPage";
 
 const guarded = (to, el) => <RequireModule to={to}>{el}</RequireModule>;
 
@@ -84,6 +85,8 @@ function App() {
                     )}
                 />
                 <Route path="/employees/promotions" element={guarded("/employees/promotions", <PromotionsPage />)} />
+                <Route path="/employees/handover" element={guarded("/employees/handover", <HandoverPage reviewMode />)} />
+                <Route path="/handover" element={guarded("/handover", <HandoverPage />)} />
                 <Route
                     path="/admin/attendance-history"
                     element={guarded(

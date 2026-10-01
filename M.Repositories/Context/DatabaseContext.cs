@@ -101,6 +101,8 @@ namespace M.Repositories.Context
 
         public DbSet<EmployeePromotion> EmployeePromotions { get; set; }
 
+        public DbSet<EmployeeHandover> EmployeeHandovers { get; set; }
+
 
         // =====================================================
         // RELATIONSHIPS
@@ -116,6 +118,12 @@ namespace M.Repositories.Context
                 .HasForeignKey(x => x.EmployeeId)
                 .OnDelete(DeleteBehavior.Restrict);
             builder.Entity<EmployeePromotion>().HasIndex(x => new { x.EmployeeId, x.Status });
+            builder.Entity<EmployeeHandover>()
+                .HasOne<Employee>()
+                .WithMany()
+                .HasForeignKey(x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<EmployeeHandover>().HasIndex(x => new { x.EmployeeId, x.Status });
 
             // =========================================================
             // EMPLOYEE - DEPARTMENT

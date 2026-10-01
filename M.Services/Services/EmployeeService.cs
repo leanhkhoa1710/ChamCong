@@ -94,6 +94,14 @@ namespace M.Services.Service
         }
         public async Task<Guid> CreateAsync(CreateEmployeeModelView model)
         {
+            if (model.Status == EmployeeStatus.Resigned)
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    "HANDOVER_REQUIRED",
+                    "Employee resignation requires an approved handover request");
+            }
+
             IGenericRepository<Employee> repo =
                 _unitOfWork.GetRepository<Employee>();
 
@@ -216,6 +224,14 @@ namespace M.Services.Service
                     StatusCodes.Status404NotFound,
                     "NOT_FOUND",
                     "Employee not found");
+
+            if (model.Status == EmployeeStatus.Resigned && employee.Status != EmployeeStatus.Resigned)
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    "HANDOVER_REQUIRED",
+                    "Employee resignation requires an approved handover request");
+            }
 
             // Kiểm tra EmployeeCode trùng
             bool employeeCodeExists = await repo.Entities

@@ -257,7 +257,7 @@ const HR_ADDForm = ({
                             <option value={1}>Thử việc</option>
                             <option value={2}>Đang làm</option>
                             <option value={3}>Tạm nghỉ</option>
-                            <option value={4}>Đã nghỉ việc</option>
+                            {employee?.status === 4 && <option value={4}>Đã nghỉ việc</option>}
                             <option value={5}>Chấm dứt HĐ</option>
                         </select>
                     </F>
