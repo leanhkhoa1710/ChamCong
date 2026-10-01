@@ -11,6 +11,10 @@ const phrases = {
     "Báo cáo": ["Reports", "报告"],
     "Hợp đồng": ["Contracts", "合同"],
     "Bảng lương": ["Payroll", "工资单"],
+    "Lương": ["Salary", "工资"],
+    "Lương & chế độ": ["Salary & benefits", "薪资与福利"],
+    "lương & chế độ": ["salary & benefits", "薪资与福利"],
+    "bảo hiểm & thuế": ["insurance & tax", "保险与税务"],
     "Bảo hiểm & thuế": ["Insurance & tax", "保险与税务"],
     "Tài khoản ngân hàng": ["Bank accounts", "银行账户"],
     "Hồ sơ": ["Profile", "个人档案"],
@@ -120,9 +124,41 @@ const phrases = {
     "Đề xuất thăng chức": ["Promotion request", "晋升申请"],
     "Quản lý thăng chức": ["Promotion management", "晋升管理"],
     "Gửi đề xuất": ["Submit request", "提交申请"],
+    "PHÁT TRIỂN SỰ NGHIỆP": ["CAREER DEVELOPMENT", "职业发展"],
     "Đề cử thăng chức": ["Nominate for promotion", "提名晋升"],
-    "Phát triển sự nghiệp": ["Career development", "职业发展"],
     "Quản lý đề xuất từ nhân viên và đề cử trong phạm vi phụ trách.": ["Manage employee requests and nominations within your scope.", "管理员工申请并提名职责范围内的员工。"],
+    "Đang tải đề xuất...": ["Loading promotion requests...", "正在加载晋升申请..."],
+    "Chưa có đề xuất thăng chức": ["No promotion requests yet", "暂无晋升申请"],
+    "Các đề xuất mới sẽ xuất hiện tại đây.": ["New requests will appear here.", "新的申请会显示在这里。"],
+    "Chưa có phòng ban": ["No department", "暂无部门"],
+    "Chưa có chức vụ": ["No position", "暂无职位"],
+    "Vai trò sau duyệt:": ["Role after approval:", "批准后的角色："],
+    "Hiệu lực dự kiến": ["Expected effective date", "预计生效日期"],
+    "Mã mới": ["New ID", "新编号"],
+    "Ghi chú:": ["Note:", "备注："],
+    "bởi": ["by", "由"],
+    "Thông tin": ["Details", "详情"],
+    "ĐỀ XUẤT NHÂN SỰ": ["PROMOTION REQUEST", "晋升申请"],
+    "Nguyện vọng thăng chức": ["Promotion request", "晋升申请"],
+    "Thông tin sẽ được gửi đến cấp có thẩm quyền để xét duyệt.": ["The request will be sent to the appropriate approver.", "申请将提交给相应审批人。"],
+    "Đề xuất sẽ được gửi đến quản lý trực tiếp.": ["Your request will be sent to your direct manager.", "申请将提交给您的直属经理。"],
+    "Nêu thành tích, năng lực hoặc cơ sở đề xuất...": ["Describe achievements, skills, or reasons for this request...", "请说明业绩、能力或申请理由..."],
+    "Mục tiêu, phạm vi trách nhiệm mới...": ["Goals and scope of the new responsibilities...", "新职责的目标与范围..."],
+    "Chưa có chức vụ đang hoạt động để chọn. Vui lòng liên hệ bộ phận nhân sự.": ["No active positions are available. Please contact HR.", "暂无可选的在职职位，请联系人力资源部门。"],
+    "HỒ SƠ XÉT DUYỆT": ["REVIEW PROFILE", "审批档案"],
+    "Chức vụ hiện tại": ["Current position", "当前职位"],
+    "Quản lý trực tiếp": ["Direct manager", "直属经理"],
+    "Chưa cập nhật": ["Not provided", "尚未填写"],
+    "Người đề xuất": ["Requester", "申请人"],
+    "Đề xuất:": ["Proposal:", "申请内容："],
+    "Vai trò dự kiến:": ["Proposed role:", "拟定角色："],
+    "Ngày hiệu lực:": ["Effective date:", "生效日期："],
+    "XÉT DUYỆT": ["REVIEW", "审批"],
+    "Vai trò dự kiến": ["Proposed role", "拟定角色"],
+    "Nhập ghi chú xét duyệt...": ["Enter a review note...", "请输入审批备注..."],
+    "Ghi chú (bắt buộc)": ["Note (required)", "备注（必填）"],
+    "Đang xử lý...": ["Processing...", "正在处理..."],
+    "Phát triển sự nghiệp": ["Career development", "职业发展"],
     "Gửi nguyện vọng phát triển và theo dõi quá trình xét duyệt.": ["Submit a career progression request and track its review.", "提交职业发展申请并跟踪审批进度。"],
     "Tổng đề xuất": ["Total requests", "申请总数"],
     "Chờ xử lý": ["Pending", "待处理"],
@@ -503,7 +539,6 @@ const phrases = {
     "Đã ghi nhận chấm công.": ["Attendance recorded.", "考勤已记录。"],
     "Chấm công thất bại.": ["Attendance failed.", "考勤失败。"],
     "Đã có lần chấm cùng loại gần đây.": ["A recent check of this type already exists.", "近期已有同类型打卡记录。"],
-    "Đang xử lý...": ["Processing...", "正在处理..."],
     "Hiện mật khẩu": ["Show password", "显示密码"],
     "Ẩn mật khẩu": ["Hide password", "隐藏密码"],
     "Nhập tên đăng nhập": ["Enter username", "请输入用户名"],
@@ -635,6 +670,14 @@ export const translate = (text, language) => {
     const trailing = text.match(/\s*$/)?.[0] || "";
     const pick = (key) => phrases[key]?.[language === "zh" ? 1 : 0];
     let phrase = pick(trimmed);
+    if (!phrase) {
+        const dynamic = trimmed.match(/^(Vai trò sau duyệt:|Hiệu lực dự kiến|Mã mới|Ghi chú:|Vai trò dự kiến:|Ngày hiệu lực:|Đề xuất:|Lý do:|Người đề xuất|Chức vụ hiện tại|Quản lý trực tiếp|Ngày vào làm|Số điện thoại|Email)\s*(.*)$/);
+        if (dynamic && pick(dynamic[1])) phrase = `${pick(dynamic[1])}${dynamic[2] ? ` ${dynamic[2]}` : ""}`;
+    }
+    if (!phrase) {
+        const proposer = trimmed.match(/^(Tự đề xuất|Được đề cử) bởi\s+(.+)$/);
+        if (proposer) phrase = `${pick(proposer[1])} ${language === "zh" ? "由" : "by"} ${proposer[2]}`;
+    }
     if (!phrase) {
         const wrapped = trimmed.match(/^([^\p{L}\p{N}]+\s*)(.+)$/u);
         if (wrapped && pick(wrapped[2])) phrase = wrapped[1] + pick(wrapped[2]);
