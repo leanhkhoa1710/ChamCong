@@ -24,6 +24,7 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
         `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
     );
     const [showAll, setShowAll] = useState(true);
+    const [search, setSearch] = useState("");
 
     const [modalOpen, setModalOpen] = useState(false);
     const [editRow, setEditRow] = useState(null);
@@ -91,6 +92,15 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
         }),
         [monthRows, employees]
     );
+
+    const visibleEmployees = useMemo(() => {
+        const q = search.trim().toLocaleLowerCase();
+        if (!q) return perEmployee;
+        return perEmployee.filter(({ emp }) =>
+            [emp.fullName, emp.employeeCode, emp.email]
+                .some((value) => String(value || "").toLocaleLowerCase().includes(q))
+        );
+    }, [perEmployee, search]);
 
     const latestRowOf = (empId) =>
         rows
@@ -192,7 +202,7 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
                         </section>
 
                         <section className="att-card">
-                            <div className="admin-toolbar">
+                            <div className="admin-toolbar stats-toolbar">
                                 <input
                                     type="month"
                                     value={month}
@@ -218,6 +228,16 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
                                 >
                                     + Thêm bản ghi
                                 </button>
+                                <label className="admin-search">
+                                    <span aria-hidden="true">⌕</span>
+                                    <input
+                                        type="search"
+                                        value={search}
+                                        onChange={(event) => setSearch(event.target.value)}
+                                        placeholder="Tìm mã hoặc tên nhân viên..."
+                                        aria-label="Tìm nhân viên"
+                                    />
+                                </label>
                             </div>
 
                             <div className="att-table-wrap">
@@ -233,17 +253,18 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
                                             <th /></tr>
                                     </thead>
                                     <tbody>
-                                        {perEmployee.length === 0 ? (
+                                        {visibleEmployees.length === 0 ? (
                                             <tr>
                                                 <td colSpan="7">
                                                     <span className="att-muted">
-                                                        Chưa có dữ liệu trong
-                                                        tháng này.
+                                                        {search.trim()
+                                                            ? "Không tìm thấy nhân viên phù hợp."
+                                                            : "Chưa có dữ liệu trong tháng này."}
                                                     </span>
                                                 </td>
                                             </tr>
                                         ) : (
-                                            perEmployee.map(({ emp, stat }) => {
+                                            visibleEmployees.map(({ emp, stat }) => {
                                                 const latest =
                                                     latestRowOf(emp.id);
                                                 return (

@@ -87,6 +87,7 @@ const ResignedPage = ({ hrMode = false }) => {
                 },
             ]}
             searchKeys={["employeeCode", "fullName", "departmentName"]}
+            searchPlaceholder="Tìm mã nhân viên, họ tên, phòng ban..."
             emptyText="Không có nhân viên nào đã nghỉ việc."
             hrMode={hrMode}
         />

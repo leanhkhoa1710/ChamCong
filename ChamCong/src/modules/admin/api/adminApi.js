@@ -113,6 +113,9 @@ const adminApi = {
     updateEmployee(payload) {
         return axiosClient.put("/Employee/update", payload);
     },
+    softDeleteEmployee(id) {
+        return axiosClient.delete(`/Employee/soft-delete/${id}`);
+    },
     createSalary(payload) {
         return axiosClient.post("/EmployeeSalary/create", payload);
     },

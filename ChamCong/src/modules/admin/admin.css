@@ -241,6 +241,51 @@
     color: #182a3a;
 }
 
+.admin-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: min(100%, 340px);
+    min-width: 220px;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid #d1dbe5;
+    border-radius: 9px;
+    background: #fff;
+    color: #718397;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.admin-search:focus-within {
+    border-color: #1673ad;
+    box-shadow: 0 0 0 3px rgba(22, 115, 173, 0.12);
+}
+
+.admin-search > span {
+    font-size: 21px;
+    line-height: 1;
+}
+
+.admin-search input[type="search"] {
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #182a3a;
+    font: inherit;
+    font-size: 13px;
+}
+
+.admin-search input[type="search"]:focus { box-shadow: none; }
+.admin-toolbar.stats-toolbar .admin-search { margin-left: auto; }
+.admin-toolbar.attendance-history-toolbar .admin-search { margin-left: auto; }
+
+@media (max-width: 640px) {
+    .admin-search { width: 100%; max-width: none; }
+}
+
 .admin-check {
     display: flex;
     align-items: center;

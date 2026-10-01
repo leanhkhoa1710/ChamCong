@@ -56,6 +56,7 @@ const LeaveAdminPage = ({ hrMode = false }) => {
                 },
             ]}
             searchKeys={["employeeName", "leaveTypeName", "reason"]}
+            searchPlaceholder="Tìm nhân viên, loại phép, lý do..."
             filter={{
                 key: "status",
                 options: [

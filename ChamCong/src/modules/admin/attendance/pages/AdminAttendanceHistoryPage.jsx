@@ -26,6 +26,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const q = searchParams.get("employee") || "";
     const [month, setMonth] = useState("");
+    const [search, setSearch] = useState("");
 
     const setQ = (value) => {
         const p = new URLSearchParams(searchParams);
@@ -65,8 +66,13 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
     }, []);
 
     const filtered = useMemo(() => {
+        const term = search.trim().toLocaleLowerCase();
         return rows.filter((r) => {
             if (q && r.employeeId !== q) return false;
+            const employee = empMap[r.employeeId];
+            const haystack = [r.employeeCode, r.employeeName, employee?.employeeCode, employee?.fullName]
+                .join(" ").toLocaleLowerCase();
+            if (term && !haystack.includes(term)) return false;
             if (month) {
                 const d = new Date(r.attendanceDate);
                 const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -74,7 +80,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
             }
             return true;
         });
-    }, [rows, q, month]);
+    }, [rows, q, month, search, empMap]);
 
     // ===== KPI + báo cáo =====
     const kpi = useMemo(() => {
@@ -128,7 +134,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
     const exportMonth = () => {
         const target = month
             ? filtered
-            : rows.filter((r) => {
+            : filtered.filter((r) => {
                   const d = new Date(r.attendanceDate);
                   const now = new Date();
                   return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
@@ -240,7 +246,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                         </div>
 
                         <section className="att-card">
-                            <div className="admin-toolbar">
+                            <div className="admin-toolbar attendance-history-toolbar">
                                 <select
                                     value={q}
                                     onChange={(e) => setQ(e.target.value)}
@@ -258,6 +264,16 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                     onChange={(e) => setMonth(e.target.value)}
                                 />
                                 <span className="att-muted">{filtered.length} bản ghi</span>
+                                <label className="admin-search">
+                                    <span aria-hidden="true">⌕</span>
+                                    <input
+                                        type="search"
+                                        value={search}
+                                        onChange={(event) => setSearch(event.target.value)}
+                                        placeholder="Tìm mã hoặc tên nhân viên..."
+                                        aria-label="Tìm nhân viên"
+                                    />
+                                </label>
                                 <button
                                     type="button"
                                     className="admin-link-btn"

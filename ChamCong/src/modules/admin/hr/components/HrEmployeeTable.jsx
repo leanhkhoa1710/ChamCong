@@ -12,6 +12,7 @@ const HrEmployeeTable = ({
     onView,
     onEdit,
     onArchive,
+    onDelete,
 }) => {
     const allSelected =
         employees.length > 0 && employees.every((e) => selected.has(e.id));
@@ -112,6 +113,7 @@ const HrEmployeeTable = ({
                                             >
                                                 {archived ? "Đã lưu trữ" : "Lưu trữ"}
                                             </button>
+                                            <button type="button" className="hr-mini-btn hr-mini-btn--delete" onClick={() => onDelete(e)} title="Xóa hồ sơ">Xóa</button>
                                         </div>
                                     </td>
                                 </tr>

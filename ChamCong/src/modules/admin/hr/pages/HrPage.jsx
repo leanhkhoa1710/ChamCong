@@ -24,6 +24,7 @@ const HrPage = () => {
     const [page, setPage] = useState(1);
     const [selected, setSelected] = useState(() => new Set());
     const [showForm, setShowForm] = useState(false);
+    const [editingEmployee, setEditingEmployee] = useState(null);
     const [viewEmp, setViewEmp] = useState(null);
     const [tab, setTab] = useState("active"); // active | archive
 
@@ -89,6 +90,21 @@ const HrPage = () => {
                 "Không thể lưu trữ nhân viên: " +
                     (error.response?.data?.message || error.message)
             );
+        }
+    };
+
+    const deleteEmployee = async (employee) => {
+        if (!window.confirm(`Xóa hồ sơ của ${employee.fullName}? Hồ sơ sẽ được ẩn khỏi danh sách.`)) return;
+        try {
+            await adminApi.softDeleteEmployee(employee.id);
+            setSelected((prev) => {
+                const next = new Set(prev);
+                next.delete(employee.id);
+                return next;
+            });
+            await data.reload();
+        } catch (error) {
+            window.alert("Không thể xóa hồ sơ: " + (error.response?.data?.message || error.message));
         }
     };
 
@@ -174,7 +190,7 @@ const HrPage = () => {
                             filters={filters}
                             setters={setters}
                             hasActiveFilter={hasActiveFilter}
-                            onAdd={() => setShowForm(true)}
+                            onAdd={() => { setEditingEmployee(null); setShowForm(true); }}
                             onImportFile={onImportFile}
                             onExport={onExport}
                             onTemplate={onTemplate}
@@ -193,8 +209,9 @@ const HrPage = () => {
                                 salaryMap,
                             }}
                             onView={setViewEmp}
-                            onEdit={(e) => setViewEmp(e)}
+                            onEdit={(e) => { setViewEmp(null); setEditingEmployee(e); setShowForm(true); }}
                             onArchive={archiveEmployee}
+                            onDelete={deleteEmployee}
                         />
                         {tab === "archive" && (
                             <p className="hr-note">
@@ -220,11 +237,13 @@ const HrPage = () => {
                                 departments={data.departments}
                                 positions={data.positions}
                                 banks={data.banks || []}
+                                employee={editingEmployee}
                                 onSaved={() => {
                                     setShowForm(false);
-                                    location.reload();
+                                    setEditingEmployee(null);
+                                    data.reload();
                                 }}
-                                onCancel={() => setShowForm(false)}
+                                onCancel={() => { setShowForm(false); setEditingEmployee(null); }}
                             />
                         )}
 
@@ -234,30 +253,26 @@ const HrPage = () => {
                                 onClick={() => setViewEmp(null)}
                             >
                                 <div className="hr-view-box" onClick={(e) => e.stopPropagation()}>
-                                    <h3>
-                                        {viewEmp.fullName} — {viewEmp.employeeCode}
-                                    </h3>
+                                    <h3>{viewEmp.fullName} <small>· {viewEmp.employeeCode}</small></h3>
                                     <dl className="hr-view-grid">
+                                        <span>Ngày sinh</span><dd>{viewEmp.birthDate ? new Date(viewEmp.birthDate).toLocaleDateString("vi-VN") : "—"}</dd>
+                                        <span>Giới tính</span><dd>{({ 1: "Nam", 2: "Nữ" })[viewEmp.gender] || "Không tiết lộ"}</dd>
+                                        <span>Điện thoại</span><dd>{viewEmp.phoneNumber || "—"}</dd>
+                                        <span>Email</span><dd>{viewEmp.email || "—"}</dd>
+                                        <span>CCCD</span><dd>{viewEmp.citizenId || "—"}</dd>
                                         <span>Phòng ban</span>
                                         <dd>{viewEmp.departmentName || "—"}</dd>
                                         <span>Chức vụ</span>
                                         <dd>{viewEmp.positionName || "—"}</dd>
-                                        <span>Email</span>
-                                        <dd>{viewEmp.email || "—"}</dd>
-                                        <span>Điện thoại</span>
-                                        <dd>{viewEmp.phoneNumber || "—"}</dd>
-                                        <span>CCCD</span>
-                                        <dd>{viewEmp.citizenId || "—"}</dd>
-                                        <span>Trạng thái</span>
-                                        <dd>{viewEmp.status}</dd>
+                                        <span>Ngày vào làm</span><dd>{viewEmp.startDate ? new Date(viewEmp.startDate).toLocaleDateString("vi-VN") : "—"}</dd>
+                                        <span>Địa chỉ</span><dd>{viewEmp.currentAddress || viewEmp.permanentAddress || "—"}</dd>
+                                        <span>Ghi chú</span><dd>{viewEmp.note || "—"}</dd>
+                                        <span>Trạng thái</span><dd>{({ 1: "Thử việc", 2: "Đang làm", 3: "Tạm nghỉ", 4: "Đã nghỉ việc", 5: "Chấm dứt hợp đồng" })[viewEmp.status] || "Chưa rõ"}</dd>
                                     </dl>
-                                    <button
-                                        type="button"
-                                        className="hr-btn hr-btn--primary"
-                                        onClick={() => setViewEmp(null)}
-                                    >
-                                        Đóng
-                                    </button>
+                                    <div className="hr-view-actions">
+                                        <button type="button" className="hr-btn hr-btn--ghost" onClick={() => setViewEmp(null)}>Đóng</button>
+                                        <button type="button" className="hr-btn hr-btn--primary" onClick={() => { setEditingEmployee(viewEmp); setViewEmp(null); setShowForm(true); }}>Sửa hồ sơ</button>
+                                    </div>
                                 </div>
                             </div>
                         )}

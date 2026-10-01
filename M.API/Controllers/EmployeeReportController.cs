@@ -68,11 +68,12 @@ public class EmployeeReportController(DatabaseContext db, IWebHostEnvironment en
             return BadRequest("Vui lòng nhập tên, loại và kỳ báo cáo hợp lệ.");
 
         var report = form.ReportId.HasValue
-            ? await db.EmployeeReports.Include(r => r.Versions).FirstOrDefaultAsync(r => r.Id == form.ReportId && r.EmployeeId == employeeId)
+            ? await db.EmployeeReports.Include(r => r.Versions).ThenInclude(v => v.Attachments).FirstOrDefaultAsync(r => r.Id == form.ReportId && r.EmployeeId == employeeId)
             : null;
         if (report != null && report.Status is not (EmployeeReportStatus.Rejected or EmployeeReportStatus.ChangesRequested or EmployeeReportStatus.UpperChangesRequested)) return BadRequest("Chỉ có thể nộp lại báo cáo bị từ chối hoặc yêu cầu chỉnh sửa.");
         if (form.ReportId.HasValue && report == null) return NotFound();
         var isResubmission = report != null;
+        var oldStoredNames = new List<string>();
         var now = DateTime.UtcNow;
         if (report == null)
         {
@@ -81,6 +82,10 @@ public class EmployeeReportController(DatabaseContext db, IWebHostEnvironment en
         }
         else
         {
+            var oldVersions = report.Versions.ToList();
+            oldStoredNames = oldVersions.SelectMany(version => new[] { version.StoredName }.Concat(version.Attachments.Select(attachment => attachment.StoredName))).Distinct().ToList();
+            db.EmployeeReportVersions.RemoveRange(oldVersions);
+            report.Versions.Clear();
             report.Status = EmployeeReportStatus.PendingManager;
             report.ManagerComment = null;
             report.UpperRequest = null;
@@ -113,6 +118,7 @@ public class EmployeeReportController(DatabaseContext db, IWebHostEnvironment en
         AddEvent(report, isResubmission ? "Nhân viên nộp lại báo cáo" : "Nhân viên gửi báo cáo", null);
         if (!isResubmission) AddEvent(report, "Hệ thống chuyển báo cáo đến quản lý", null);
         await db.SaveChangesAsync();
+        DeleteStoredFiles(oldStoredNames);
         return Ok(new BaseResponse<object>(StatusCodeHelper.OK, ResponseCodeConstants.SUCCESS, new { report.Id, report.ReportCode }));
     }
 
@@ -378,6 +384,15 @@ public class EmployeeReportController(DatabaseContext db, IWebHostEnvironment en
         Directory.CreateDirectory(PrivateDirectory);
         await using var stream = System.IO.File.Create(Path.Combine(PrivateDirectory, storedName));
         await file.CopyToAsync(stream);
+    }
+    private void DeleteStoredFiles(IEnumerable<string> storedNames)
+    {
+        foreach (var storedName in storedNames)
+        {
+            try { System.IO.File.Delete(Path.Combine(PrivateDirectory, Path.GetFileName(storedName))); }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        }
     }
     private static string MimeFor(string? name) => Path.GetExtension(name ?? "").ToLowerInvariant() switch
     {

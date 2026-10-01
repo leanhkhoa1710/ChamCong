@@ -27,10 +27,11 @@ const HR_ADDForm = ({
     departments,
     positions,
     banks,
+    employee = null,
     onSaved,
     onCancel,
 }) => {
-    const [form, setForm] = useState({
+    const [form, setForm] = useState(() => ({
         // 1. Danh tính
         employeeCode: "",
         givenName: "",
@@ -77,7 +78,29 @@ const HR_ADDForm = ({
         // 10. Kết thúc làm việc
         endWorkDate: "",
         endWorkReason: "",
-    });
+        ...(employee ? {
+            employeeCode: employee.employeeCode || "",
+            givenName: employee.givenName || "",
+            familyName: employee.familyName || "",
+            birthDate: (employee.birthDate || "").slice(0, 10),
+            gender: employee.gender ?? 0,
+            citizenId: employee.citizenId || "",
+            citizenIdIssuedDate: (employee.citizenIdIssuedDate || "").slice(0, 10),
+            citizenIdIssuedPlace: employee.citizenIdIssuedPlace || "",
+            phoneNumber: employee.phoneNumber || "",
+            email: employee.email || "",
+            permanentAddress: employee.permanentAddress || "",
+            currentAddress: employee.currentAddress || "",
+            departmentId: employee.departmentId || "",
+            positionId: employee.positionId || "",
+            startDate: (employee.startDate || "").slice(0, 10),
+            probationEndDate: (employee.probationEndDate || "").slice(0, 10),
+            laborType: employee.laborType ?? 1,
+            status: employee.status ?? 1,
+            usePhoneAttendance: Boolean(employee.usePhoneAttendance),
+            note: employee.note || "",
+        } : {}),
+    }));
 
     const set = (k) => (e) =>
         setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -117,7 +140,9 @@ const HR_ADDForm = ({
             note: form.note || null,
         };
         try {
-            const res = await d.createEmployee(base);
+            const res = employee
+                ? await d.updateEmployee({ ...base, id: employee.id, userId: employee.userId, managerId: employee.managerId })
+                : await d.createEmployee(base);
             onSaved?.(res?.data?.data?.id || null, missing);
         } catch (e) {
             alert(
@@ -140,7 +165,7 @@ const HR_ADDForm = ({
                 onClick={(event) => event.stopPropagation()}
             >
                 <div className="hrf-head">
-                    <h3 id="hrf-title">Thêm nhân viên</h3>
+                    <h3 id="hrf-title">{employee ? "Sửa hồ sơ nhân viên" : "Thêm nhân viên"}</h3>
                     <button type="button" onClick={onCancel} aria-label="Đóng">
                         ×
                     </button>
@@ -242,6 +267,7 @@ const HR_ADDForm = ({
                     </label>
                 </Grp>
 
+                {!employee && <>
                 <Grp t="5. Hợp đồng">
                     <F l="Số hợp đồng">
                         <input className={inp} value={form.contractNumber} onChange={set("contractNumber")} />
@@ -304,6 +330,7 @@ const HR_ADDForm = ({
                         TK chính
                     </label>
                 </Grp>
+                </>}
 
                 <Grp t="9. Ghi chú">
                     <F l="Ghi chú">
@@ -311,14 +338,14 @@ const HR_ADDForm = ({
                     </F>
                 </Grp>
 
-                <Grp t="10. Kết thúc làm việc">
+                {!employee && <Grp t="10. Kết thúc làm việc">
                     <F l="Ngày kết thúc">
                         <input type="date" className={inp} value={form.endWorkDate} onChange={set("endWorkDate")} />
                     </F>
                     <F l="Lý do">
                         <input className={inp} value={form.endWorkReason} onChange={set("endWorkReason")} />
                     </F>
-                </Grp>
+                </Grp>}
                 </div>
 
                 <div className="hrf-foot">
@@ -337,7 +364,7 @@ const HR_ADDForm = ({
                             disabled={!canSave}
                             onClick={save}
                         >
-                            Lưu hồ sơ
+                            {employee ? "Lưu thay đổi" : "Lưu hồ sơ"}
                         </button>
                     </div>
                 </div>

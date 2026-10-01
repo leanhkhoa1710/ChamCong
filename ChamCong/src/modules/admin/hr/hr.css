@@ -222,6 +222,9 @@
     color: #704600;
 }
 
+.hr-mini-btn--delete { border-color: #f1caca; color: #a52a2a; }
+.hr-mini-btn--delete:hover:not(:disabled) { border-color: #d88; background: #fff5f5; color: #8f1c1c; }
+
 .hr-mini-btn:disabled {
     border-color: #e5eaf0;
     background: #f5f7f9;
@@ -624,7 +627,9 @@
 
 .hr-view-box {
     width: 100%;
-    max-width: 460px;
+    max-width: 620px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
     background: #fff;
     border-radius: 16px;
     padding: 24px 26px;
@@ -638,6 +643,9 @@
     font-weight: 700;
     color: #0e1a26;
 }
+
+.hr-view-box h3 small { color: #718397; font-size: 13px; font-weight: 500; }
+.hr-view-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
 .hr-view-grid {
     margin: 0 0 16px;

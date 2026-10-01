@@ -15,6 +15,7 @@ const AdminListPage = ({
     fetcher,
     columns, // [{key,label,date,statusKind}]
     searchKeys = [],
+    searchPlaceholder = "Tìm theo thông tin...",
     filter, // {key, options:[[v,label]]} (tùy chọn)
     approve,
     reject,
@@ -89,13 +90,16 @@ const AdminListPage = ({
                 {!loading && !error && (
                     <div className="att-card">
                         <div className="admin-toolbar">
-                            <input
-                                type="search"
-                                placeholder="🔍 Tìm..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                style={{ width: 220 }}
-                            />
+                            <label className="admin-search">
+                                <span aria-hidden="true">⌕</span>
+                                <input
+                                    type="search"
+                                    placeholder={searchPlaceholder}
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    aria-label={searchPlaceholder}
+                                />
+                            </label>
                             {filter?.options && filter.options.length > 0 && (
                                 <select
                                     value={filterVal}
