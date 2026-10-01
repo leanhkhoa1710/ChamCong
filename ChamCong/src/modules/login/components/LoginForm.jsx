@@ -31,7 +31,7 @@ const LoginForm = () => {
       const data = response.data?.data ?? response.data;
 
       saveAuth(data);
-      window.location.href = "/attendance";
+      window.location.href = "/home";
     } catch (err) {
       const responseMessage = err.response?.data?.message;
       const responseData = err.response?.data?.data;
