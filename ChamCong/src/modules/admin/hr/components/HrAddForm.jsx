@@ -177,10 +177,10 @@ const HR_ADDForm = ({
                         <input className={inp} value={form.employeeCode} onChange={set("employeeCode")} placeholder="NV001" />
                     </F>
                     <F l="Họ / tên đệm" req>
-                        <input className={inp} value={form.givenName} onChange={set("givenName")} placeholder="Văn" />
+                        <input className={inp} value={form.givenName} onChange={set("givenName")} placeholder="Nguyễn Văn" />
                     </F>
                     <F l="Tên" req>
-                        <input className={inp} value={form.familyName} onChange={set("familyName")} placeholder="Nguyễn" />
+                        <input className={inp} value={form.familyName} onChange={set("familyName")} placeholder="An" />
                     </F>
                     <F l="Ngày sinh">
                         <input type="date" className={inp} value={form.birthDate} onChange={set("birthDate")} />

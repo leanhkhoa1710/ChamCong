@@ -78,6 +78,7 @@ const HrFilterBar = ({
                     type="button"
                     className="hr-btn hr-btn--ghost"
                     onClick={() => fileRef.current?.click()}
+                    title="Nhập danh sách nhân viên từ tệp Excel hoặc CSV"
                 >
                     ⬆ Nhập Excel
                 </button>
@@ -107,7 +108,7 @@ const HrFilterBar = ({
             <input
                 ref={fileRef}
                 type="file"
-                accept=".csv,.xls,.xlsx"
+                accept=".xlsx,.csv"
                 hidden
                 onChange={(e) => {
                     onImportFile?.(e.target.files?.[0]);

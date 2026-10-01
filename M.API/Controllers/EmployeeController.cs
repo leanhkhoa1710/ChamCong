@@ -88,12 +88,12 @@ namespace M.API.Controllers
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeModelView model)
         {
-            await _employeeService.CreateAsync(model);
+            Guid employeeId = await _employeeService.CreateAsync(model);
 
-            return Ok(new BaseResponse<string>(
+            return Ok(new BaseResponse<Guid>(
                 statusCode: StatusCodeHelper.OK,
                 code: ResponseCodeConstants.SUCCESS,
-                data: "Employee created successfully!"
+                data: employeeId
             ));
         }
 

@@ -1,6 +1,17 @@
 import { STATUS_LABELS, STATUS_TONES } from "../hooks/useHrFilters";
 import { docCompleteness } from "../hrUtils";
 
+const MISSING_SECTIONS = [
+    "danh tính",
+    "pháp lý",
+    "liên hệ",
+    "điều kiện",
+    "hợp đồng",
+    "lương&chế độ",
+    "bảo hiểm&thue",
+    "thanh toán",
+];
+
 // Bảng nhân sự: checkbox + Mã NV + Họ tên + Phòng ban + Chức vụ + Trạng thái
 // + Lương + Hồ sơ % + Còn thiếu + Xem/Sửa/Lưu trữ.
 const HrEmployeeTable = ({
@@ -12,14 +23,20 @@ const HrEmployeeTable = ({
     onView,
     onEdit,
     onArchive,
-    onDelete,
 }) => {
     const allSelected =
         employees.length > 0 && employees.every((e) => selected.has(e.id));
 
     return (
-        <div className="hr-table-wrap">
-            <table className="hr-table">
+        <div className="hr-employee-list">
+            <div className="hr-missing-legend" aria-label="Chú thích các nhóm hồ sơ">
+                <strong>Còn thiếu:</strong>
+                {MISSING_SECTIONS.map((section, index) => (
+                    <span key={section}><b>{index + 1}</b> {section === "bảo hiểm&thue" ? "bảo hiểm & thuế" : section === "lương&chế độ" ? "lương & chế độ" : section}</span>
+                ))}
+            </div>
+            <div className="hr-table-wrap">
+                <table className="hr-table">
                 <thead>
                     <tr>
                         <th className="hr-col-check">
@@ -85,8 +102,12 @@ const HrEmployeeTable = ({
                                     </td>
                                     <td className="hr-missing">
                                         {comp.missing.length
-                                            ? comp.missing.join(", ")
-                                            : "Đủ"}
+                                            ? comp.missing.map((section) => (
+                                                <span className="hr-missing-number" key={section} title={section}>
+                                                    {MISSING_SECTIONS.indexOf(section) + 1}
+                                                </span>
+                                            ))
+                                            : <span className="hr-missing-complete">Đủ</span>}
                                     </td>
                                     <td>
                                         <div className="hr-row-actions">
@@ -113,7 +134,6 @@ const HrEmployeeTable = ({
                                             >
                                                 {archived ? "Đã lưu trữ" : "Lưu trữ"}
                                             </button>
-                                            <button type="button" className="hr-mini-btn hr-mini-btn--delete" onClick={() => onDelete(e)} title="Xóa hồ sơ">Xóa</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -121,7 +141,8 @@ const HrEmployeeTable = ({
                         })
                     )}
                 </tbody>
-            </table>
+                </table>
+            </div>
         </div>
     );
 };

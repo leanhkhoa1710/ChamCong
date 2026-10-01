@@ -92,7 +92,7 @@ namespace M.Services.Service
 
             return employee?.ToViewModel();
         }
-        public async Task CreateAsync(CreateEmployeeModelView model)
+        public async Task<Guid> CreateAsync(CreateEmployeeModelView model)
         {
             IGenericRepository<Employee> repo =
                 _unitOfWork.GetRepository<Employee>();
@@ -200,6 +200,7 @@ namespace M.Services.Service
 
             await repo.InsertAsync(employee);
             await _unitOfWork.SaveAsync();
+            return employee.Id;
         }
 
         public async Task UpdateAsync(UpdateEmployeeModelView model)
