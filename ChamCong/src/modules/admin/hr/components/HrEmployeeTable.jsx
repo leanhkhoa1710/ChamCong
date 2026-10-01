@@ -13,7 +13,7 @@ const MISSING_SECTIONS = [
 ];
 
 // Bảng nhân sự: checkbox + Mã NV + Họ tên + Phòng ban + Chức vụ + Trạng thái
-// + Lương + Hồ sơ % + Còn thiếu + Xem/Sửa/Lưu trữ.
+// + Lương + Hồ sơ % + Còn thiếu + Xem/Sửa.
 const HrEmployeeTable = ({
     employees,
     selected,
@@ -22,7 +22,6 @@ const HrEmployeeTable = ({
     data,
     onView,
     onEdit,
-    onArchive,
 }) => {
     const allSelected =
         employees.length > 0 && employees.every((e) => selected.has(e.id));
@@ -68,7 +67,6 @@ const HrEmployeeTable = ({
                     ) : (
                         employees.map((e) => {
                             const comp = docCompleteness(e, data);
-                            const archived = [4, 5].includes(e.status);
                             return (
                                 <tr key={e.id}>
                                     <td className="hr-col-check">
@@ -124,15 +122,6 @@ const HrEmployeeTable = ({
                                                 onClick={() => onEdit(e)}
                                             >
                                                 Sửa
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="hr-mini-btn hr-mini-btn--archive"
-                                                onClick={() => onArchive(e)}
-                                                disabled={archived}
-                                                title={archived ? "Nhân viên đã được lưu trữ" : "Lưu hồ sơ vào danh sách đã nghỉ"}
-                                            >
-                                                {archived ? "Đã lưu trữ" : "Lưu trữ"}
                                             </button>
                                         </div>
                                     </td>

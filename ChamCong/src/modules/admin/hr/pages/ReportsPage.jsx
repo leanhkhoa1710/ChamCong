@@ -197,16 +197,16 @@ export default function ReportsPage() {
                     <Kpi icon="▣" label="Tổng báo cáo" value={counts.total} /><Kpi icon="⇣" label="Chờ tôi duyệt" value={counts.pending} tone="pending" /><Kpi icon="⇡" label="Chờ gửi cấp trên" value={counts.toUpper} tone="sent" /><Kpi icon="⚑" label="Cấp trên yêu cầu" value={counts.upperRequest} tone="rejected" />
                 </div>
                 <div className="hr-file-kpis hr-file-kpis-bottom"><Kpi icon="✓" label="Hoàn tất" value={counts.complete} tone="approved" /><Kpi icon="↻" label="Cần xử lý" value={counts.needsWork} tone="rejected" /><Kpi icon="!" label="Quá hạn" value={counts.overdue} tone="overdue" /></div>
-                <ReportSection title="📥 1. Báo cáo cấp dưới gửi đến tôi" action={() => filter("status", String(S.pending))}>
+                <ReportSection title="📥 1. Báo cáo cấp dưới gửi đến tôi">
                     <ReportTable reports={inbound} columns="inbound" open={open} onAction={startDialog} />
                 </ReportSection>
-                <ReportSection id="hr-file-outbound-section" title="📤 2. Báo cáo gửi cấp trên" action={() => filter("status", String(S.sent))}>
+                <ReportSection id="hr-file-outbound-section" title="📤 2. Báo cáo gửi cấp trên">
                     <ReportTable reports={outbound} columns="outbound" open={open} onAction={startDialog} complete={complete} isUpperRecipient={isUpperRecipient} />
                 </ReportSection>
-                <ReportSection title="📌 3. Yêu cầu / phản hồi từ cấp trên" action={() => filter("status", String(S.upperRequest))}>
+                <ReportSection title="📌 3. Yêu cầu / phản hồi từ cấp trên">
                     <ReportTable reports={upperRequests} columns="requests" open={open} onAction={startDialog} complete={complete} />
                 </ReportSection>
-                <ReportSection title="📋 4. Tất cả báo cáo" action={load}>
+                <ReportSection title="📋 4. Tất cả báo cáo">
                     <ReportTable reports={visible} columns="all" open={open} onAction={startDialog} />
                     <footer className="hr-file-pagination"><span>Hiển thị {reports.length ? (page - 1) * 20 + 1 : 0}–{Math.min(page * 20, reports.length)} trong {reports.length} báo cáo</span><div><button disabled={page <= 1} onClick={() => setPage(page - 1)}>‹</button><span>{page} / {pages}</span><button disabled={page >= pages} onClick={() => setPage(page + 1)}>›</button></div></footer>
                 </ReportSection>
@@ -219,7 +219,7 @@ export default function ReportsPage() {
 }
 
 function Kpi({ icon, label, value, tone = "" }) { return <article className={`hr-file-kpi ${tone}`}><span>{icon}</span><small>{label}</small><strong>{value}</strong></article>; }
-function ReportSection({ id, title, action, children }) { return <section id={id} className="hr-file-section"><header><h2>{title}</h2>{action && <button onClick={action}>Xem tất cả →</button>}</header>{children}</section>; }
+function ReportSection({ id, title, children }) { return <section id={id} className="hr-file-section"><header><h2>{title}</h2></header>{children}</section>; }
 function ReportTable({ reports, columns, open, onAction, complete, isUpperRecipient = () => false }) {
     const empty = reports.length === 0;
     return <div className="att-card hr-file-table-wrap"><table className="hr-file-table"><thead><tr><th>Mã BC</th><th>Tên báo cáo</th><th>{columns === "outbound" ? "Bộ phận" : "Phòng ban"}</th>{columns !== "outbound" && columns !== "requests" && <th>Người gửi</th>}{columns === "outbound" && <><th>Người nhận</th><th>Ngày gửi</th></>}{columns === "requests" && <><th>Nội dung yêu cầu</th><th>Người gửi</th><th>Hạn xử lý</th></>}{columns === "all" && <th>Cấp hiện tại</th>}{columns !== "requests" && columns !== "outbound" && <th>Deadline</th>}<th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
