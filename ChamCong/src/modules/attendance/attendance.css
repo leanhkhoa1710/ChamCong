@@ -13,18 +13,8 @@
     overflow-y: auto;
 }
 
-/* Sidebar gập (chỉ còn dải hẹp, label ẩn, tooltip qua title) */
-.att-sidebar.collapsed {
-    width: 76px;
-    padding: 20px 8px;
-}
-
-.att-sidebar.collapsed .att-nav-item {
-    font-size: 0;
-    text-align: center;
-    padding: 10px;
-    overflow: hidden;
-}
+/* Ẩn hoàn toàn sidebar để nội dung sử dụng toàn bộ chiều ngang. */
+.att-sidebar.collapsed { display: none; }
 
 .att-sidebar-nav {
     display: flex;
@@ -1099,16 +1089,6 @@
         height: auto;
         border-right: none;
         border-bottom: 1px solid #e8edf2;
-    }
-
-    .att-sidebar.collapsed {
-        width: 100%;
-    }
-
-    .att-sidebar.collapsed .att-nav-item {
-        font-size: 14px;
-        text-align: left;
-        padding: 10px 14px;
     }
 
     .att-main {

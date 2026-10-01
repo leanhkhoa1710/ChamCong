@@ -376,6 +376,43 @@
     resize: vertical;
 }
 
+.att-employee-picker { position: relative; }
+.att-employee-picker > input { box-sizing: border-box; width: 100%; }
+.att-employee-options,
+.att-employee-empty {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 4px);
+    right: 0;
+    left: 0;
+    overflow: auto;
+    max-height: 220px;
+    border: 1px solid #d1dbe5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 22px rgba(14, 26, 38, 0.14);
+}
+.att-employee-options button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-bottom: 1px solid #eef2f6;
+    background: #fff;
+    color: #0e1a26;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.att-employee-options button:last-child { border-bottom: 0; }
+.att-employee-options button:hover,
+.att-employee-options button[aria-selected="true"] { background: #f0f7fc; }
+.att-employee-options button span { color: #66788a; font-size: 12px; white-space: nowrap; }
+.att-employee-empty { padding: 11px 12px; color: #66788a; font-size: 13px; font-weight: 400; }
+
 .att-form-actions {
     display: flex;
     justify-content: flex-end;
