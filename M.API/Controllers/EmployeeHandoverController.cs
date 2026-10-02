@@ -20,6 +20,15 @@ public class EmployeeHandoverController(DatabaseContext db, IWebHostEnvironment 
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
         { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".zip" };
 
+    // Frontend gửi AssetsJson/ProjectsJson ở camelCase (assetType, projectName...)
+    // còn model C# dùng PascalCase. Dùng chung 1 options để bind đọc/ghi nhất quán
+    // (camelCase + không phân biệt hoa thường) -> hết lỗi 400 "Vui lòng nhập dự án".
+    private static readonly JsonSerializerOptions Json = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true
+    };
+
     [HttpGet("mine")]
     public async Task<IActionResult> Mine()
     {
@@ -56,13 +65,23 @@ public class EmployeeHandoverController(DatabaseContext db, IWebHostEnvironment 
         List<HandoverAttachmentInput> attachmentInputs;
         try
         {
-            assets = JsonSerializer.Deserialize<List<HandoverAssetRow>>(form.AssetsJson) ?? [];
-            projects = JsonSerializer.Deserialize<List<HandoverProjectRow>>(form.ProjectsJson) ?? [];
-            attachmentInputs = JsonSerializer.Deserialize<List<HandoverAttachmentInput>>(form.AttachmentMetadataJson) ?? [];
+            assets = JsonSerializer.Deserialize<List<HandoverAssetRow>>(form.AssetsJson, Json) ?? [];
+            projects = JsonSerializer.Deserialize<List<HandoverProjectRow>>(form.ProjectsJson, Json) ?? [];
+            attachmentInputs = JsonSerializer.Deserialize<List<HandoverAttachmentInput>>(form.AttachmentMetadataJson, Json) ?? [];
         }
         catch (JsonException) { return BadRequest("Thông tin tài sản hoặc dự án không hợp lệ."); }
         if (projects.Count == 0 || projects.Any(x => string.IsNullOrWhiteSpace(x.ProjectName) || x.Progress is < 0 or > 100))
             return BadRequest("Vui lòng nhập dự án bàn giao và tiến độ từ 0 đến 100%.");
+        // Frontend gửi ProjectsJson với documents/handoverFiles rỗng; file thật nằm trong
+        // multipart "Attachments" và chỉ gắn vào project sau khi lưu. Vì vậy kiểm tra bắt buộc
+        // phải dựa trên metadata đính kèm (mỗi dự án cần >=1 tài liệu và >=1 file bàn giao).
+        for (var i = 0; i < projects.Count; i++)
+        {
+            var hasDoc = attachmentInputs.Any(x => x.ProjectIndex == i && x.Kind == "documents");
+            var hasFile = attachmentInputs.Any(x => x.ProjectIndex == i && x.Kind == "handoverFiles");
+            if (!hasDoc) return BadRequest($"Dự án #{i + 1} phải có ít nhất một tài liệu dự án.");
+            if (!hasFile) return BadRequest($"Dự án #{i + 1} phải có ít nhất một file bàn giao.");
+        }
         var files = form.Attachments ?? [];
         if (files.Count != attachmentInputs.Count) return BadRequest("Danh sách tệp đính kèm không khớp.");
         if (files.Any(f => f.Length == 0 || f.Length > MaxAttachmentSize || !AllowedExtensions.Contains(Path.GetExtension(f.FileName))) || files.Sum(f => f.Length) > MaxRequestSize)
@@ -86,8 +105,8 @@ public class EmployeeHandoverController(DatabaseContext db, IWebHostEnvironment 
             Reason = form.Reason.Trim(),
             CompanyAssets = string.Join("\n", assets.Select(x => $"{x.AssetCode} · {x.AssetType} · {x.Condition}")),
             WorkProgress = string.Join("\n", projects.Select(x => $"{x.ProjectCode} · {x.ProjectName} · {x.Progress}%")),
-            AssetsJson = JsonSerializer.Serialize(assets),
-            ProjectsJson = JsonSerializer.Serialize(projects),
+            AssetsJson = JsonSerializer.Serialize(assets, Json),
+            ProjectsJson = JsonSerializer.Serialize(projects, Json),
             AccountIssued = employee.UserId.HasValue,
             Status = EmployeeHandoverStatus.Pending
         };
@@ -104,7 +123,7 @@ public class EmployeeHandoverController(DatabaseContext db, IWebHostEnvironment 
             if (metadata.Kind == "documents") projects[metadata.ProjectIndex].Documents.Add(info);
             else projects[metadata.ProjectIndex].HandoverFiles.Add(info);
         }
-        handover.ProjectsJson = JsonSerializer.Serialize(projects);
+        handover.ProjectsJson = JsonSerializer.Serialize(projects, Json);
         db.EmployeeHandovers.Add(handover);
         await db.SaveChangesAsync();
         return Ok(new BaseResponse<object>(StatusCodeHelper.OK, ResponseCodeConstants.SUCCESS, new { message = "Đã gửi yêu cầu bàn giao cho cấp trên." }));
@@ -116,7 +135,7 @@ public class EmployeeHandoverController(DatabaseContext db, IWebHostEnvironment 
         var handover = await db.EmployeeHandovers.FirstOrDefaultAsync(x => x.Id == id);
         if (handover == null) return NotFound();
         if (!await CanAccess(handover)) return Forbid();
-        var projects = JsonSerializer.Deserialize<List<HandoverProjectRow>>(handover.ProjectsJson) ?? [];
+        var projects = JsonSerializer.Deserialize<List<HandoverProjectRow>>(handover.ProjectsJson, Json) ?? [];
         var metadata = projects.SelectMany(x => x.Documents.Concat(x.HandoverFiles)).FirstOrDefault(x => x.StoredName == storedName);
         if (metadata == null || Path.GetFileName(storedName) != storedName) return NotFound();
         var path = Path.Combine(PhotoStore.GetRoot(environment), "handovers", id.ToString("N"), storedName);

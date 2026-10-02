@@ -35,8 +35,8 @@ app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
 app.UseCors("ReactPolicy");
+app.UseHttpsRedirection();
 
 // Ảnh chấm công đã upload -> /uploads (lưu trong wwwroot/uploads, ổn định)
 var uploadDir = PhotoStore.GetRoot(app.Environment);
