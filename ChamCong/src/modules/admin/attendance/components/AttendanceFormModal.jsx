@@ -19,6 +19,13 @@ const APPROVAL_OPTIONS = [
     { v: 2, l: "Từ chối" },
 ];
 
+const normalizeEmployeeSearch = (value) =>
+    String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/gi, "d")
+        .toLocaleLowerCase("vi-VN");
+
 const buildDraft = (row) =>
     row
         ? {
@@ -41,19 +48,31 @@ const buildDraft = (row) =>
 const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
     const [form, setForm] = useState(null);
     const [error, setError] = useState("");
+    const [employeeSearch, setEmployeeSearch] = useState("");
+    const [showEmployeeOptions, setShowEmployeeOptions] = useState(false);
 
     // Nạp form mỗi lần mở (thêm: trống, sửa: từ row)
     useEffect(() => {
         if (open) {
             setForm(buildDraft(row));
             setError("");
+            const selected = employees.find((employee) => employee.id === row?.employeeId);
+            setEmployeeSearch(selected ? `${selected.fullName} · ${selected.employeeCode}` : "");
+            setShowEmployeeOptions(false);
         }
-    }, [open, row]);
+    }, [open, row, employees]);
 
     if (!open || !form) return null;
 
     const set = (k) => (e) =>
         setForm({ ...form, [k]: e.target.value });
+
+    const searchTerm = normalizeEmployeeSearch(employeeSearch.trim());
+    const employeeOptions = searchTerm
+        ? employees
+              .filter((employee) => normalizeEmployeeSearch(`${employee.fullName} ${employee.employeeCode}`).includes(searchTerm))
+              .slice(0, 8)
+        : [];
 
     const submit = async (e) => {
         e.preventDefault();
@@ -77,18 +96,48 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                 <form onSubmit={submit} className="att-form">
                     <label>
                         Nhân viên
-                        <select
-                            required
-                            value={form.employeeId}
-                            onChange={set("employeeId")}
-                        >
-                            <option value="">— Chọn nhân viên —</option>
-                            {employees.map((x) => (
-                                <option key={x.id} value={x.id}>
-                                    {x.employeeCode} · {x.fullName}
-                                </option>
-                            ))}
-                        </select>
+                        <div className="att-employee-picker" onBlur={(event) => {
+                            if (!event.currentTarget.contains(event.relatedTarget)) setShowEmployeeOptions(false);
+                        }}>
+                            <input
+                                required
+                                role="combobox"
+                                aria-autocomplete="list"
+                                aria-expanded={showEmployeeOptions && employeeOptions.length > 0}
+                                aria-controls="att-employee-options"
+                                value={employeeSearch}
+                                placeholder="Nhập họ tên hoặc mã nhân viên..."
+                                onFocus={() => setShowEmployeeOptions(true)}
+                                onChange={(event) => {
+                                    setEmployeeSearch(event.target.value);
+                                    setShowEmployeeOptions(true);
+                                    setForm({ ...form, employeeId: "" });
+                                }}
+                            />
+                            {showEmployeeOptions && employeeOptions.length > 0 && (
+                                <div className="att-employee-options" id="att-employee-options" role="listbox">
+                                    {employeeOptions.map((employee) => (
+                                        <button
+                                            type="button"
+                                            role="option"
+                                            aria-selected={form.employeeId === employee.id}
+                                            key={employee.id}
+                                            onClick={() => {
+                                                setForm({ ...form, employeeId: employee.id });
+                                                setEmployeeSearch(`${employee.fullName} · ${employee.employeeCode}`);
+                                                setShowEmployeeOptions(false);
+                                            }}
+                                        >
+                                            <strong>{employee.fullName}</strong>
+                                            <span>{employee.employeeCode}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                            {showEmployeeOptions && searchTerm && employeeOptions.length === 0 && (
+                                <div className="att-employee-empty">Không tìm thấy nhân viên phù hợp.</div>
+                            )}
+                        </div>
                     </label>
 
                     <label>

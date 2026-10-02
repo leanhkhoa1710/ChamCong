@@ -128,18 +128,22 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
         <section className="att-hero">
             <div className="att-hero-title">
                 <h2>Chấm công</h2>
-                <p>
-                    {isCheckedIn && !isCheckedOut
-                        ? "Chụp một ảnh của bạn để ra ca."
-                        : "Chụp một ảnh của bạn để vào ca."}
-                </p>
+                {!isCheckedOut && (
+                    <p>
+                        {isCheckedIn
+                            ? "Chụp một ảnh của bạn để ra ca."
+                            : "Chụp một ảnh của bạn để vào ca."}
+                    </p>
+                )}
             </div>
 
-            <CameraCapture
-                key={camKey}
-                onPhoto={setPendingPhoto}
-                locked={busy}
-            />
+            {!isCheckedOut && (
+                <CameraCapture
+                    key={camKey}
+                    onPhoto={setPendingPhoto}
+                    locked={busy}
+                />
+            )}
 
             {!isCheckedIn && !isCheckedOut ? (
                 <div className="att-hero-actions">

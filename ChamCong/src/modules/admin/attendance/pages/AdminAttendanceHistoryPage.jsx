@@ -159,18 +159,11 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
         );
     };
 
-    const doDelete = async (row) => {
-        const e = empMap[row.employeeId];
-        if (!window.confirm(`Xóa bản ghi ${formatVnDate(row.attendanceDate)} của ${e?.fullName || row.employeeCode}?`)) return;
-        try {
-            await adminAttendanceApi.softDelete(row.id);
-            load();
-        } catch (err) {
-            setError(err.response?.data?.message || err.message);
-        }
-    };
-
     const submitModal = async (form, isEdit) => {
+        if (isEdit && editRow?.approvalStatus === 1) {
+            setError("Không thể chỉnh sửa bản ghi chấm công đã được duyệt.");
+            return;
+        }
         const payload = {
             employeeId: form.employeeId,
             attendanceDate: form.attendanceDate,
@@ -361,23 +354,18 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                                                     </button>
                                                                 </>
                                                             )}
-                                                            <button
-                                                                type="button"
-                                                                className="admin-link-btn"
-                                                                onClick={() => {
-                                                                    setEditRow(row);
-                                                                    setModalOpen(true);
-                                                                }}
-                                                            >
-                                                                Sửa
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="admin-link-btn admin-link-btn--danger"
-                                                                onClick={() => doDelete(row)}
-                                                            >
-                                                                Xóa
-                                                            </button>
+                                                            {row.approvalStatus !== 1 && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="admin-link-btn"
+                                                                    onClick={() => {
+                                                                        setEditRow(row);
+                                                                        setModalOpen(true);
+                                                                    }}
+                                                                >
+                                                                    Sửa
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </td>
                                                 </tr>

@@ -380,6 +380,14 @@ namespace M.Services.Service
                     "NOT_FOUND",
                     "Attendance not found");
 
+            if (attendance.ApprovalStatus == AttendanceApprovalStatus.Approved)
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    "ATTENDANCE_APPROVED",
+                    "Không thể chỉnh sửa bản ghi chấm công đã được duyệt");
+            }
+
             // Kiểm tra Employee
             IGenericRepository<Employee> employeeRepo =
                 _unitOfWork.GetRepository<Employee>();
