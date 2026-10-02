@@ -24,6 +24,7 @@ import {
 } from "./modules/admin/leaves/pages/PayrollResignedReport";
 import AccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
 import HomePage from "./modules/home/pages/HomePage";
+import UnauthorizedPage from "./modules/unauthorized/pages/UnauthorizedPage";
 import RequireModule from "./components/common/RequireModule";
 import MyReportsPage from "./modules/reports/MyReportsPage";
 import PromotionsPage from "./modules/admin/hr/pages/PromotionsPage";
@@ -37,6 +38,7 @@ function App() {
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/kich-hoat" element={<ActivatePage />} />
+                <Route path="/unauthorized" element={<UnauthorizedPage />} />
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
 

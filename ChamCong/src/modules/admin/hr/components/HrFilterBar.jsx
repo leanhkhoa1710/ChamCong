@@ -12,6 +12,7 @@ const HrFilterBar = ({
     onImportFile,
     onExport,
     onTemplate,
+    showActions = true,
 }) => {
     const fileRef = useRef(null);
 
@@ -73,37 +74,39 @@ const HrFilterBar = ({
                 </button>
             </div>
 
-            <div className="hr-actions">
-                <button
-                    type="button"
-                    className="hr-btn hr-btn--ghost"
-                    onClick={() => fileRef.current?.click()}
-                    title="Nhập danh sách nhân viên từ tệp Excel hoặc CSV"
-                >
-                    ⬆ Nhập Excel
-                </button>
-                <button
-                    type="button"
-                    className="hr-btn hr-btn--ghost"
-                    onClick={onTemplate}
-                >
-                    ⬇ Tải mẫu
-                </button>
-                <button
-                    type="button"
-                    className="hr-btn hr-btn--ghost"
-                    onClick={onExport}
-                >
-                    ⬇ Xuất danh sách
-                </button>
-                <button
-                    type="button"
-                    className="hr-btn hr-btn--primary"
-                    onClick={onAdd}
-                >
-                    + Thêm nhân viên
-                </button>
-            </div>
+            {showActions && (
+                <div className="hr-actions">
+                    <button
+                        type="button"
+                        className="hr-btn hr-btn--ghost"
+                        onClick={() => fileRef.current?.click()}
+                        title="Nhập danh sách nhân viên từ tệp Excel hoặc CSV"
+                    >
+                        ⬆ Nhập Excel
+                    </button>
+                    <button
+                        type="button"
+                        className="hr-btn hr-btn--ghost"
+                        onClick={onTemplate}
+                    >
+                        ⬇ Tải mẫu
+                    </button>
+                    <button
+                        type="button"
+                        className="hr-btn hr-btn--ghost"
+                        onClick={onExport}
+                    >
+                        ⬇ Xuất danh sách
+                    </button>
+                    <button
+                        type="button"
+                        className="hr-btn hr-btn--primary"
+                        onClick={onAdd}
+                    >
+                        + Thêm nhân viên
+                    </button>
+                </div>
+            )}
 
             <input
                 ref={fileRef}

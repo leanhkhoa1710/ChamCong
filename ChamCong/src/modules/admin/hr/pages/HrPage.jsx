@@ -349,10 +349,7 @@ const HrPage = () => {
     };
 
     return (
-        <HrAppLayout
-            title="Nhân sự"
-            subtitle="Quản lý nhân viên, chấm công, hợp đồng & hồ sơ lương"
-        >
+        <HrAppLayout>
             {data.error && <div className="att-error">{data.error}</div>}
             {data.loading && <div className="att-loading">Đang tải...</div>}
 
@@ -360,21 +357,55 @@ const HrPage = () => {
                     <div className="hr-body">
                         <HrKpiCards kpis={kpis} />
 
-                        <div className="hr-tabs">
-                            <button
-                                type="button"
-                                className={`hr-tab${tab === "active" ? " active" : ""}`}
-                                onClick={() => setTab("active")}
-                            >
-                                Nhân sự đang làm ({active.length})
-                            </button>
-                            <button
-                                type="button"
-                                className={`hr-tab${tab === "archive" ? " active" : ""}`}
-                                onClick={() => setTab("archive")}
-                            >
-                                Lưu trữ – đã nghỉ ({resigned.length})
-                            </button>
+                        <div className="hr-topbar">
+                            <div className="hr-tabs">
+                                <button
+                                    type="button"
+                                    className={`hr-tab${tab === "active" ? " active" : ""}`}
+                                    onClick={() => setTab("active")}
+                                >
+                                    Nhân sự đang làm ({active.length})
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`hr-tab${tab === "archive" ? " active" : ""}`}
+                                    onClick={() => setTab("archive")}
+                                >
+                                    Lưu trữ – đã nghỉ ({resigned.length})
+                                </button>
+                            </div>
+
+                            <div className="hr-actions">
+                                <button
+                                    type="button"
+                                    className="hr-btn hr-btn--ghost"
+                                    onClick={() => document.getElementById("hr-import-file")?.click()}
+                                    title="Nhập danh sách nhân viên từ tệp Excel hoặc CSV"
+                                >
+                                    ⬆ Nhập Excel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="hr-btn hr-btn--ghost"
+                                    onClick={onTemplate}
+                                >
+                                    ⬇ Tải mẫu
+                                </button>
+                                <button
+                                    type="button"
+                                    className="hr-btn hr-btn--ghost"
+                                    onClick={onExport}
+                                >
+                                    ⬇ Xuất danh sách
+                                </button>
+                                <button
+                                    type="button"
+                                    className="hr-btn hr-btn--primary"
+                                    onClick={() => { setEditingEmployee(null); setShowForm(true); }}
+                                >
+                                    + Thêm nhân viên
+                                </button>
+                            </div>
                         </div>
 
                         <HrFilterBar
@@ -387,6 +418,7 @@ const HrPage = () => {
                             onImportFile={onImportFile}
                             onExport={onExport}
                             onTemplate={onTemplate}
+                            showActions={false}
                         />
 
                         <HrEmployeeTable
