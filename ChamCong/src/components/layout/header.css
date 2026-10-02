@@ -112,7 +112,7 @@
     gap: 12px;
 }
 
-.app-language-picker {
+    position: relative;
     height: 40px;
     display: flex;
     align-items: center;
@@ -127,16 +127,11 @@
     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
 
-.app-language-picker:hover,
-.app-language-picker:focus-within { border-color: #8eb8d5; background: #fff; box-shadow: 0 0 0 3px rgba(22, 115, 173, 0.09); }
-.app-language-picker > span { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: #e7f2fa; color: #075b91; font-size: 17px; font-weight: 700; }
-.app-language-picker select { max-width: 132px; padding-right: 3px; border: 0; outline: 0; background: transparent; color: #18384f; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+
 
 @media (max-width: 520px) {
     .app-header { padding-right: 12px; padding-left: 12px; }
     .app-header-user { gap: 7px; }
-    .app-language-picker { gap: 5px; padding-right: 7px; }
-    .app-language-picker select { max-width: 104px; font-size: 11px; }
 }
 
 .app-header-avatar-btn {

@@ -233,7 +233,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                 <span className="admin-kpi-label">Báo cáo công việc</span>
                                 <strong>{kpi.hours}h</strong>
                                 <span className="admin-kpi-sub">
-                                    {kpi.people} người · trễ {kpi.late} · vắng {kpi.absent} (tháng)
+                                    {`${kpi.people} người · trễ ${kpi.late} · vắng ${kpi.absent} (tháng)`}
                                 </span>
                             </div>
                         </div>

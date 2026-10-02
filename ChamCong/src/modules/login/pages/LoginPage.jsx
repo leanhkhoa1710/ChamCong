@@ -1,5 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
+import LanguagePicker from "../../../components/layout/LanguagePicker";
 import logo from "../../../assets/images/marixa-logo.png";
 import "../login.css";
 
@@ -9,6 +10,7 @@ const LoginPage = () => {
 
     return (
         <div className="login-page">
+            <LanguagePicker className="lang-picker--corner" />
             <div className="login-brand">
                 <div className="login-brand-logo">
                     <img src={logo} alt="MARIXA" />

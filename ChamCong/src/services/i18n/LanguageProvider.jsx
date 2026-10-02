@@ -693,6 +693,226 @@ const phrases = {
     "Chưa có nội dung.": ["No content.", "暂无内容。"],
     "Kinh doanh": ["Sales", "销售"],
     "Bộ phận Nhân sự": ["Human Resources", "人力资源"],
+    "Chưa có bản ghi chấm công trong tháng này.": ["No attendance records for this month.", "本月暂无考勤记录。"],
+    "Không có lần đi trễ": ["No late arrivals", "无迟到记录"],
+    "Đủ ngày công kỳ vọng": ["Met expected work days", "已达预期工作日"],
+    "Đủ giờ công kỳ vọng": ["Met expected work hours", "已达预期工时"],
+    "Chưa cấu hình hạn mức phép": ["Leave quota not configured", "尚未设置假期额度"],
+    "mục": ["items", "项"],
+    "Gửi nguyện vọng phát triển nghề nghiệp": ["Submit your career development request", "提交您的职业发展意愿"],
+    "MARIXA · NHÂN SỰ": ["MARIXA · HR", "MARIXA · 人事"],
+    "Ngày & lý do": ["Date & reason", "日期与原因"],
+    "Tài sản": ["Assets", "资产"],
+    "Thiết bị công ty": ["Company equipment", "公司设备"],
+    "Dự án": ["Project", "项目"],
+    "Tiến độ & file": ["Progress & files", "进度与文件"],
+    "Ngày gửi hôm nay": ["Sent date (today)", "今日提交日期"],
+    "VD: Lý do cá nhân, hoàn cảnh gia đình...": ["E.g. personal reasons, family circumstances...", "例如：个人原因、家庭情况..."],
+    "Tiếp tục →": ["Continue →", "继续 →"],
+    "← Trước": ["← Previous", "← 上一步"],
+    "Nghỉ thai sản": ["Maternity leave", "产假"],
+    "Nghỉ không lương": ["Unpaid leave", "无薪假"],
+    "Nghỉ việc riêng": ["Personal leave", "事假"],
+    "Chuyên viên nhân sự": ["HR specialist", "人力资源专员"],
+    "Kế toán": ["Accountant", "会计"],
+    "Quản trị viên": ["Administrator", "管理员"],
+    "Tên báo cáo *": ["Report name *", "报告名称 *"],
+    "Loại báo cáo *": ["Report type *", "报告类型 *"],
+    "Kỳ báo cáo *": ["Reporting period *", "报告周期 *"],
+    "STT": ["No.", "序号"],
+    "Loại tài sản": ["Asset type", "资产类型"],
+    "Mã tài sản": ["Asset code", "资产编号"],
+    "Tình trạng": ["Condition", "状态"],
+    "Ghi chú tài sản": ["Asset note", "资产备注"],
+    "Xóa tài sản": ["Remove asset", "删除资产"],
+    "Không có tài sản được khai báo.": ["No assets declared.", "未申报任何资产。"],
+    "Màn hình máy tính": ["Computer monitor", "电脑显示器"],
+    "Bàn phím": ["Keyboard", "键盘"],
+    "Chuột": ["Mouse", "鼠标"],
+    "Tốt": ["Good", "良好"],
+    "Đang sử dụng": ["In use", "使用中"],
+    "Hư hỏng": ["Damaged", "损坏"],
+    "Thất lạc": ["Lost", "丢失"],
+    "Đã bàn giao": ["Handed over", "已交接"],
+    "＋ Thêm tài sản": ["＋ Add asset", "＋ 添加资产"],
+    "VD: Laptop": ["E.g. Laptop", "例如：笔记本电脑"],
+    "Thiết bị, dụng cụ công ty giao khi nhận việc.": ["Equipment and tools issued when you joined.", "入职时公司配发的设备与工具。"],
+    "Mã dự án": ["Project code", "项目编号"],
+    "Tên dự án": ["Project name", "项目名称"],
+    "Đối tác": ["Partner", "合作伙伴"],
+    "Tiến độ": ["Progress", "进度"],
+    "Tài liệu dự án": ["Project documents", "项目资料"],
+    "File bàn giao": ["Handover files", "交接文件"],
+    "Chưa có dự án bàn giao.": ["No handover projects yet.", "暂无交接项目。"],
+    "Tiến độ & bàn giao công việc": ["Progress & work handover", "进度与工作交接"],
+    "Dự án đang phụ trách, tài liệu và file bàn giao.": ["Projects you oversee, their documents and handover files.", "您负责的项目、相关资料与交接文件。"],
+    "＋ Thêm dự án": ["＋ Add project", "＋ 添加项目"],
+    "Xóa dự án": ["Remove project", "删除项目"],
+    "＋ Chọn file": ["＋ Select files", "＋ 选择文件"],
+    "Chọn file": ["Select file", "选择文件"],
+    "Xóa tệp đã chọn": ["Remove selected file", "删除已选文件"],
+    "Tình trạng tài khoản công ty được đính kèm tự động. Hồ sơ chỉ chuyển sang danh sách nghỉ việc sau khi được cấp trên duyệt.": ["Your company account status is attached automatically. The record moves to the resigned list only after senior approval.", "公司账户状态会自动附上。档案在上级审批通过后才会转入离职列表。"],
+    "Mỗi dự án cần ít nhất 1 tài liệu dự án và 1 file bàn giao thì mới gửi được cho cấp trên.": ["Each project needs at least 1 document and 1 handover file before it can be sent up.", "每个项目至少需要 1 份项目资料和 1 份交接文件才能提交上级。"],
+    "Vui lòng hoàn thiện tên dự án, tài liệu dự án và file bàn giao.": ["Please complete the project name, documents and handover files.", "请完善项目名称、项目资料与交接文件。"],
+    "✓ Gửi cấp trên duyệt": ["✓ Submit for approval", "✓ 提交上级审批"],
+    "Đang gửi...": ["Submitting...", "正在提交..."],
+    "Yêu cầu bàn giao nghỉ việc": ["Resignation handover request", "离职交接申请"],
+    "chờ xử lý": ["pending", "待处理"],
+    "Đang chờ cấp trên duyệt": ["Awaiting senior approval", "等待上级审批"],
+    "Bạn có yêu cầu bàn giao đang chờ xử lý. Form tạo mới sẽ mở lại sau khi yêu cầu đó được duyệt hoặc từ chối.": ["You have a handover request pending. A new form reopens once it is approved or rejected.", "您有一条待处理交接申请，审批通过或拒绝后即可再次创建。"],
+    "Xử lý duyệt": ["Process review", "处理审批"],
+    "Tài sản khai báo": ["Declared assets", "申报资产"],
+    "Xem tài sản & dự án": ["View assets & projects", "查看资产与项目"],
+    "Thu gọn chi tiết": ["Collapse details", "收起详情"],
+    "Ngày làm việc cuối": ["Last working day", "最后工作日"],
+    "Đã cấp": ["Issued", "已发放"],
+    "Chưa cấp": ["Not issued", "未发放"],
+    "Lý do:": ["Reason:", "原因："],
+    "Lý do nghỉ việc:": ["Resignation reason:", "离职原因："],
+    "Nhập ý kiến hoặc lý do từ chối...": ["Enter a comment or reason for rejection...", "请输入意见或拒绝理由..."],
+    "File báo cáo *": ["Report file *", "报告文件 *"],
+    "Công ty ABC": ["ABC Company", "ABC 公司"],
+    "Công ty XYZ": ["XYZ Company", "XYZ 公司"],
+    "danh tính": ["Identity", "身份"],
+    "pháp lý": ["Legal", "法律"],
+    "liên hệ": ["Contact", "联系"],
+    "điều kiện": ["Terms", "条款"],
+    "hợp đồng": ["Contract", "合同"],
+    "lương&chế độ": ["Salary & benefits", "薪资与福利"],
+    "bảo hiểm&thue": ["Insurance & tax", "保险与税务"],
+    "thanh toán": ["Payment", "付款"],
+    "Còn thiếu:": ["Missing:", "缺少："],
+    "Chú thích các nhóm hồ sơ": ["Record completeness legend", "档案完整度图例"],
+    "Chấm dứt": ["Terminated", "已终止"],
+    "nhân viên": ["employee", "员工"],
+    "⬇ Xuất danh sách": ["⬇ Export list", "⬇ 导出名单"],
+    "+ Thêm nhân viên": ["+ Add employee", "+ 添加员工"],
+    "Kết quả nhập nhân viên": ["Employee import results", "员工导入结果"],
+    "Đã thêm": ["Added", "已添加"],
+    "Bỏ qua do trùng": ["Skipped (duplicate)", "跳过（重复）"],
+    "Cảnh báo": ["Warning", "警告"],
+    "Dòng": ["Row", "行"],
+    "Chi tiết cần xử lý": ["Details to review", "需处理的详情"],
+    "Tất cả dòng hợp lệ đã được nhập.": ["All valid rows have been imported.", "所有有效行已导入。"],
+    "Không đọc được": ["Could not read", "无法读取"],
+    "Vui lòng chọn file .xlsx hoặc .csv.": ["Please select a .xlsx or .csv file.", "请选择 .xlsx 或 .csv 文件。"],
+    "File rỗng hoặc thiếu dòng dữ liệu.": ["File is empty or missing data rows.", "文件为空或缺少数据行。"],
+    "đã tồn tại": ["already exists", "已存在"],
+    "Số điện thoại": ["Phone number", "电话号码"],
+    "Email không đúng định dạng.": ["Invalid email format.", "电子邮箱格式无效。"],
+    "không tiết lộ": ["prefer not to say", "不透露"],
+    "chính thức": ["full-time", "正式"],
+    "bán thời gian": ["part-time", "兼职"],
+    "cộng tác viên": ["contractor", "合同工"],
+    "đang làm": ["active", "在职"],
+    "đã nghỉ việc": ["resigned", "已离职"],
+    "chấm dứt hợp đồng": ["contract terminated", "合同终止"],
+    "chấm dứt hđ": ["contract ended", "合同结束"],
+    "hạn định": ["fixed term", "固定期限"],
+    "không xác định": ["indefinite", "无固定"],
+    "mùa vụ": ["seasonal", "临时工"],
+    "theo tháng": ["monthly", "按月"],
+    "không": ["none", "无"],
+    "Cần điền cả Ngân hàng và Số tài khoản.": ["Both bank and account number are required.", "银行和账号均为必填。"],
+    "Có Số hợp đồng nhưng thiếu Ngày ký hợp đồng hoặc Ngày vào làm.": ["Contract number present but missing signing date or start date.", "有合同编号但缺少签署日期或入职日期。"],
+    "Đã tồn tại — bỏ qua": ["Already exists – skipped", "已存在 — 跳过"],
+    "Đã thêm nhân viên, nhưng không lấy được mã hồ sơ để lưu hợp đồng/lương/bảo hiểm/tài khoản.": ["Employee added, but record code unavailable to save contract/salary/insurance/account.", "已添加员工，但无法获取档案编号以保存合同/工资/保险/账户。"],
+    "API hiện chưa lưu Ngày/Lý do kết thúc làm việc.": ["The API does not yet save end-date/end-reason.", "API 尚不支持保存离职日期/原因。"],
+    "Đã thêm, cần kiểm tra": ["Added, needs review", "已添加，需检查"],
+    "Đã thêm thành công": ["Added successfully", "添加成功"],
+    "Không thêm được": ["Could not add", "无法添加"],
+    "Nhập danh sách nhân viên từ tệp Excel hoặc CSV": ["Import employee list from Excel or CSV file", "从 Excel 或 CSV 文件导入员工名单"],
+    "✕ Xóa lọc": ["✕ Clear filters", "✕ 清除筛选"],
+    "🔍 Tìm tên, mã NV, email...": ["🔍 Search name, ID, or email...", "🔍 搜索姓名、员工编号或电子邮箱..."],
+    "người đã vào ca": ["clocked in", "人上班打卡"],
+    "lượt cần xem lại hôm nay": ["flagged for review today", "次需今日复核"],
+    "bản ghi chưa phê duyệt": ["unapproved records", "条未审批记录"],
+    "Giờ vào": ["Clock-in time", "上班时间"],
+    "Không xác định được người duyệt (chưa liên kết nhân viên).": ["Approver not identified (employee not linked).", "无法识别审批人（未关联员工）。"],
+    "Không thể chỉnh sửa bản ghi chấm công đã được duyệt.": ["Cannot edit an approved attendance record.", "无法修改已审批的考勤记录。"],
+    "Lịch sử chấm công · Quản trị": ["Attendance history · Admin", "考勤记录 · 管理"],
+    "Mã": ["Code", "编号"],
+    "● Chưa kích hoạt": ["● Not activated", "● 未激活"],
+    "Sau khi xác minh, nhân viên sẽ dùng mã này để tự đặt mật khẩu và hoàn tất kích hoạt tài khoản.": ["After verification, the employee will use this code to set a password and complete account activation.", "验证后，员工将使用此代码设置密码并激活账户。"],
+    "✓ Xác minh & kích hoạt": ["✓ Verify & activate", "✓ 验证并激活"],
+    "Người quản lý": ["Manager", "经理"],
+    "Chưa có tài khoản": ["No account", "未开通"],
+    "Không tải được danh sách tài khoản.": ["Could not load account list.", "无法加载账户列表。"],
+    "Mã hết hạn": ["Code expired", "代码已过期"],
+    "Không cấp được mã kích hoạt.": ["Could not issue activation code.", "无法发放激活码。"],
+    "Không cấp lại được mã kích hoạt.": ["Could not re-issue activation code.", "无法重新发放激活码。"],
+    "Không xác minh được mã kích hoạt.": ["Could not verify activation code.", "无法验证激活码。"],
+    "Xác minh hồ sơ và cấp mã kích hoạt cho nhân viên": ["Verify records and issue activation codes to employees", "验证档案并为员工发放激活码"],
+    "CCCD / căn cước": ["ID / citizenship card", "身份证 / 公民证"],
+    "Chi nhánh": ["Branch", "分支"],
+    "Đang xác minh...": ["Verifying...", "正在验证..."],
+    "Chưa quá hạn": ["Not overdue", "未逾期"],
+    "Đang tải báo cáo file…": ["Loading file reports…", "正在加载报告文件…"],
+    "Chưa có hoạt động.": ["No activity yet.", "暂无活动。"],
+    "Ngày gửi": ["Submitted date", "提交日期"],
+    "Cấp trên duyệt": ["Senior approval", "上级审批"],
+    "Ghi nhận yêu cầu": ["Acknowledge request", "确认要求"],
+    "Không có báo cáo phù hợp.": ["No matching reports.", "没有符合条件的报告。"],
+    "Không có file đính kèm.": ["No attachments.", "暂无附件。"],
+    "Luồng xử lý": ["Workflow", "审批流程"],
+    "Chưa có lịch sử xử lý.": ["No processing history.", "暂无处理历史。"],
+    "Nhận xét": ["Comment", "意见"],
+    "Yêu cầu bổ sung": ["Request for additional info", "要求补充信息"],
+    "Chuyển cấp dưới xử lý": ["Delegate to subordinate", "转交下级处理"],
+    "Đánh dấu hoàn tất": ["Mark complete", "标记完成"],
+    "Báo cáo:": ["Report:", "报告："],
+    "Quản lý mở báo cáo": ["Manager opened report", "经理打开报告"],
+    "Chưa có bộ phận": ["No department", "暂无部门"],
+    "Ghi chú (không bắt buộc)": ["Note (optional)", "备注（选填）"],
+    "Ghi chú gửi cấp trên": ["Note to senior management", "给上级的备注"],
+    "Chuyển yêu cầu cho cấp dưới": ["Forward request to subordinate", "将要求转交下级"],
+    "Nội dung cần nhân viên xử lý": ["Content for the employee to handle", "需员工处理的内容"],
+    "Chọn cấp trên nhận báo cáo": ["Select senior manager to receive report", "选择接收报告的上级"],
+    "Không tìm thấy cấp trên trong hồ sơ nhân sự": ["No senior manager found in HR records", "人事档案中未找到上级"],
+    "✓ Đủ ngày công kỳ vọng": ["✓ Met expected work days", "✓ 已达预期工作日"],
+    "✓ Đủ giờ công kỳ vọng": ["✓ Met expected work hours", "✓ 已达预期工时"],
+    "✓ Không có lần đi trễ": ["✓ No late arrivals", "✓ 无迟到"],
+    "Ngày công / Giờ làm / Đi trễ / Nghỉ phép": ["Work days / Hours / Late / Leave", "工作日 / 工时 / 迟到 / 请假"],
+    "nhân viên đang làm việc": ["active employees", "名在职员工"],
+    "trong tháng": ["this month", "本月"],
+    "hiện cả người chưa có": ["show those without", "显示未登记的"],
+    "Thống kê công · Quản trị": ["Attendance stats · Admin", "考勤统计 · 管理"],
+    "Tìm theo thông tin...": ["Search by info...", "按信息搜索..."],
+    "Thống kê": ["Statistics", "统计"],
+    "Công tác theo tháng": ["Monthly attendance", "月度考勤"],
+    "Ký & theo dõi hạn": ["Sign & track deadlines", "签署并跟踪期限"],
+    "Duyệt đơn xin nghỉ": ["Approve leave requests", "审批请假"],
+    "Bảng lương tháng": ["Monthly payroll", "月度工资"],
+    "Lưu trữ nhân viên": ["Archive employees", "员工归档"],
+    "Tổng hợp công việc": ["Work summary", "工作汇总"],
+    "Không có đơn nghỉ phép nào.": ["No leave requests.", "暂无请假申请。"],
+    "Chưa có bảng lương nào.": ["No payroll yet.", "暂无工资单。"],
+    "Người đã nghỉ việc": ["Resigned employees", "已离职员工"],
+    "Phê duyệt": ["Approve", "审批"],
+    "Nhập họ tên hoặc mã nhân viên...": ["Enter name or employee code...", "输入姓名或员工编号..."],
+    "Chính thức": ["Full-time", "正式"],
+    "Bán thời gian": ["Part-time", "兼职"],
+    "Cộng tác viên": ["Contractor", "合同工"],
+    "Không xác định": ["Indefinite", "无固定"],
+    "Mùa vụ": ["Seasonal", "临时工"],
+    "Chấm công qua điện thoại": ["Clock via phone", "手机打卡"],
+    "TK chính": ["Primary account", "主要账户"],
+    "Chấm dứt hợp đồng": ["Contract terminated", "合同终止"],
+    "Thiếu:": ["Missing:", "缺少："],
+    "— không thể lưu hồ sơ": ["— record cannot be saved", "— 无法保存档案"],
+    "Vận hành": ["Operations", "运营"],
+    "Tài chính kế toán": ["Finance & accounting", "财务与会计"],
+    "Kỹ thuật": ["Engineering", "工程"],
+    "Tiếp thị": ["Marketing", "市场"],
+    "Xem tài sản, tài khoản và tiến độ công việc trước khi duyệt.": ["Review assets, accounts and work progress before approval.", "审批前查看资产、账户与工作进度。"],
+    "Chưa có yêu cầu bàn giao nào.": ["No handover requests yet.", "暂无交接申请。"],
+    "Báo cáo file nhân viên gửi · Tất cả tháng": ["Employee-submitted report files · All months", "员工提交的报告文件 · 所有月份"],
+    "Duyệt & gửi": ["Approve & send", "审批并发送"],
+    "(tháng)": ["(this month)", "（本月）"],
+    "người · trễ": ["people · late", "人 · 迟到"],
+    "· vắng": ["· absent", "· 缺勤"],
+    "Cấp trên yêu cầu": ["Senior requests", "上级要求"],
+    "Nhân viên đã có đề xuất thăng chức đang chờ xử lý.": ["This employee already has a pending promotion request.", "该员工已有待审批的晋升申请。"],
 };
 
 export const getLanguage = () => {
@@ -748,6 +968,95 @@ export const translate = (text, language) => {
     if (!phrase) {
         const count = trimmed.match(/^(Xuất Excel|Cấp mã)\s*\((\d+)\)$/);
         if (count) phrase = `${count[1] === "Xuất Excel" ? (language === "zh" ? "导出 Excel" : "Export Excel") : (language === "zh" ? "发放代码" : "Issue codes")} (${count[2]})`;
+    }
+    if (!phrase) {
+        const m = trimmed.match(/^(\d+)\s+ngày chưa có dữ liệu chấm công$/i);
+        if (m) phrase = language === "zh" ? `${m[1]} 天无考勤数据` : `${m[1]} days have no attendance data`;
+    }
+    if (!phrase) {
+        const m = trimmed.match(/^(\d+)\s+lần đi trễ trong tháng$/i);
+        if (m) phrase = language === "zh" ? `本月迟到 ${m[1]} 次` : `${m[1]} late arrivals this month`;
+    }
+    if (!phrase) {
+        const m = trimmed.match(/^Phép còn lại:\s*(\d+)\s+ngày$/i);
+        if (m) phrase = language === "zh" ? `剩余假期：${m[1]} 天` : `Remaining leave: ${m[1]} days`;
+    }
+    if (!phrase) {
+        const m = trimmed.match(/^Còn thiếu\s*(\d+)\s+ngày$/i);
+        if (m) phrase = language === "zh" ? `还缺 ${m[1]} 天` : `Missing ${m[1]} days`;
+    }
+    if (!phrase) {
+        const m = trimmed.match(/^Còn thiếu\s*(\d+h)$/i);
+        if (m) phrase = language === "zh" ? `还缺 ${m[1]}` : `Missing ${m[1]}`;
+    }
+    if (!phrase) {
+        const m = trimmed.match(/^(\d+)\s+mục$/i);
+        if (m) phrase = language === "zh" ? `${m[1]} 项` : `${m[1]} items`;
+    }
+    if (!phrase) {
+        const m = trimmed.match(/^(\d{2}\/\d{2})\s+bạn chưa checkout$/i);
+        if (m) phrase = language === "zh" ? `${m[1]} 未下班打卡` : `${m[1]} not clocked out yet`;
+    }
+    if (!phrase) {
+        const m = trimmed.match(/^(\d{2}\/\d{2})\s+đang chờ duyệt công$/i);
+        if (m) phrase = language === "zh" ? `${m[1]} 考勤待审批` : `${m[1]} pending attendance approval`;
+    }
+    if (!phrase) {
+        const p = trimmed.match(/^(\d+)\s+dự án$/i);
+        if (p) phrase = language === "zh" ? `${p[1]} 个项目` : `${p[1]} projects`;
+    }
+    if (!phrase) {
+        const kpi2 = trimmed.match(/^(\d+)\s+người\s*·\s*trễ\s*(\d+)\s*·\s*vắng\s*(\d+)\s*\(tháng\)$/i);
+        if (kpi2) phrase = language === "zh" ? `${kpi2[1]} 人 · 迟到 ${kpi2[2]} · 缺勤 ${kpi2[3]}（本月）` : `${kpi2[1]} people · late ${kpi2[2]} · absent ${kpi2[3]} (month)`;
+    }
+    if (!phrase) {
+        const rep = trimmed.match(/^Hiển thị\s+(\d+)–(\d+)\s+trong\s+(\d+)\s+báo cáo$/i);
+        if (rep) phrase = language === "zh" ? `显示 ${rep[1]}–${rep[2]} / ${rep[3]} 份报告` : `Showing ${rep[1]}–${rep[2]} of ${rep[3]} reports`;
+    }
+    if (!phrase) {
+        const pgn = trimmed.match(/^(\d+)–(\d+)\s*\/\s*(\d[\d,.]*)\s+nhân viên$/i);
+        if (pgn) phrase = language === "zh" ? `${pgn[1]}–${pgn[2]} / ${pgn[3]} 名员工` : `${pgn[1]}–${pgn[2]} / ${pgn[3]} employees`;
+    }
+    if (!phrase) {
+        const avl = trimmed.match(/^(\d+)\s*\/\s*(\d+)\s+nhân viên đang làm việc$/i);
+        if (avl) phrase = language === "zh" ? `${avl[1]} / ${avl[2]} 名在职员工` : `${avl[1]} / ${avl[2]} active employees`;
+    }
+    if (!phrase) {
+        const avl2 = trimmed.match(/^(\d+)\s*\/\s*(\d+)\s+nhân viên đang làm$/i);
+        if (avl2) phrase = language === "zh" ? `${avl2[1]} / ${avl2[2]} 名在职员工` : `${avl2[1]} / ${avl2[2]} active employees`;
+    }
+    if (!phrase) {
+        const thieu = trimmed.match(/^Thiếu:\s*(.+?)\s*\u2014\s*(.+)$/i);
+        if (thieu) phrase = language === "zh" ? `缺少：${thieu[1]} — 无法保存档案` : `Missing: ${thieu[1]} — cannot save record`;
+    }
+    if (!phrase) {
+        const tab1 = trimmed.match(/^Nhân sự đang làm \((\d+)\)$/i);
+        if (tab1) phrase = language === "zh" ? `在职员工 (${tab1[1]})` : `Active employees (${tab1[1]})`;
+    }
+    if (!phrase) {
+        const tab2 = trimmed.match(/^Lưu trữ \s*–\s*đã nghỉ \((\d+)\)$/i);
+        if (tab2) phrase = language === "zh" ? `已归档 – 离职 (${tab2[1]})` : `Archived – resigned (${tab2[1]})`;
+    }
+    if (!phrase) {
+        const tab4 = trimmed.match(/^(.+?) \((\d+)\)$/i);
+        if (tab4) {
+            const inner = tab4[1].trim();
+            const known = {
+                "Ngày công": "工作日",
+                "Giờ làm": "工作时长",
+                "Đi trễ": "迟到",
+                "Nghỉ phép": "请假",
+                "người đã vào ca": "上班打卡",
+                "lượt cần xem lại hôm nay": "今日需复核",
+                "bản ghi chưa phê duyệt": "未审批记录",
+            };
+            const zh = known[inner];
+            if (zh) phrase = language === "zh" ? `${zh} (${tab4[2]})` : `${inner} (${tab4[2]})`;
+        }
+    }
+    if (!phrase) {
+        const kpiA = trimmed.match(/^(\d+)\s+người\s*·\s*trễ\s*(\d+)\s*·\s*vắng\s*(\d+)\s*\(tháng\)$/i);
+        if (kpiA) phrase = language === "zh" ? `${kpiA[1]} 人 · 迟到 ${kpiA[2]} · 缺勤 ${kpiA[3]}（本月）` : `${kpiA[1]} people · late ${kpiA[2]} · absent ${kpiA[3]} (month)`;
     }
     if (!phrase) {
         const month = trimmed.match(/^tháng\s+(\d{1,2})\s+năm\s+(\d{4})$/i);

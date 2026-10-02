@@ -364,14 +364,14 @@ const HrPage = () => {
                                     className={`hr-tab${tab === "active" ? " active" : ""}`}
                                     onClick={() => setTab("active")}
                                 >
-                                    Nhân sự đang làm ({active.length})
+                                    {`Nhân sự đang làm (${active.length})`}
                                 </button>
                                 <button
                                     type="button"
                                     className={`hr-tab${tab === "archive" ? " active" : ""}`}
                                     onClick={() => setTab("archive")}
                                 >
-                                    Lưu trữ – đã nghỉ ({resigned.length})
+                                    {`Lưu trữ – đã nghỉ (${resigned.length})`}
                                 </button>
                             </div>
 
