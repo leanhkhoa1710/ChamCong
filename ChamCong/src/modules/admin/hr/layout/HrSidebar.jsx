@@ -6,7 +6,6 @@ const HR_NAV_ITEMS = [
     { to: "/employees/statistics", label: "Thống kê công" },
     { to: "/employees/leaves", label: "Duyệt nghỉ phép" },
     { to: "/employees/handover", label: "Bàn giao" },
-    { to: "/employees/resigned", label: "Nghỉ việc" },
     { to: "/employees/reports", label: "Báo cáo" },
     { to: "/employees/accounts", label: "Cấp tài khoản" },
     { to: "/employees/promotions", label: "Thăng chức" },

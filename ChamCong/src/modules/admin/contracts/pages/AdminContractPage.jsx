@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
+import HrAppLayout from "../../../employees/hr/layout/HrAppLayout";
 import adminApi from "../../api/adminApi";
+import employeeApi from "../../../employees/api/employeeApi";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
 
@@ -29,7 +31,7 @@ const contractStateOf = (e, contracts) => {
     return "signed";
 };
 
-const AdminContractPage = () => {
+const AdminContractPage = ({ hrMode = false }) => {
     const [employees, setEmployees] = useState([]);
     const [contracts, setContracts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -48,12 +50,14 @@ const AdminContractPage = () => {
         startDate: "",
         endDate: "",
     });
+    const PageLayout = hrMode ? HrAppLayout : AdminAppLayout;
+    const api = hrMode ? employeeApi : adminApi;
 
     const load = async () => {
         try {
             const [e, c] = await Promise.all([
-                adminApi.employees(),
-                adminApi.contracts(),
+                api.employees(),
+                api.contracts(),
             ]);
             setEmployees(e.data.data?.items || []);
             setContracts(c.data.data?.items || []);
@@ -104,7 +108,7 @@ const AdminContractPage = () => {
             return;
         }
         try {
-            await adminApi.createContract({
+            await api.createContract({
                 employeeId: form.employeeId,
                 contractNumber: form.contractNumber,
                 contractType: Number(form.contractType),
@@ -128,7 +132,7 @@ const AdminContractPage = () => {
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
     return (
-        <AdminAppLayout
+        <PageLayout
             title="Hợp đồng lao động"
             subtitle="Quản lý hợp đồng: hết hạn · sắp hết hạn · chờ ký · chưa lập · đã ký"
         >
@@ -369,7 +373,7 @@ const AdminContractPage = () => {
                     </>
                 )}
             </div>
-        </AdminAppLayout>
+        </PageLayout>
     );
 };
 

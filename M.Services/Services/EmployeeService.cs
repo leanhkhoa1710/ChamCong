@@ -56,6 +56,35 @@ namespace M.Services.Service
                 pageSize);
         }
 
+        public async Task<BasePaginatedList<EmployeeResponseModelView>> GetArchivedAsync(int pageNumber, int pageSize)
+        {
+            IGenericRepository<Employee> repo = _unitOfWork.GetRepository<Employee>();
+            var query = repo.Entities
+                .Where(x => x.DeletedTime.HasValue)
+                .Include(x => x.Department)
+                .Include(x => x.Position)
+                .Include(x => x.Manager)
+                .OrderByDescending(x => x.DeletedTime);
+            var totalItems = await query.CountAsync();
+            var employees = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            var result = employees.Select(x => x.ToViewModel()).ToList();
+            return new BasePaginatedList<EmployeeResponseModelView>(result.AsReadOnly(), totalItems, pageNumber, pageSize);
+        }
+
+        public async Task RestoreAsync(Guid id)
+        {
+            IGenericRepository<Employee> repo = _unitOfWork.GetRepository<Employee>();
+            Employee employee = await repo.Entities.FirstOrDefaultAsync(x => x.Id == id && x.DeletedTime.HasValue)
+                ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Archived employee not found");
+
+            employee.DeletedBy = null;
+            employee.DeletedTime = null;
+            employee.LastUpdatedBy = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
+            employee.LastUpdatedTime = CoreHelper.SystemTimeNow;
+            await repo.UpdateAsync(employee);
+            await _unitOfWork.SaveAsync();
+        }
+
         public async Task<EmployeeResponseModelView> GetByIdAsync(Guid id)
         {
             IGenericRepository<Employee> repo =

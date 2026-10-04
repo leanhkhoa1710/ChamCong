@@ -39,7 +39,12 @@ namespace ModelViews.AttendanceModelView
 
         public string? Note { get; set; }
 
+        // Audit trail: tóm tắt nội dung đã sửa
+        public string? ChangeSummary { get; set; }
+
         public DateTimeOffset CreatedTime { get; set; }
+
+        public string? LastUpdatedBy { get; set; }
 
         public DateTimeOffset LastUpdatedTime { get; set; }
     }
@@ -59,6 +64,10 @@ namespace ModelViews.AttendanceModelView
         public Guid? PlannedShiftId { get; set; }
         public int? PlannedHours { get; set; }
 
+
+        // Gio vao / ra ca (tuy chon khi tao)
+        public DateTimeOffset? CheckInTime { get; set; }
+        public DateTimeOffset? CheckOutTime { get; set; }
         public string? Note { get; set; }
     }
 
@@ -79,6 +88,10 @@ namespace ModelViews.AttendanceModelView
         public Guid? PlannedShiftId { get; set; }
         public int? PlannedHours { get; set; }
         public int? ActualHours { get; set; }
+
+        // Giờ vào / ra ca (manual override)
+        public DateTimeOffset? CheckInTime { get; set; }
+        public DateTimeOffset? CheckOutTime { get; set; }
 
         public string? CheckInPhoto { get; set; }
         public string? CheckOutPhoto { get; set; }

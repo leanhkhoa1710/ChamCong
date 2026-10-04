@@ -114,6 +114,30 @@ namespace M.API.Controllers
             ));
         }
 
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpGet("get-archived")]
+        public async Task<IActionResult> GetArchived(int pageNumber = 1, int pageSize = 500)
+        {
+            var result = await _employeeService.GetArchivedAsync(pageNumber, pageSize);
+            return Ok(new BaseResponse<BasePaginatedList<EmployeeResponseModelView>>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpPost("restore/{id}")]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            await _employeeService.RestoreAsync(id);
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Employee restored successfully!"
+            ));
+        }
+
         /// <summary>
         /// Soft deletes employee by ID
         /// </summary>

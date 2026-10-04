@@ -3,7 +3,7 @@ import { getAuth } from "../../../services/auth/auth";
 import axiosClient from "../../../services/api/axiosClient";
 import { localeForLanguage, useLanguage } from "../../../services/i18n/LanguageProvider";
 import AppLayout from "../../../components/layout/AppLayout";
-import HrAppLayout from "../../admin/hr/layout/HrAppLayout";
+import HrAppLayout from "../../employees/hr/layout/HrAppLayout";
 import "../handover.css";
 
 const dataOf = (response) => response?.data?.data;
@@ -554,11 +554,7 @@ export default function HandoverPage({ reviewMode = false }) {
         <div className="hv-page">
             {/* Header */}
             <header className="hv-header">
-                <div>
-                    <span className="hv-eyebrow">MARIXA · NHÂN SỰ</span>
-                    <h1>{reviewMode ? "Duyệt bàn giao nghỉ việc" : "Bàn giao nghỉ việc"}</h1>
-                    <p>{reviewMode ? "Xem tài sản, tài khoản và tiến độ công việc trước khi duyệt." : "Gửi thông tin bàn giao để cấp trên kiểm tra trước ngày nghỉ việc."}</p>
-                </div>
+
                 <div className="hv-header-right">
                     {!reviewMode && <span className="hv-user-chip">{auth?.userName || "Nhân viên"}</span>}
                     {reviewMode && pendingCount > 0 && (

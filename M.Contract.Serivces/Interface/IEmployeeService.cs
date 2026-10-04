@@ -9,6 +9,10 @@ namespace M.Contract.Services.Interface
             int pageNumber,
             int pageSize);
 
+        Task<BasePaginatedList<EmployeeResponseModelView>> GetArchivedAsync(int pageNumber, int pageSize);
+
+        Task RestoreAsync(Guid id);
+
         Task<EmployeeResponseModelView> GetByIdAsync(Guid id);
 
         Task<EmployeeResponseModelView?> GetByUserIdAsync(Guid userId);

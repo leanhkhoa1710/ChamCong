@@ -1,4 +1,4 @@
-﻿using M.Core.Base;
+using M.Core.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,6 +20,17 @@ namespace M.Contract.Repositories.Entities
 
         // Trạng thái chấm công (có thể null nếu chưa xác định)
         public AttendanceStatus? Status { get; set; }
+
+        // =========================================================
+        // GIỜ VÀO / RA CA (manual override khi admin chỉnh sửa)
+        // Nếu null, mapping sẽ derive từ AttendanceLog.
+        // =========================================================
+        public DateTimeOffset? CheckInTime { get; set; }
+        public DateTimeOffset? CheckOutTime { get; set; }
+
+        // Tóm tắt nội dung đã sửa (audit trail)
+        [MaxLength(500)]
+        public string? ChangeSummary { get; set; }
 
         // =========================================================
         // KẾ HOẠCH (chấm công kế hoạch)

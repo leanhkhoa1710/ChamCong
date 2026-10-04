@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./modules/login/pages/LoginPage";
 import ActivatePage from "./modules/activate/pages/ActivatePage";
-import HrPage from "./modules/admin/hr/pages/HrPage";
-import ReportsPage from "./modules/admin/hr/pages/ReportsPage";
+import HrPage from "./modules/employees/hr/pages/HrPage";
+import ReportsPage from "./modules/employees/hr/pages/ReportsPage";
 import AttendancePage from "./modules/attendance/pages/AttendancePage";
 import LeavePage from "./modules/leave/pages/LeavePage";
 import ContractPage from "./modules/contracts/pages/ContractPage";
@@ -16,18 +16,23 @@ import AdminHomepage from "./modules/admin/pages/AdminHomepage";
 import AdminAttendanceHistoryPage from "./modules/admin/attendance/pages/AdminAttendanceHistoryPage";
 import AdminStatisticsPage from "./modules/admin/attendance/pages/AdminStatisticsPage";
 import AdminContractPage from "./modules/admin/contracts/pages/AdminContractPage";
-import LeaveAdminPage from "./modules/admin/leaves/pages/LeaveAdminPage";
+import AdminLeaveAdminPage from "./modules/admin/leaves/pages/LeaveAdminPage";
 import {
     PayrollAdminPage,
-    ResignedPage,
-    ReportPage,
+    ResignedPage as AdminResignedPage,
+    ReportPage as AdminReportPage,
 } from "./modules/admin/leaves/pages/PayrollResignedReport";
-import AccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
+import AdminAccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
+import EmployeeAttendanceHistoryPage from "./modules/employees/attendance/pages/EmployeeAttendanceHistoryPage";
+import EmployeeStatisticsPage from "./modules/employees/attendance/pages/EmployeeStatisticsPage";
+import EmployeeLeavePage from "./modules/employees/leaves/pages/EmployeeLeavePage";
+import EmployeeAccountIssuancePage from "./modules/employees/accounts/pages/AccountIssuancePage";
+import EmployeeContractPage from "./modules/employees/contracts/pages/EmployeeContractPage";
 import HomePage from "./modules/home/pages/HomePage";
 import UnauthorizedPage from "./modules/unauthorized/pages/UnauthorizedPage";
 import RequireModule from "./components/common/RequireModule";
 import MyReportsPage from "./modules/reports/MyReportsPage";
-import PromotionsPage from "./modules/admin/hr/pages/PromotionsPage";
+import PromotionsPage from "./modules/employees/hr/pages/PromotionsPage";
 import HandoverPage from "./modules/handover/pages/HandoverPage";
 
 const guarded = (to, el) => <RequireModule to={to}>{el}</RequireModule>;
@@ -51,28 +56,23 @@ function App() {
                     path="/employees/attendance-history"
                     element={guarded(
                         "/employees/attendance-history",
-                        <AdminAttendanceHistoryPage hrMode />
+                        <EmployeeAttendanceHistoryPage hrMode />
                     )}
                 />
                 <Route
                     path="/employees/statistics"
                     element={guarded(
                         "/employees/statistics",
-                        <AdminStatisticsPage hrMode />
+                        <EmployeeStatisticsPage hrMode />
                     )}
                 />
+                <Route path="/employees/contracts" element={guarded("/employees/contracts", <EmployeeContractPage />)} />
+                <Route path="/employees/payroll" element={<Navigate to="/employees" replace />} />
                 <Route
                     path="/employees/leaves"
                     element={guarded(
                         "/employees/leaves",
-                        <LeaveAdminPage hrMode />
-                    )}
-                />
-                <Route
-                    path="/employees/resigned"
-                    element={guarded(
-                        "/employees/resigned",
-                        <ResignedPage hrMode />
+                        <EmployeeLeavePage hrMode />
                     )}
                 />
                 <Route
@@ -83,7 +83,7 @@ function App() {
                     path="/employees/accounts"
                     element={guarded(
                         "/employees/accounts",
-                        <AccountIssuancePage hrMode />
+                        <EmployeeAccountIssuancePage hrMode />
                     )}
                 />
                 <Route path="/employees/promotions" element={guarded("/employees/promotions", <PromotionsPage />)} />
@@ -109,7 +109,7 @@ function App() {
                 />
                 <Route
                     path="/admin/leaves"
-                    element={guarded("/admin/leaves", <LeaveAdminPage />)}
+                    element={guarded("/admin/leaves", <AdminLeaveAdminPage />)}
                 />
                 <Route
                     path="/admin/payroll"
@@ -117,15 +117,15 @@ function App() {
                 />
                 <Route
                     path="/admin/resigned"
-                    element={guarded("/admin/resigned", <ResignedPage />)}
+                    element={guarded("/admin/resigned", <AdminResignedPage />)}
                 />
                 <Route
                     path="/admin/reports"
-                    element={guarded("/admin/reports", <ReportPage />)}
+                    element={guarded("/admin/reports", <AdminReportPage />)}
                 />
                 <Route
                     path="/admin/accounts"
-                    element={guarded("/admin/accounts", <AccountIssuancePage />)}
+                    element={guarded("/admin/accounts", <AdminAccountIssuancePage />)}
                 />
                 <Route path="/admin" element={guarded("/admin", <AdminHomepage />)} />
 

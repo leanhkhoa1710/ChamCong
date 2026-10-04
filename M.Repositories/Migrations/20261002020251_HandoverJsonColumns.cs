@@ -10,31 +10,14 @@ namespace M.Repositories.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "AssetsJson",
-                table: "EmployeeHandovers",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "ProjectsJson",
-                table: "EmployeeHandovers",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.Sql("IF COL_LENGTH('dbo.EmployeeHandovers', 'AssetsJson') IS NULL ALTER TABLE [dbo].[EmployeeHandovers] ADD [AssetsJson] nvarchar(max) NOT NULL CONSTRAINT [DF_EmployeeHandovers_AssetsJson] DEFAULT N'';");
+            migrationBuilder.Sql("IF COL_LENGTH('dbo.EmployeeHandovers', 'ProjectsJson') IS NULL ALTER TABLE [dbo].[EmployeeHandovers] ADD [ProjectsJson] nvarchar(max) NOT NULL CONSTRAINT [DF_EmployeeHandovers_ProjectsJson] DEFAULT N'';");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "AssetsJson",
-                table: "EmployeeHandovers");
-
-            migrationBuilder.DropColumn(
-                name: "ProjectsJson",
-                table: "EmployeeHandovers");
+            // This duplicate migration shares its schema changes with AddHandoverAssetAndProjectJson.
         }
     }
 }

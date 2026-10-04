@@ -10,6 +10,21 @@ namespace M.Services.Mappings
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
 
+            // Giờ vào ca: ưu tiên field override, nếu null thì derive từ log
+            var checkInTime = entity.CheckInTime
+                ?? entity.AttendanceLogs?
+                    .Where(x => x.Type == AttendanceLogType.CheckIn)
+                    .Select(x => x.LogTime)
+                    .Cast<DateTimeOffset?>()
+                    .Min();
+
+            var checkOutTime = entity.CheckOutTime
+                ?? entity.AttendanceLogs?
+                    .Where(x => x.Type == AttendanceLogType.CheckOut)
+                    .Select(x => x.LogTime)
+                    .Cast<DateTimeOffset?>()
+                    .Max();
+
             var model = new AttendanceResponseModelView
             {
                 Id = entity.Id,
@@ -22,16 +37,8 @@ namespace M.Services.Mappings
                 PlannedShiftName = entity.PlannedShift?.Name,
                 PlannedHours = entity.PlannedHours,
                 ActualHours = entity.ActualHours,
-                CheckInTime = entity.AttendanceLogs?
-                    .Where(x => x.Type == AttendanceLogType.CheckIn)
-                    .Select(x => x.LogTime)
-                    .Cast<DateTimeOffset?>()
-                    .Min(),
-                CheckOutTime = entity.AttendanceLogs?
-                    .Where(x => x.Type == AttendanceLogType.CheckOut)
-                    .Select(x => x.LogTime)
-                    .Cast<DateTimeOffset?>()
-                    .Max(),
+                CheckInTime = checkInTime,
+                CheckOutTime = checkOutTime,
                 CheckInPhoto = entity.CheckInPhoto,
                 CheckOutPhoto = entity.CheckOutPhoto,
                 ApprovalStatus = entity.ApprovalStatus,
@@ -39,6 +46,8 @@ namespace M.Services.Mappings
                 ApproverName = entity.Approver?.FullName,
                 ApprovedAt = entity.ApprovedAt,
                 Note = entity.Note,
+                ChangeSummary = entity.ChangeSummary,
+                LastUpdatedBy = entity.LastUpdatedBy,
                 CreatedTime = entity.CreatedTime,
                 LastUpdatedTime = entity.LastUpdatedTime
             };
@@ -56,6 +65,8 @@ namespace M.Services.Mappings
                 EmployeeId = model.EmployeeId,
                 AttendanceDate = model.AttendanceDate,
                 Status = model.Status,
+                CheckInTime = model.CheckInTime,
+                CheckOutTime = model.CheckOutTime,
                 PlannedShiftId = model.PlannedShiftId,
                 PlannedHours = model.PlannedHours,
                 Note = model.Note,
@@ -79,6 +90,11 @@ namespace M.Services.Mappings
             entity.PlannedShiftId = model.PlannedShiftId;
             entity.PlannedHours = model.PlannedHours;
             entity.ActualHours = model.ActualHours;
+
+            // Giờ vào / ra ca (manual override)
+            entity.CheckInTime = model.CheckInTime;
+            entity.CheckOutTime = model.CheckOutTime;
+
             // keep existing photo unless a new one is supplied
             if (!string.IsNullOrWhiteSpace(model.CheckInPhoto))
                 entity.CheckInPhoto = model.CheckInPhoto;

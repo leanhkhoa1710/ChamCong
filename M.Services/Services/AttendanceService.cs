@@ -258,9 +258,8 @@ namespace M.Services.Service
 
             if (!createdToday)
             {
-                attendance.LastUpdatedBy =
-                    _httpContextAccessor.HttpContext?.User?.Identity?.Name
-                    ?? "System";
+                attendance.LastUpdatedBy = await ResolveEmployeeNameAsync(
+                    _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System");
                 attendance.LastUpdatedTime = CoreHelper.SystemTimeNow;
                 await repo.UpdateAsync(attendance);
             }
@@ -372,6 +371,7 @@ namespace M.Services.Service
                 _unitOfWork.GetRepository<Attendance>();
 
             Attendance attendance = await repo.Entities
+                .Include(x => x.AttendanceLogs)
                 .FirstOrDefaultAsync(x =>
                     x.Id == model.Id &&
                     !x.DeletedTime.HasValue)
@@ -431,18 +431,83 @@ namespace M.Services.Service
                     "Invalid attendance status");
             }
 
+
             string currentUser =
                 _httpContextAccessor.HttpContext?.User?.Identity?.Name
                 ?? "System";
 
+            // ===== AUDIT: ghi lai noi dung da sua =====
+            var oldCheckIn = GetLogCheckInTime(attendance);
+            var oldCheckOut = GetLogCheckOutTime(attendance);
+            var oldStatus = attendance.Status;
+            var oldActualHours = attendance.ActualHours;
+            var oldNote = attendance.Note;
+
             model.ToEntity(attendance);
 
-            attendance.LastUpdatedBy = currentUser;
+            // Tinh diff va luu vao ChangeSummary
+            var changes = new List<string>();
+            string oldInStr = FormatTime(oldCheckIn);
+            string newInStr = FormatTime(attendance.CheckInTime);
+            string oldOutStr = FormatTime(oldCheckOut);
+            string newOutStr = FormatTime(attendance.CheckOutTime);
+            if (oldInStr != newInStr)
+                changes.Add($"Da sua vao ca ({oldInStr} -> {newInStr})");
+            if (oldOutStr != newOutStr)
+                changes.Add($"Da sua ra ca ({oldOutStr} -> {newOutStr})");
+            if (oldStatus != attendance.Status)
+                changes.Add($"Da sua trang thai ({oldStatus?.ToString() ?? "null"} -> {attendance.Status?.ToString() ?? "null"})");
+            if (oldActualHours != attendance.ActualHours)
+                changes.Add($"Da sua gio thuc te ({oldActualHours?.ToString() ?? "null"} -> {attendance.ActualHours?.ToString() ?? "null"})");
+            if (oldNote != attendance.Note)
+                changes.Add("Da sua ghi chu");
+
+            attendance.ChangeSummary =
+                changes.Count > 0 ? string.Join("; ", changes) : null;
+
+            attendance.LastUpdatedBy = await ResolveEmployeeNameAsync(currentUser);
             attendance.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
             await repo.UpdateAsync(attendance);
             await _unitOfWork.SaveAsync();
         }
+
+
+        // Resolve ten dang ki (Ho ten) tu username/phone
+        private async Task<string> ResolveEmployeeNameAsync(string username)
+        {
+            if (string.IsNullOrEmpty(username) || username == "System") return username;
+            try
+            {
+                IGenericRepository<Employee> empRepo =
+                    _unitOfWork.GetRepository<Employee>();
+                var emp = await empRepo.Entities
+                    .FirstOrDefaultAsync(x => !x.DeletedTime.HasValue &&
+                        (x.PhoneNumber == username || x.EmployeeCode == username || x.Email == username));
+                return emp?.FullName ?? username;
+            }
+            catch { return username; }
+        }
+        // Helper: lay gio goc tu log (nguyen ban, khong phai override)
+        private DateTimeOffset? GetLogCheckInTime(Attendance a) =>
+            a.AttendanceLogs?
+                .Where(x => x.Type == AttendanceLogType.CheckIn)
+                .Select(x => x.LogTime)
+                .Cast<DateTimeOffset?>()
+                .Min();
+
+        private DateTimeOffset? GetLogCheckOutTime(Attendance a) =>
+            a.AttendanceLogs?
+                .Where(x => x.Type == AttendanceLogType.CheckOut)
+                .Select(x => x.LogTime)
+                .Cast<DateTimeOffset?>()
+                .Max();
+
+        // Helper: format gio VN (HH:mm)
+        private static string FormatTime(DateTimeOffset? t) =>
+            t.HasValue
+                ? t.Value.ToOffset(TimeSpan.FromHours(7)).ToString("HH:mm")
+                : "chua co";
 
         public async Task ApproveAsync(ApproveAttendanceModelView model)
         {
@@ -491,7 +556,7 @@ namespace M.Services.Service
                 _httpContextAccessor.HttpContext?.User?.Identity?.Name
                 ?? "System";
 
-            attendance.LastUpdatedBy = currentUser;
+            attendance.LastUpdatedBy = await ResolveEmployeeNameAsync(currentUser);
             attendance.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
             await repo.UpdateAsync(attendance);

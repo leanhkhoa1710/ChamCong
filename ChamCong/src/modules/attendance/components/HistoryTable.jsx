@@ -14,7 +14,7 @@ const statusLabel = (s) =>
     })[s] || "Chưa đánh giá";
 
 const approvalLabel = (s) =>
-    ({ 0: "Chờ duyệt", 1: "Đã duyệt", 2: "Từ chối" })[s] ?? "Chờ duyệt";
+    ({ 0: "Chờ duyệt", 1: "Đã duyệt", 2: "Đã từ chối" })[s] ?? "Chờ duyệt";
 
 // Ca: chỉ hiển thị tên ca nếu được gán kế hoạch (Marixa có 1 ca duy nhất).
 const formatShift = (row) => row.plannedShiftName || "—";

@@ -19,7 +19,7 @@ namespace M.API.Controllers
             _employeeShiftService = employeeShiftService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {

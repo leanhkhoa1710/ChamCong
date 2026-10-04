@@ -36,9 +36,10 @@ export const MODULES = [
     ...[
         ["attendance-history", "Lịch sử & duyệt công"],
         ["statistics", "Thống kê công"],
+        ["contracts", "Hợp đồng"],
+        ["payroll", "Bảng lương"],
         ["leaves", "Duyệt nghỉ phép"],
         ["handover", "Bàn giao"],
-        ["resigned", "Nghỉ việc"],
         ["reports", "Báo cáo"],
         ["accounts", "Cấp tài khoản"],
         ["promotions", "Thăng chức"],
