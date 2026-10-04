@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import authApi from "../../login/api/authApi";
+import LanguagePicker from "../../../components/layout/LanguagePicker";
 import logo from "../../../assets/images/marixa-logo.png";
 import "../../login/login.css";
 
@@ -149,6 +150,7 @@ const ActivateForm = () => {
 const ActivatePage = () => {
     return (
         <div className="login-page">
+            <LanguagePicker className="lang-picker--corner" />
             <div className="login-brand">
                 <div className="login-brand-logo">
                     <img src={logo} alt="MARIXA" />

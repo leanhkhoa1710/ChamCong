@@ -1,23 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import axiosClient from "../../../services/api/axiosClient";
-import { localeForLanguage, useLanguage } from "../../../services/i18n/LanguageProvider";
+import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 import AppLayout from "../../../components/layout/AppLayout";
 import HrAppLayout from "../../employees/hr/layout/HrAppLayout";
 import "../handover.css";
 
 const dataOf = (response) => response?.data?.data;
 const statusLabels = ["Chờ duyệt", "Đã duyệt", "Từ chối"];
-const initialAssets = () => [
-    { assetType: "Màn hình máy tính", assetCode: "TS-MH-001", condition: "Tốt", note: "" },
+const initialAssets = (language) => [
+    { assetType: L("Màn hình máy tính", language), assetCode: "TS-MH-001", condition: "Tốt", note: "" },
     { assetType: "CPU", assetCode: "TS-CPU-001", condition: "Tốt", note: "" },
     { assetType: "PC", assetCode: "TS-PC-001", condition: "Đang sử dụng", note: "" },
-    { assetType: "Bàn phím", assetCode: "TS-BP-001", condition: "Tốt", note: "" },
-    { assetType: "Chuột", assetCode: "TS-CH-001", condition: "Tốt", note: "" },
+    { assetType: L("Bàn phím", language), assetCode: "TS-BP-001", condition: "Tốt", note: "" },
+    { assetType: L("Chuột", language), assetCode: "TS-CH-001", condition: "Tốt", note: "" },
 ];
-const initialProjects = () => [
-    { projectCode: "DA-001", projectName: "Website ABC", partner: "Công ty ABC", progress: 80, documents: [], handoverFiles: [] },
-    { projectCode: "DA-002", projectName: "Mobile App XYZ", partner: "Công ty XYZ", progress: 45, documents: [], handoverFiles: [] },
+const initialProjects = (language) => [
+    { projectCode: "DA-001", projectName: "Website ABC", partner: L("Công ty ABC", language), progress: 80, documents: [], handoverFiles: [] },
+    { projectCode: "DA-002", projectName: "Mobile App XYZ", partner: L("Công ty XYZ", language), progress: 45, documents: [], handoverFiles: [] },
 ];
 const parseJson = (value) => { try { return JSON.parse(value || "[]"); } catch { return []; } };
 const assetsOf = (row) => parseJson(row.assetsJson ?? row.AssetsJson).map((x) => ({ assetType: x.assetType ?? x.AssetType, assetCode: x.assetCode ?? x.AssetCode, condition: x.condition ?? x.Condition, note: x.note ?? x.Note }));
@@ -35,6 +35,7 @@ const today = () => {
 const dateLabel = (value, locale) => value
     ? new Date(`${String(value).slice(0, 10)}T00:00:00`).toLocaleDateString(locale)
     : "—";
+const L = (text, language) => language === "vi" ? text : translate(text, language);
 
 // ===== Thành phần xem (cùng dùng cho card lịch sử + dialog duyệt) =====
 
@@ -121,7 +122,7 @@ const STEPS = [
     { id: 3, label: "Dự án", hint: "Tiến độ & file" },
 ];
 
-const HandoverForm = ({ form, setForm, submitting, onSubmit }) => {
+const HandoverForm = ({ form, setForm, submitting, onSubmit, locale }) => {
     const [step, setStep] = useState(1);
     const [touched, setTouched] = useState({});
 
@@ -179,7 +180,7 @@ const HandoverForm = ({ form, setForm, submitting, onSubmit }) => {
                         </label>
                         <label className="hv-field">
                             <span>Ngày gửi hôm nay</span>
-                            <input value={dateLabel(today(), "vi-VN")} disabled />
+                            <input value={dateLabel(today(), locale)} disabled />
                         </label>
                     </div>
                     <label className={touched[1] && !form.reason.trim() ? "hv-field invalid" : "hv-field"}>
@@ -470,7 +471,7 @@ export default function HandoverPage({ reviewMode = false }) {
     const [error, setError] = useState("");
     const [notice, setNotice] = useState("");
     const [selected, setSelected] = useState(null);
-    const [form, setForm] = useState({ lastWorkingDate: today(), reason: "", assets: initialAssets(), projects: initialProjects() });
+    const [form, setForm] = useState({ lastWorkingDate: today(), reason: "", assets: initialAssets(language), projects: initialProjects(language) });
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -507,7 +508,7 @@ export default function HandoverPage({ reviewMode = false }) {
             // Quan trọng: bỏ đè default "Content-Type: application/json" của axiosClient
             // để trình duyệt tự đặt "multipart/form-data; boundary=..." (server bind [FromForm]).
             await axiosClient.post("/EmployeeHandover/request", body, { headers: { "Content-Type": undefined } });
-            setForm({ lastWorkingDate: today(), reason: "", assets: initialAssets(), projects: initialProjects() });
+            setForm({ lastWorkingDate: today(), reason: "", assets: initialAssets(language), projects: initialProjects(language) });
             setNotice("Đã gửi yêu cầu bàn giao cho cấp trên.");
             await load();
         } catch (e) {
@@ -569,7 +570,7 @@ export default function HandoverPage({ reviewMode = false }) {
             {/* Form tạo yêu cầu (chỉ nhân viên, khi chưa có yêu cầu đang chờ) */}
             {!reviewMode && !rows.some((row) => row.status === 0) && (
                 <section className="hv-panel">
-                    <HandoverForm form={form} setForm={setForm} submitting={saving} onSubmit={submit} />
+                    <HandoverForm form={form} setForm={setForm} submitting={saving} onSubmit={submit} locale={locale} />
                 </section>
             )}
             {!reviewMode && rows.some((row) => row.status === 0) && (

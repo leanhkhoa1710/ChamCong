@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import HrAppLayout from "../layout/HrAppLayout";
 import adminApi from "../../api/adminApi";
 import { getAuth } from "../../../../services/auth/auth";
+import { localeForLanguage, useLanguage } from "../../../../services/i18n/LanguageProvider";
 import "../reports.css";
 
 const S = { pending: 0, approved: 1, rejected: 2, revise: 3, sent: 4, upperApproved: 5, upperRequest: 6, complete: 7 };
@@ -63,6 +64,8 @@ const getUpperRecipients = (employees, report, currentEmployeeId) => {
 };
 
 export default function ReportsPage() {
+    const { language } = useLanguage();
+    const locale = localeForLanguage(language);
     const auth = getAuth();
     const [reports, setReports] = useState([]);
     const [departments, setDepartments] = useState([]);
@@ -177,7 +180,7 @@ export default function ReportsPage() {
     };
     const startDialog = (type, report = selected) => { setSelected(report); setDialog(type); setComment(""); setRecipient(type === "forward" ? getUpperRecipients(employees, report, auth?.employeeId)[0]?.id || "" : ""); setDialogDeadline(""); };
     const filter = (key, value) => { setFilters((current) => ({ ...current, [key]: value })); setPage(1); };
-    const monthLabel = filters.period ? new Date(`${filters.period}-01`).toLocaleDateString("vi-VN", { month: "long", year: "numeric" }) : "Tất cả tháng";
+    const monthLabel = filters.period ? new Date(`${filters.period}-01`).toLocaleDateString(locale, { month: "long", year: "numeric" }) : "Tất cả tháng";
 
     return <HrAppLayout title="Quản lý báo cáo" subtitle={`Báo cáo file nhân viên gửi · ${monthLabel}`}>
         <div className="att-content hr-file-reports">

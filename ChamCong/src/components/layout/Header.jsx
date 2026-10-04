@@ -7,9 +7,11 @@ import {
     subscribeAvatarChange,
 } from "../../services/avatar/avatar";
 import { GuideModal } from "./GuideModal";
+import LanguagePicker from "./LanguagePicker";
 import ChangePasswordModal from "./ChangePasswordModal";
 import { useLanguage } from "../../services/i18n/LanguageProvider";
 import "./header.css";
+
 
 // Thanh nav toàn rộng: logo + slogan (trái), nút gập sidebar,
 // nút vuông dropdown tài khoản (phải).
@@ -104,14 +106,7 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false }) => {
             </div>
 
             <div className="app-header-user" ref={userRef}>
-                <label className="app-language-picker" title="Language">
-                    <span aria-hidden="true">🌐</span>
-                    <select value={language} onChange={(event) => setLanguage(event.target.value)} aria-label="Language">
-                        <option value="vi">🇻🇳 Tiếng Việt</option>
-                        <option value="en">🇬🇧 English</option>
-                        <option value="zh">🇨🇳 中文</option>
-                    </select>
-                </label>
+                                <LanguagePicker />
                 <button
                     type="button"
                     className="app-header-avatar-btn"
