@@ -96,6 +96,10 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
             setError("Chọn nhân viên và ngày là bắt buộc.");
             return;
         }
+        if (form.approvalStatus === "2" && !form.note.trim()) {
+            setError("Vui lòng nhập lý do từ chối.");
+            return;
+        }
         setError("");
         try {
             await onSubmit(form, !!row);
@@ -213,12 +217,13 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                     </div>
 
                     <label>
-                        Ghi chú
+                        {form.approvalStatus === "2" ? "Lý do từ chối *" : "Ghi chú"}
                         <textarea
                             rows="2"
+                            required={form.approvalStatus === "2"}
                             value={form.note}
                             onChange={set("note")}
-                            placeholder="Tùy chọn"
+                            placeholder={form.approvalStatus === "2" ? "Nhập lý do từ chối" : "Tùy chọn"}
                         />
                     </label>
 
