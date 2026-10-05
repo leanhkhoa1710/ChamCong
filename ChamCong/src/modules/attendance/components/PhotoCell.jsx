@@ -3,7 +3,8 @@ import { resolvePhotoUrl } from "../../../utils/photoUrl";
 
 // 1 ô ảnh vào ca / ra ca: thumbnail (bấm xem to) + badge Có/Không.
 // Ảnh lỗi (404) tự downgrade về "Không" để bảng vẫn đọc được.
-const PhotoCell = ({ src, alt }) => {
+// hideYesBadge: bỏ badge "Có" khi đã có ảnh (vẫn giữ "Không" khi thiếu).
+const PhotoCell = ({ src, alt, hideYesBadge = false }) => {
     const url = resolvePhotoUrl(src);
     const [broken, setBroken] = useState(false);
 
@@ -27,9 +28,11 @@ const PhotoCell = ({ src, alt }) => {
                     />
                 </a>
             ) : null}
-            <span className={`att-badge ${show ? "ok" : "bad"}`}>
-                {show ? "Có" : "Không"}
-            </span>
+            {(!show || !hideYesBadge) && (
+                <span className={`att-badge ${show ? "ok" : "bad"}`}>
+                    {show ? "Có" : "Không"}
+                </span>
+            )}
         </div>
     );
 };

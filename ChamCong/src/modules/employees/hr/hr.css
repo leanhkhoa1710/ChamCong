@@ -147,6 +147,13 @@
     min-width: 0;
 }
 
+.hr-filter-search {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+}
+
 .hr-select {
     box-sizing: border-box;
     width: 100%;
@@ -788,7 +795,7 @@
     color: #182a3a;
 }
 .hr-table td.hr-missing { min-width: 86px; white-space: nowrap; }
-.hr-missing-number { margin-right: 4px; background: #fff4dc; color: #a16207; }
+.hr-missing-number { margin-right: 1px; background: #fff4dc; color: #a16207; }
 .hr-missing-complete { color: #218838; font-size: 12px; font-weight: 600; }
 
 .hr-import-report {

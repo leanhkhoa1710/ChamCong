@@ -115,6 +115,9 @@ namespace ModelViews.AttendanceModelView
         [Required]
         public Guid ApprovedBy { get; set; }
 
+        [Required]
+        public AttendanceStatus? Status { get; set; }
+
         public string? Note { get; set; }
     }
 

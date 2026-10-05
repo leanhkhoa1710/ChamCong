@@ -432,6 +432,16 @@ namespace M.Services.Service
                     "Invalid attendance status");
             }
 
+            if ((model.ApprovalStatus == AttendanceApprovalStatus.Approved ||
+                 model.ApprovalStatus == AttendanceApprovalStatus.Rejected) &&
+                !model.Status.HasValue)
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    "ATTENDANCE_STATUS_REQUIRED",
+                    "Phải chọn trạng thái chấm công trước khi duyệt hoặc từ chối.");
+            }
+
 
             string currentUser =
                 _httpContextAccessor.HttpContext?.User?.Identity?.Name
@@ -529,6 +539,15 @@ namespace M.Services.Service
 
         public async Task ApproveAsync(ApproveAttendanceModelView model)
         {
+            if (!model.Status.HasValue ||
+                !Enum.IsDefined(typeof(AttendanceStatus), model.Status.Value))
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    "ATTENDANCE_STATUS_REQUIRED",
+                    "Phải chọn trạng thái chấm công trước khi duyệt hoặc từ chối.");
+            }
+
             IGenericRepository<Attendance> repo =
                 _unitOfWork.GetRepository<Attendance>();
 
@@ -559,6 +578,7 @@ namespace M.Services.Service
             }
 
             attendance.ApprovalStatus = model.ApprovalStatus;
+            attendance.Status = model.Status;
             attendance.ApprovedBy = model.ApprovedBy;
             attendance.ApprovedAt =
                 model.ApprovalStatus == AttendanceApprovalStatus.Pending

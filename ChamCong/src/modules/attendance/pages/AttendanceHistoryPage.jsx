@@ -4,6 +4,7 @@ import AppLayout from "../../../components/layout/AppLayout";
 import HistoryTable from "../components/HistoryTable";
 import relatedApi from "../api/relatedApi";
 import "../attendance.css";
+import "../../employees/employee.css";
 
 const AttendanceHistoryPage = () => {
     const auth = getAuth();
@@ -43,11 +44,7 @@ const AttendanceHistoryPage = () => {
     }, [userId, employeeId]);
 
     return (
-        <AppLayout
-            title="Lịch sử chấm công"
-            subtitle="Tất cả các bản ghi chấm công của bạn"
-            profile={profile}
-        >
+        <AppLayout profile={profile}>
             {error && <div className="att-error">{error}</div>}
             {loading ? (
                 <div className="att-loading">Đang tải...</div>

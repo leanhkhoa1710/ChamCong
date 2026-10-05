@@ -38,10 +38,10 @@ const AttendanceHistoryModal = ({ row, employeeLabel, onClose }) => {
                                     : "—"}
                             </span>
                         </div>
-                        {isRejected && (
+                        {row.note && (
                             <div className="att-history-row">
-                                <span className="att-history-label">Lý do</span>
-                                <span>{row.note || "—"}</span>
+                                <span className="att-history-label">{isRejected ? "Lý do từ chối" : "Ghi chú"}</span>
+                                <span>{row.note}</span>
                             </div>
                         )}
                     </div>

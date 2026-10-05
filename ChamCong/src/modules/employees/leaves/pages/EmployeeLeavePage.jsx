@@ -40,7 +40,7 @@ const EmployeeLeavePage = ({ hrMode = false }) => {
         <EmployeeListPage
             fetcher={employeeApi.leaveRequests}
             columns={[
-                { key: "employeeName", label: "Nhân viên" },
+                { key: "employeeName", label: "Nhân viên", type: "employee" },
                 { key: "leaveTypeName", label: "Loại phép" },
                 { key: "fromDate", label: "Từ", date: true },
                 { key: "toDate", label: "Đến", date: true },

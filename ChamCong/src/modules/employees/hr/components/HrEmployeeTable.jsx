@@ -13,7 +13,7 @@ const MISSING_SECTIONS = [
 ];
 
 // Bảng nhân sự: checkbox + Mã NV + Họ tên + Phòng ban + Chức vụ + Trạng thái
-// + Hồ sơ % + Còn thiếu + Xem/Sửa.
+// + Hồ sơ (nhóm thiếu) + Xem/Sửa.
 const HrEmployeeTable = ({
     employees,
     selected,
@@ -49,20 +49,18 @@ const HrEmployeeTable = ({
                                 aria-label="Chọn tất cả"
                             />
                         </th>
-                        <th>Mã NV</th>
-                        <th>Họ và tên</th>
+                        <th>Nhân viên</th>
                         <th>Phòng ban</th>
                         <th>Chức vụ</th>
                         <th>Trạng thái</th>
                         <th>Hồ sơ</th>
-                        <th>Còn thiếu</th>
                         <th />
                     </tr>
                 </thead>
                 <tbody>
                     {employees.length === 0 ? (
                         <tr>
-                            <td colSpan={9} className="hr-empty">
+                            <td colSpan={7} className="hr-empty">
                                 Không có nhân viên nào khớp bộ lọc.
                             </td>
                         </tr>
@@ -79,8 +77,7 @@ const HrEmployeeTable = ({
                                             aria-label={"Chọn " + e.fullName}
                                         />
                                     </td>
-                                    <td>{e.employeeCode}</td>
-                                    <td>{e.fullName}</td>
+                                    <td><div className="att-emp-cell"><span className="att-emp-code">{e.employeeCode}</span><span className="att-emp-name">{e.fullName}</span></div></td>
                                     <td>{e.departmentName || "—"}</td>
                                     <td>{e.positionName || "—"}</td>
                                     <td>
@@ -88,13 +85,6 @@ const HrEmployeeTable = ({
                                             className={`hr-badge hr-badge--${STATUS_TONES[e.status] || "muted"}`}
                                         >
                                             {STATUS_LABELS[e.status] || "Chưa rõ"}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span
-                                            className={`hr-doc ${comp.percent === 100 ? "hr-doc--full" : ""}`}
-                                        >
-                                            {comp.percent}%
                                         </span>
                                     </td>
                                     <td className="hr-missing">

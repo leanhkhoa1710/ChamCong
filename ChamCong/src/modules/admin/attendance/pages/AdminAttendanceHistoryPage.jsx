@@ -8,7 +8,6 @@ import PhotoCell from "../../../../modules/attendance/components/PhotoCell";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
 import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
 import { toCsv, downloadCsv } from "../../hr/hrUtils";
-import { getAuth } from "../../../../services/auth/auth";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
 
@@ -112,22 +111,10 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
     }, [rows, logs, filtered, month]);
 
     // ===== Duyệt công (thấp / cao cấp: duyệt / từ chối) =====
-    const approve = async (row, ok) => {
-        const auth = getAuth();
-        if (!auth?.employeeId) {
-            alert("Không xác định được người duyệt (chưa liên kết nhân viên).");
-            return;
-        }
-        try {
-            await adminAttendanceApi.approve({
-                id: row.id,
-                approvalStatus: ok ? 1 : 2,
-                approvedBy: auth.employeeId,
-            });
-            load();
-        } catch (err) {
-            setError(err.response?.data?.message || err.message);
-        }
+    const approve = (row, ok) => {
+        setError("");
+        setEditRow({ ...row, approvalStatus: ok ? 1 : 2, _approvalDecision: true });
+        setModalOpen(true);
     };
 
     // ===== Xuất file theo tháng (CSV) =====
@@ -160,7 +147,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
     };
 
     const submitModal = async (form, isEdit) => {
-        if (isEdit && editRow?.approvalStatus === 1) {
+        if (isEdit && editRow?.approvalStatus === 1 && !editRow?._approvalDecision) {
             setError("Không thể chỉnh sửa bản ghi chấm công đã được duyệt.");
             return;
         }

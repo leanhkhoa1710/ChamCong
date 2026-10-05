@@ -3,6 +3,7 @@ const ADMIN_NAV_ITEMS = [
     { to: "/admin", label: "Dashboard" },
     { to: "/employees", label: "Nhân sự" },
     { to: "/admin/attendance-history", label: "Chấm công" },
+    { to: "/employees/work-schedule", label: "Lịch làm" },
     { to: "/admin/statistics", label: "Thống kê công" },
     { to: "/admin/contracts", label: "Hợp đồng" },
     { to: "/admin/leaves", label: "Duyệt nghỉ phép" },

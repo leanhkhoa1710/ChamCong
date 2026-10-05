@@ -1,8 +1,9 @@
 import { NavLink } from "react-router-dom";
 
 const HR_NAV_ITEMS = [
-    { to: "/employees", label: "Danh sách nhân viên" },
-    { to: "/employees/attendance-history", label: "Lịch sử & duyệt công" },
+    { to: "/employees", label: "Danh sách" },
+    { to: "/employees/attendance-history", label: "Duyệt công" },
+    { to: "/employees/work-schedule", label: "Lịch làm" },
     { to: "/employees/statistics", label: "Thống kê công" },
     { to: "/employees/leaves", label: "Duyệt nghỉ phép" },
     { to: "/employees/handover", label: "Bàn giao" },

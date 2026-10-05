@@ -24,6 +24,7 @@ import {
 } from "./modules/admin/leaves/pages/PayrollResignedReport";
 import AdminAccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
 import EmployeeAttendanceHistoryPage from "./modules/employees/attendance/pages/EmployeeAttendanceHistoryPage";
+import EmployeeWorkSchedulePage from "./modules/employees/attendance/pages/EmployeeWorkSchedulePage";
 import EmployeeStatisticsPage from "./modules/employees/attendance/pages/EmployeeStatisticsPage";
 import EmployeeLeavePage from "./modules/employees/leaves/pages/EmployeeLeavePage";
 import EmployeeAccountIssuancePage from "./modules/employees/accounts/pages/AccountIssuancePage";
@@ -58,6 +59,10 @@ function App() {
                         "/employees/attendance-history",
                         <EmployeeAttendanceHistoryPage hrMode />
                     )}
+                />
+                <Route
+                    path="/employees/work-schedule"
+                    element={guarded("/employees/work-schedule", <EmployeeWorkSchedulePage />)}
                 />
                 <Route
                     path="/employees/statistics"

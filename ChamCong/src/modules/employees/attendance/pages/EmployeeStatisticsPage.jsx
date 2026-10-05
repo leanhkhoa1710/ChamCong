@@ -253,12 +253,10 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
                                                 return (
                                                     <tr key={emp.id}>
                                                         <td>
-                                                            <strong>
-                                                                {emp.fullName}
-                                                            </strong>{" "}
-                                                            <span className="att-muted">
-                                                                {emp.employeeCode}
-                                                            </span>
+                                                            <div className="att-emp-cell">
+                                                                <span className="att-emp-code">{emp.employeeCode}</span>
+                                                                <span className="att-emp-name">{emp.fullName}</span>
+                                                            </div>
                                                         </td>
                                                         <td>
                                                             {stat

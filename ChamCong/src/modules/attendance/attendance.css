@@ -572,6 +572,23 @@
     text-transform: uppercase;
 }
 
+.att-emp-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.att-emp-cell .att-emp-code {
+    font-size: 11px;
+    color: #5a6b7b;
+    letter-spacing: 0.3px;
+    font-weight: 400;
+}
+.att-emp-cell .att-emp-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #182a3a;
+}
+
 .att-photo-cell {
     display: flex;
     flex-direction: column;

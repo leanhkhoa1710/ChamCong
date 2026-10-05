@@ -67,6 +67,17 @@ const EmployeeListPage = ({
     };
 
     const cell = (c, x) => {
+        if (c.type === "employee") {
+            const name = x[c.key];
+            const code = x["employeeCode"];
+            if (name == null || name === "") return "-";
+            return (
+                <div className="att-emp-cell">
+                    {code ? <span className="att-emp-code">{code}</span> : null}
+                    <span className="att-emp-name">{name}</span>
+                </div>
+            );
+        }
         const v = x[c.key];
         if (v == null || v === "") return "—";
         if (c.date) return new Date(v).toLocaleDateString("vi-VN");

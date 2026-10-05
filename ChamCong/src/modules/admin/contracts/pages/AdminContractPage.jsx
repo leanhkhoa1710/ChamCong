@@ -24,12 +24,19 @@ const daysUntil = (iso) => {
 const contractStateOf = (e, contracts) => {
     const c = contracts.find((x) => x.employeeId === e.id);
     if (!c) return "none";
-    if (!c.endDate) return "signed"; // không xác định thời hạn
+    if (!c.endDate) return "signed";
     const d = daysUntil(c.endDate);
     if (d < 0) return "expired";
     if (d <= 30) return "expiring";
     return "signed";
 };
+
+const normalizeSearch = (v) =>
+    String(v || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/gi, "d")
+        .toLocaleLowerCase("vi-VN");
 
 const AdminContractPage = ({ hrMode = false }) => {
     const [employees, setEmployees] = useState([]);
@@ -43,6 +50,8 @@ const AdminContractPage = ({ hrMode = false }) => {
 
     // Modal tạo hợp đồng
     const [showModal, setShowModal] = useState(false);
+    const [empSearch, setEmpSearch] = useState("");
+    const [showEmpOptions, setShowEmpOptions] = useState(false);
     const [form, setForm] = useState({
         employeeId: "",
         contractNumber: "",
@@ -80,9 +89,11 @@ const AdminContractPage = ({ hrMode = false }) => {
         [employees, contracts]
     );
 
+    const PRIORITY = { pending: 1, none: 2, expired: 3, expiring: 4, signed: 5 };
+
     const filtered = useMemo(() => {
         const q = search.trim().toLowerCase();
-        return employees.filter((e) => {
+        const list = employees.filter((e) => {
             const s = stateMap[e.id];
             if (state && s !== state) return false;
             if (q) {
@@ -93,9 +104,16 @@ const AdminContractPage = ({ hrMode = false }) => {
             }
             return true;
         });
+        if (!state) {
+            list.sort(
+                (a, b) =>
+                    (PRIORITY[stateMap[a.id]] || 9) -
+                    (PRIORITY[stateMap[b.id]] || 9)
+            );
+        }
+        return list;
     }, [employees, search, state, stateMap]);
 
-    // Đếm theo trạng thái (cho bộ lọc nhanh)
     const counts = useMemo(() => {
         const c = { expired: 0, expiring: 0, pending: 0, none: 0, signed: 0 };
         Object.values(stateMap).forEach((s) => c[s]++);
@@ -123,7 +141,8 @@ const AdminContractPage = ({ hrMode = false }) => {
                 startDate: "",
                 endDate: "",
             });
-            load(); // "tải lại" sau khi tạo
+            setEmpSearch("");
+            load();
         } catch (err) {
             alert("Tạo thất bại: " + (err.response?.data?.message || err.message));
         }
@@ -131,26 +150,41 @@ const AdminContractPage = ({ hrMode = false }) => {
 
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
+    const openModal = () => {
+        setEmpSearch("");
+        setShowEmpOptions(false);
+        setShowModal(true);
+    };
+
+    const empTerm = normalizeSearch(empSearch.trim());
+    const empOptions = empTerm
+        ? employees
+              .filter((e) => [1, 2, 3].includes(e.status))
+              .filter((e) =>
+                  normalizeSearch(`${e.fullName} ${e.employeeCode}`).includes(empTerm)
+              )
+              .slice(0, 8)
+        : [];
+
     return (
-        <PageLayout
-            title="Hợp đồng lao động"
-            subtitle="Quản lý hợp đồng: hết hạn · sắp hết hạn · chờ ký · chưa lập · đã ký"
-        >
+        <PageLayout>
             <div className="att-content">
                 {error && <div className="att-error">{error}</div>}
                 {loading && <div className="att-loading">Đang tải...</div>}
 
                 {!loading && !error && (
                     <>
-                        {/* Thanh tìm kiếm + tạo + tải lại */}
                         <div className="admin-toolbar">
-                            <input
-                                type="search"
-                                placeholder="🔍 Tìm tên, mã NV..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                style={{ width: 240 }}
-                            />
+                            <label className="admin-search">
+                                <span aria-hidden="true">⌕</span>
+                                <input
+                                    type="search"
+                                    placeholder="Tìm tên, mã NV..."
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    aria-label="Tìm hợp đồng"
+                                />
+                            </label>
                             <select
                                 value={state}
                                 onChange={(e) => setState(e.target.value)}
@@ -162,9 +196,7 @@ const AdminContractPage = ({ hrMode = false }) => {
                                 <option value="none">Chưa lập ({counts.none})</option>
                                 <option value="signed">Đã ký ({counts.signed})</option>
                             </select>
-                            <span className="att-muted">
-                                {filtered.length} hồ sơ
-                            </span>
+                            <span className="att-muted">{filtered.length} hồ sơ</span>
                             <button
                                 type="button"
                                 className="admin-link-btn"
@@ -175,7 +207,7 @@ const AdminContractPage = ({ hrMode = false }) => {
                             <button
                                 type="button"
                                 className="admin-link-btn"
-                                onClick={() => setShowModal(true)}
+                                onClick={openModal}
                             >
                                 + Tạo hợp đồng
                             </button>
@@ -211,12 +243,13 @@ const AdminContractPage = ({ hrMode = false }) => {
                                                 return (
                                                     <tr key={e.id}>
                                                         <td>
-                                                            {e.employeeCode} ·{" "}
-                                                            {e.fullName}
+                                                            <div className="att-emp-cell">
+                                                                <span className="att-emp-code">{e.employeeCode}</span>
+                                                                <span className="att-emp-name">{e.fullName}</span>
+                                                            </div>
                                                         </td>
                                                         <td>
-                                                            {e.departmentName ||
-                                                                "—"}
+                                                            {e.departmentName || "—"}
                                                         </td>
                                                         <td>
                                                             {c
@@ -250,7 +283,8 @@ const AdminContractPage = ({ hrMode = false }) => {
                                                         <td>
                                                             {c?.endDate
                                                                 ? new Date(
-                                                                      c.endDate
+                                                                      c
+                                                                          .endDate
                                                                   ).toLocaleDateString(
                                                                       "vi-VN"
                                                                   )
@@ -280,92 +314,111 @@ const AdminContractPage = ({ hrMode = false }) => {
 
                         {showModal && (
                             <div
-                                className="att-form-modal"
+                                className="att-guide-overlay"
+                                onMouseDown={(e) => e.target === e.currentTarget && setShowModal(false)}
                             >
-                                <div
-                                    className="att-form"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <h2>Tạo hợp đồng lao động</h2>
-                                    <label>
-                                        Nhân viên
-                                        <select
-                                            value={form.employeeId}
-                                            onChange={set("employeeId")}
-                                        >
-                                            <option value="">
-                                                — Chọn nhân viên —
-                                            </option>
-                                            {employees
-                                                .filter((e) =>
-                                                    [1, 2, 3].includes(
-                                                        e.status
-                                                    )
-                                                )
-                                                .map((e) => (
-                                                    <option
-                                                        key={e.id}
-                                                        value={e.id}
-                                                    >
-                                                        {e.employeeCode} ·{" "}
-                                                        {e.fullName}
-                                                    </option>
-                                                ))}
-                                        </select>
-                                    </label>
-                                    <label>
-                                        Số hợp đồng
-                                        <input
-                                            value={form.contractNumber}
-                                            onChange={set("contractNumber")}
-                                            placeholder="HD-001"
-                                        />
-                                    </label>
-                                    <label>
-                                        Loại hợp đồng
-                                        <select
-                                            value={form.contractType}
-                                            onChange={set("contractType")}
-                                        >
-                                            <option value={1}>Thử việc</option>
-                                            <option value={2}>Hạn định</option>
-                                            <option value={3}>
-                                                Không xác định
-                                            </option>
-                                            <option value={4}>Mùa vụ</option>
-                                        </select>
-                                    </label>
-                                    <label>
-                                        Ngày bắt đầu
-                                        <input
-                                            type="date"
-                                            value={form.startDate}
-                                            onChange={set("startDate")}
-                                        />
-                                    </label>
-                                    <label>
-                                        Ngày hết hạn
-                                        <input
-                                            type="date"
-                                            value={form.endDate}
-                                            onChange={set("endDate")}
-                                        />
-                                    </label>
-                                    <div className="att-form-actions">
-                                        <button
-                                            type="button"
-                                            className="att-form-btn"
-                                            onClick={() => setShowModal(false)}
-                                        >
-                                            Hủy
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="att-form-btn att-form-btn--primary"
-                                            onClick={submitContract}
-                                        >
-                                            Lưu hợp đồng
-                                        </button>
+                                <div className="att-form-modal" onClick={(e) => e.stopPropagation()}>
+                                    <div className="att-form">
+                                        <h2>Tạo hợp đồng lao động</h2>
+                                        <label>
+                                            Nhân viên
+                                            <div className="att-employee-picker" onBlur={(event) => {
+                                                if (!event.currentTarget.contains(event.relatedTarget)) setShowEmpOptions(false);
+                                            }}>
+                                                <input
+                                                    required
+                                                    role="combobox"
+                                                    aria-autocomplete="list"
+                                                    aria-expanded={showEmpOptions && empOptions.length > 0}
+                                                    aria-controls="contract-employee-options"
+                                                    value={empSearch}
+                                                    placeholder="Nhập họ tên hoặc mã nhân viên..."
+                                                    onFocus={() => setShowEmpOptions(true)}
+                                                    onChange={(event) => {
+                                                        setEmpSearch(event.target.value);
+                                                        setShowEmpOptions(true);
+                                                        setForm({ ...form, employeeId: "" });
+                                                    }}
+                                                />
+                                                {showEmpOptions && empOptions.length > 0 && (
+                                                    <div className="att-employee-options" id="contract-employee-options" role="listbox">
+                                                        {empOptions.map((employee) => (
+                                                            <button
+                                                                type="button"
+                                                                role="option"
+                                                                aria-selected={form.employeeId === employee.id}
+                                                                key={employee.id}
+                                                                onClick={() => {
+                                                                    setForm({ ...form, employeeId: employee.id });
+                                                                    setEmpSearch(`${employee.fullName} · ${employee.employeeCode}`);
+                                                                    setShowEmpOptions(false);
+                                                                }}
+                                                            >
+                                                                <strong>{employee.fullName}</strong>
+                                                                <span>{employee.employeeCode}</span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                {showEmpOptions && empTerm && empOptions.length === 0 && (
+                                                    <div className="att-employee-empty">Không tìm thấy nhân viên phù hợp.</div>
+                                                )}
+                                            </div>
+                                        </label>
+                                        <label>
+                                            Số hợp đồng
+                                            <input
+                                                value={form.contractNumber}
+                                                onChange={set("contractNumber")}
+                                                placeholder="HD-001"
+                                            />
+                                        </label>
+                                        <label>
+                                            Loại hợp đồng
+                                            <select
+                                                value={form.contractType}
+                                                onChange={set("contractType")}
+                                            >
+                                                <option value={1}>Thử việc</option>
+                                                <option value={2}>Hạn định</option>
+                                                <option value={3}>
+                                                    Không xác định
+                                                </option>
+                                                <option value={4}>Mùa vụ</option>
+                                            </select>
+                                        </label>
+                                        <label>
+                                            Ngày bắt đầu
+                                            <input
+                                                type="date"
+                                                value={form.startDate}
+                                                onChange={set("startDate")}
+                                            />
+                                        </label>
+                                        <label>
+                                            Ngày hết hạn
+                                            <input
+                                                type="date"
+                                                value={form.endDate}
+                                                onChange={set("endDate")}
+                                            />
+                                        </label>
+                                        <div className="att-form-actions">
+                                            <button
+                                                type="button"
+                                                className="att-cam-btn-remove"
+                                                onClick={() => setShowModal(false)}
+                                            >
+                                                Hủy
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="admin-link-btn"
+                                                onClick={submitContract}
+                                            >
+                                                Lưu hợp đồng
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

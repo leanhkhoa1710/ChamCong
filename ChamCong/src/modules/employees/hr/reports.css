@@ -4,7 +4,7 @@
 .hr-file-intro h2 { margin: 6px 0 3px; font-size: 20px; }
 .hr-file-intro p { margin: 0; color: #73839b; font-size: 13px; }
 .hr-file-intro button, .hr-file-section header button, .hr-file-pagination button { padding: 8px 12px; color: #365f98; background: #fff; border: 1px solid #d8e1ed; border-radius: 8px; cursor: pointer; }
-.hr-file-search { width: 100%; }
+.admin-search.hr-file-search { width: 100%; min-width: 0; }
 .hr-file-filters { display: grid; grid-template-columns: repeat(5, minmax(125px, 1fr)) auto; gap: 10px; align-items: end; }
 .hr-file-filters label { display: flex; flex-direction: column; gap: 5px; color: #64758b; font-size: 12px; }
 .hr-file-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }

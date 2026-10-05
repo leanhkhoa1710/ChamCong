@@ -35,6 +35,7 @@ export const MODULES = [
     },
     ...[
         ["attendance-history", "Lịch sử & duyệt công"],
+        ["work-schedule", "Lịch làm"],
         ["statistics", "Thống kê công"],
         ["contracts", "Hợp đồng"],
         ["payroll", "Bảng lương"],

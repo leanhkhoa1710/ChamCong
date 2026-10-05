@@ -183,7 +183,7 @@ export default function ReportsPage() {
         <div className="att-content hr-file-reports">
             {error && <div className="hr-report-error" role="alert">{error}<button onClick={() => setError("")}>×</button></div>}
             {success && <div className="hr-report-success" role="status">{success}<button onClick={() => setSuccess("")}>×</button></div>}
-            <input className="hr-input hr-file-search" type="search" placeholder="🔍 Tìm mã báo cáo / tên báo cáo / người gửi..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
+            <label className="admin-search hr-file-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Tìm mã báo cáo / tên báo cáo / người gửi..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} /></label>
             <div className="hr-file-filters">
                 <label>Tháng<select className="hr-select" value={filters.period} onChange={(e) => filter("period", e.target.value)}><option value="">Tất cả tháng</option>{monthOptions.map((month) => <option key={month} value={month}>{new Date(`${month}-01`).toLocaleDateString("vi-VN", { month: "2-digit", year: "numeric" })}</option>)}</select></label>
                 <label>Phòng ban<select className="hr-select" value={filters.departmentId} onChange={(e) => filter("departmentId", e.target.value)}><option value="">Tất cả phòng ban</option>{departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</select></label>

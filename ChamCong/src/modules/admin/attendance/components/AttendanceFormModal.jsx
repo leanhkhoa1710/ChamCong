@@ -80,6 +80,14 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
             setError("Chọn nhân viên và ngày là bắt buộc.");
             return;
         }
+        if ([1, 2].includes(Number(form.approvalStatus)) && !form.status) {
+            setError("Vui lòng chọn Trạng thái trước khi duyệt hoặc từ chối.");
+            return;
+        }
+        if (Number(form.approvalStatus) === 2 && !form.note.trim()) {
+            setError("Vui lòng nhập lý do từ chối.");
+            return;
+        }
         setError("");
         try {
             await onSubmit(form, !!row);
@@ -92,7 +100,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
     return (
         <div className="att-guide-overlay">
             <div className="att-form-modal" onClick={(e) => e.stopPropagation()}>
-                <h2>{row ? "Sửa bản ghi chấm công" : "Thêm bản ghi chấm công"}</h2>
+                <h2>{row?._approvalDecision ? (row.approvalStatus === 1 ? "Duyệt bản ghi chấm công" : "Từ chối bản ghi chấm công") : row ? "Sửa bản ghi chấm công" : "Thêm bản ghi chấm công"}</h2>
                 <form onSubmit={submit} className="att-form">
                     <label>
                         Nhân viên
@@ -151,8 +159,8 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                     </label>
 
                     <label>
-                        Trạng thái
-                        <select value={form.status} onChange={set("status")}>
+                        Trạng thái{[1, 2].includes(Number(form.approvalStatus)) ? " *" : ""}
+                        <select required={[1, 2].includes(Number(form.approvalStatus))} value={form.status} onChange={set("status")}>
                             {STATUS_OPTIONS.map((o) => (
                                 <option key={o.l} value={o.v}>
                                     {o.l}
@@ -188,12 +196,13 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                     </label>
 
                     <label>
-                        Ghi chú
+                        {Number(form.approvalStatus) === 2 ? "Lý do từ chối *" : "Ghi chú"}
                         <textarea
                             rows="2"
+                            required={Number(form.approvalStatus) === 2}
                             value={form.note}
                             onChange={set("note")}
-                            placeholder="Tùy chọn"
+                            placeholder={Number(form.approvalStatus) === 2 ? "Nhập lý do từ chối" : "Tùy chọn"}
                         />
                     </label>
 
@@ -208,7 +217,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                             Hủy
                         </button>
                         <button type="submit" className="admin-link-btn">
-                            {row ? "Lưu sửa" : "Thêm mới"}
+                            {row?._approvalDecision ? (row.approvalStatus === 1 ? "Xác nhận duyệt" : "Xác nhận từ chối") : row ? "Lưu sửa" : "Thêm mới"}
                         </button>
                     </div>
                 </form>

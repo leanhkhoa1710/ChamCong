@@ -1,4 +1,4 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace ModelViews.LeaveRequestModelView
@@ -8,6 +8,8 @@ namespace ModelViews.LeaveRequestModelView
         public Guid Id { get; set; }
 
         public Guid EmployeeId { get; set; }
+
+        public string? EmployeeCode { get; set; }
 
         public string? EmployeeName { get; set; }
 

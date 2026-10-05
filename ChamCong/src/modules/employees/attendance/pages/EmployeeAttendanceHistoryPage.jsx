@@ -9,7 +9,6 @@ import PhotoCell from "../../../../modules/attendance/components/PhotoCell";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
 import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
 import { toCsv, downloadCsv } from "../../hr/hrUtils";
-import { getAuth } from "../../../../services/auth/auth";
 import "../../../../modules/attendance/attendance.css";
 import "../../employee.css";
 
@@ -22,6 +21,8 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
     const [rows, setRows] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [logs, setLogs] = useState([]);
+    const [employeeShifts, setEmployeeShifts] = useState([]);
+    const [shifts, setShifts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -36,6 +37,7 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [historyRow, setHistoryRow] = useState(null);
     const [editRow, setEditRow] = useState(null);
+    const [dupNotice, setDupNotice] = useState(null);
 
     const empMap = useMemo(
         () => Object.fromEntries(employees.map((e) => [e.id, e])),
@@ -44,14 +46,18 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
 
     const load = async () => {
         try {
-            const [a, e, lg] = await Promise.all([
+            const [a, e, lg, es, s] = await Promise.all([
                 employeeAttendanceApi.attendanceAll(),
                 employeeAttendanceApi.employeesAll(),
                 employeeAttendanceApi.logsAll ? employeeAttendanceApi.logsAll() : Promise.resolve(null),
+                employeeAttendanceApi.employeeShiftsAll(),
+                employeeAttendanceApi.shiftsAll(),
             ]);
             setRows(a.data.data?.items || []);
             setEmployees(e.data.data?.items || []);
             if (lg?.data?.data) setLogs(lg.data.data.items || []);
+            setEmployeeShifts(es.data.data?.items || []);
+            setShifts(s.data.data?.items || []);
         } catch (err) {
             setError(err.response?.data?.message || err.message);
         } finally {
@@ -119,32 +125,29 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
             const previous = latestByEmployee.get(log.employeeId);
             if (!previous || new Date(log.logTime) > new Date(previous.logTime)) latestByEmployee.set(log.employeeId, log);
         });
+        const weekdayBit = 1 << ((new Date(`${metricDate}T00:00:00`).getDay() + 6) % 7);
+        const activeShiftIds = new Set(shifts.filter((shift) => shift.isActive && (Number(shift.workDays) & weekdayBit)).map((shift) => shift.id));
+        const scheduledEmployees = new Set(employeeShifts.filter((assignment) =>
+            activeShiftIds.has(assignment.shiftId) &&
+            (assignment.effectiveFrom || "").slice(0, 10) <= metricDate &&
+            (!assignment.effectiveTo || assignment.effectiveTo.slice(0, 10) >= metricDate)
+        ).map((assignment) => assignment.employeeId));
+        const checkedIn = new Set(dayLogs.filter((log) => log.type === 1).map((log) => log.employeeId));
         return {
             workforce: employees.length,
-            checkedIn: new Set(dayLogs.filter((log) => log.type === 1).map((log) => log.employeeId)).size,
+            scheduled: scheduledEmployees.size,
+            checkedIn: checkedIn.size,
             onShift: [...latestByEmployee.values()].filter((log) => log.type === 1).length,
             checkedOut: new Set(dayLogs.filter((log) => log.type === 2).map((log) => log.employeeId)).size,
-            absent: new Set(rows.filter((row) => (row.attendanceDate || "").slice(0, 10) === metricDate && Number(row.status) === 4).map((row) => row.employeeId)).size,
+            absent: Math.max(0, scheduledEmployees.size - checkedIn.size),
         };
-    }, [rows, logs, employees, selectedDate]);
+    }, [rows, logs, employees, employeeShifts, shifts, selectedDate]);
 
     // ===== Duyệt công (thấp / cao cấp: duyệt / từ chối) =====
-    const approve = async (row, ok) => {
-        const auth = getAuth();
-        if (!auth?.employeeId) {
-            alert("Không xác định được người duyệt (chưa liên kết nhân viên).");
-            return;
-        }
-        try {
-            await employeeAttendanceApi.approve({
-                id: row.id,
-                approvalStatus: ok ? 1 : 2,
-                approvedBy: auth.employeeId,
-            });
-            load();
-        } catch (err) {
-            setError(err.response?.data?.message || err.message);
-        }
+    const approve = (row, ok) => {
+        setError("");
+        setEditRow({ ...row, approvalStatus: ok ? 1 : 2, _approvalDecision: true });
+        setModalOpen(true);
     };
 
     // ===== Xuất file theo tháng (CSV) =====
@@ -172,7 +175,7 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
     };
 
     const submitModal = async (form, isEdit) => {
-        if (isEdit && editRow?.approvalStatus === 1) {
+        if (isEdit && editRow?.approvalStatus === 1 && !editRow?._approvalDecision) {
             setError("Không thể chỉnh sửa bản ghi chấm công đã được duyệt.");
             return;
         }
@@ -197,6 +200,14 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                 payload.id = editRow.id;
                 await employeeAttendanceApi.update(payload);
             } else {
+                // Pre-check trùng từ dữ liệu đã tải: "+ Thêm" chỉ cho trường hợp chưa có chấm công
+                const dup = rows.find((r) => r.employeeId === form.employeeId && (r.attendanceDate || "").slice(0, 10) === form.attendanceDate);
+                if (dup) {
+                    setModalOpen(false);
+                    setEditRow(null);
+                    setDupNotice({ employeeId: form.employeeId, attendanceDate: form.attendanceDate });
+                    return;
+                }
                 // Create chỉ nhận các field của CreateAttendanceModelView
                 await employeeAttendanceApi.create({
                     employeeId: payload.employeeId,
@@ -212,14 +223,26 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
             setEditRow(null);
             load();
         } catch (err) {
+            // Fallback: server vẫn chặn trùng (race / dữ liệu chưa load hết)
+            if (!isEdit && err.response?.status === 400 && String(err.response?.data?.message || "").includes("Attendance already exists")) {
+                setModalOpen(false);
+                setEditRow(null);
+                setDupNotice({ employeeId: form.employeeId, attendanceDate: form.attendanceDate });
+                return;
+            }
             setError(err.response?.data?.message || err.message);
             throw err;
         }
     };
 
-    const empName = (row) => {
+    const empCode = (row) => {
         const e = empMap[row.employeeId];
-        return e ? `${e.employeeCode} · ${e.fullName}` : row.employeeName || "—";
+        return e?.employeeCode || row.employeeCode || "—";
+    };
+
+    const empFull = (row) => {
+        const e = empMap[row.employeeId];
+        return e ? e.fullName : (row.employeeName || "—");
     };
 
     const PageLayout = HrAppLayout;
@@ -234,10 +257,11 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                     <>
                         <div className="attendance-history-summary">
                             <div><span>Quân số</span><strong>{kpi.workforce}</strong></div>
+                            <div><span>Có lịch làm</span><strong>{kpi.scheduled}</strong></div>
                             <div><span>Đã vào ca</span><strong>{kpi.checkedIn}</strong></div>
                             <div><span>Đang trong ca</span><strong>{kpi.onShift}</strong></div>
                             <div><span>Đã ra ca</span><strong>{kpi.checkedOut}</strong></div>
-                            <div><span>Vắng mặt</span><strong>{kpi.absent}</strong></div>
+                            <div><span>Vắng</span><strong>{kpi.absent}</strong></div>
                         </div>
 
                         <div className="att-cal-strip">
@@ -301,53 +325,56 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                                         <tr>
                                             <th>Nhân viên</th>
                                             <th>Ngày</th>
-                                            <th>Trạng thái</th>
-                                            <th>Giờ vào → ra</th>
-                                            <th>Giờ thực</th>
-                                            <th>Ảnh vào ca</th>
-                                            <th>Ảnh ra ca</th>
+                                            <th className="att-col-status">Trạng thái</th>
+                                            <th>Giờ vào</th>
+                                            <th>Giờ ra</th>
+                                            <th className="att-col-actual">Giờ thực</th>
+                                            <th className="att-col-photo">Ảnh vào ca</th>
+                                            <th className="att-col-photo">Ảnh ra ca</th>
                                             <th className="att-col-approval">Duyệt</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filtered.length === 0 ? (
                                             <tr>
-                                                <td colSpan={8}>
+                                                <td colSpan={9}>
                                                     <span className="att-muted">Không có bản ghi phù hợp.</span>
                                                 </td>
                                             </tr>
                                         ) : (
                                             filtered.map((row) => (
                                                 <tr key={row.id}>
-                                                    <td>{empName(row)}</td>
+                                                    <td><span className="work-schedule-employee-code">{empCode(row)}</span><strong className="work-schedule-employee-name">{empFull(row)}</strong></td>
                                                     <td>{formatVnDate(row.attendanceDate)}</td>
-                                                    <td>
+                                                    <td className="att-col-status">
                                                         <span
                                                             className={`att-badge ${statusClass(row.status)}`}
                                                         >
                                                             {statusLabel(row.status)}
                                                         </span>
                                                     </td>
-                                                    <td>
-                                                        {formatVnTime(row.checkInTime) || "—"} →{" "}
-                                                        {formatVnTime(row.checkOutTime) || "—"}
-                                                    </td>
-                                                    <td>{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
-                                                    <td><PhotoCell src={row.checkInPhoto} alt="Vào ca" /></td>
-                                                    <td><PhotoCell src={row.checkOutPhoto} alt="Ra ca" /></td>
+                                                    <td>{formatVnTime(row.checkInTime) || "—"}</td>
+                                                    <td>{formatVnTime(row.checkOutTime) || "—"}</td>
+                                                    <td className="att-col-actual">{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
+                                                    <td className="att-col-photo"><PhotoCell src={row.checkInPhoto} alt="Vào ca" hideYesBadge /></td>
+                                                    <td className="att-col-photo"><PhotoCell src={row.checkOutPhoto} alt="Ra ca" hideYesBadge /></td>
                                                     <td>
                                                         <div className="att-approval-cell">
                                                             {row.approvalStatus === 0 ? (
-                                                                <>
-                                                                    <button
-                                                                        type="button"
-                                                                        className="admin-link-btn admin-link-btn--sm admin-link-btn--approve"
-                                                                        onClick={() => approve(row, true)}
-                                                                    >
-                                                                        Duyệt
-                                                                    </button>
-                                                                    <button type="button" className="admin-link-btn admin-link-btn--sm" onClick={() => { setEditRow(row); setModalOpen(true); }}>Sửa</button>
-                                                                </>
+                                                                row.checkOutTime ? (
+                                                                    <>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="admin-link-btn admin-link-btn--sm admin-link-btn--approve"
+                                                                            onClick={() => approve(row, true)}
+                                                                        >
+                                                                            Duyệt
+                                                                        </button>
+                                                                        <button type="button" className="admin-link-btn admin-link-btn--sm" onClick={() => { setEditRow(row); setModalOpen(true); }}>Sửa</button>
+                                                                    </>
+                                                                ) : (
+                                                                    <button type="button" className="admin-link-btn admin-link-btn--sm" title="Nhân viên chưa ra ca — cập nhật giờ ra ca để có thể duyệt" onClick={() => { setEditRow(row); setModalOpen(true); }}>Sửa</button>
+                                                                )
                                                             ) : (
                                                                 <div
                                                                     className="att-approval-detail"
@@ -382,10 +409,43 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                     onSubmit={submitModal}
                 />
 
+                {dupNotice && (() => {
+                    const dupEmp = employees.find((e) => e.id === dupNotice.employeeId);
+                    const dupName = dupEmp ? `${dupEmp.fullName} · ${dupEmp.employeeCode}` : "Nhân viên này";
+                    return (
+                        <div className="att-guide-overlay" onMouseDown={(e) => e.target === e.currentTarget && setDupNotice(null)}>
+                            <section className="att-history-modal" role="dialog" aria-modal="true">
+                                <header className="att-history-modal-head">
+                                    <h2>Bản ghi đã tồn tại</h2>
+                                    <p>{dupName} · {formatVnDate(dupNotice.attendanceDate)}</p>
+                                    <button type="button" onClick={() => setDupNotice(null)} aria-label="Đóng">×</button>
+                                </header>
+                                <div className="att-history-body">
+                                    <div className="att-history-section">
+                                        <div className="att-history-section-title">
+                                            <span className="att-badge warn">Lưu ý</span>
+                                        </div>
+                                        <div className="att-history-change-detail">
+                                            Nhân viên đã có bản ghi chấm công trong ngày này. Nút “+ Thêm” chỉ dùng cho trường hợp nhân viên quên chấm hoặc chưa có bản ghi (chấm bổ sung).
+                                        </div>
+                                        <div className="att-history-row">
+                                            <span className="att-history-label">Bạn có thể</span>
+                                            <span>Chọn một ngày khác, hoặc bấm “Sửa” trên bản ghi hiện có nếu cần điều chỉnh.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <footer className="att-history-modal-foot">
+                                    <button type="button" className="admin-link-btn" onClick={() => setDupNotice(null)}>Đóng</button>
+                                </footer>
+                            </section>
+                        </div>
+                    );
+                })()}
+
                 {historyRow && (
                     <AttendanceHistoryModal
                         row={historyRow}
-                        employeeLabel={empName(historyRow)}
+                        employeeLabel={`${empCode(historyRow)} · ${empFull(historyRow)}`}
                         onClose={() => setHistoryRow(null)}
                     />
                 )}

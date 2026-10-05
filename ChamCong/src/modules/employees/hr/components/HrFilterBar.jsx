@@ -18,13 +18,15 @@ const HrFilterBar = ({
     return (
         <div className="hr-filter-bar">
             <div className="hr-filter-fields">
-                <input
-                    type="search"
-                    className="hr-input hr-input--search"
-                    placeholder="🔍 Tìm tên, mã NV, email..."
-                    value={filters.search}
-                    onChange={(e) => setters.setSearch(e.target.value)}
-                />
+                <label className="admin-search hr-filter-search">
+                    <span aria-hidden="true">⌕</span>
+                    <input
+                        type="search"
+                        placeholder="Tìm tên, mã NV, email..."
+                        value={filters.search}
+                        onChange={(e) => setters.setSearch(e.target.value)}
+                    />
+                </label>
                 <select
                     className="hr-select"
                     value={filters.department}

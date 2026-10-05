@@ -16,6 +16,7 @@ namespace M.Services.Mappings
             {
                 Id = entity.Id,
                 EmployeeId = entity.EmployeeId,
+                EmployeeCode = entity.Employee?.EmployeeCode,
                 EmployeeName = entity.Employee?.FullName,
 
                 LeaveTypeId = entity.LeaveTypeId,

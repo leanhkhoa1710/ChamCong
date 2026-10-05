@@ -264,6 +264,7 @@
 .admin-search > span {
     font-size: 21px;
     line-height: 1;
+    margin-bottom: 5px;
 }
 
 .admin-search input[type="search"] {

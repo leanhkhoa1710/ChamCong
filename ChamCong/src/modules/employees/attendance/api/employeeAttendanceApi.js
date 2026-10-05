@@ -13,6 +13,12 @@ const employeeAttendanceApi = {
             `/Employee/get-all?pageNumber=${page}&pageSize=${size}`
         );
     },
+    employeeShiftsAll(page = 1, size = 1000) {
+        return axiosClient.get(`/EmployeeShift/get-all?pageNumber=${page}&pageSize=${size}`);
+    },
+    shiftsAll(page = 1, size = 500) {
+        return axiosClient.get(`/Shift/get-all?pageNumber=${page}&pageSize=${size}`);
+    },
     create(payload) {
         return axiosClient.post("/Attendance/create", payload);
     },

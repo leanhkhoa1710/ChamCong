@@ -264,6 +264,7 @@
 .admin-search > span {
     font-size: 21px;
     line-height: 1;
+    margin-bottom: 5px;
 }
 
 .admin-search input[type="search"] {
@@ -285,7 +286,7 @@
 
 .attendance-history-summary {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 8px;
     margin-bottom: 8px;
 }
@@ -303,6 +304,39 @@
     font-size: 13px;
 }
 .attendance-history-summary strong { color: #0e1a26; font-size: 20px; line-height: 1; }
+
+.work-schedule-page { display: grid; gap: 14px; }
+.work-schedule-calendar { padding: 16px 18px; }
+.work-schedule-calendar-head { display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; min-height: 34px; margin-bottom: 14px; }
+.work-schedule-calendar-head .att-cal-nav { position: static; flex: 0 0 30px; width: 30px; height: 30px; }
+.work-schedule-calendar-head h2 { min-width: 180px; margin: 0; color: #172b42; font-size: 16px; text-align: center; text-transform: capitalize; }
+.work-schedule-date-picker { display: flex; align-items: center; gap: 7px; margin-left: auto; color: #5a6b7b; font-size: 12px; }
+.work-schedule-date-picker input { min-height: 34px; padding: 5px 8px; border: 1px solid #d1d9e2; border-radius: 7px; color: #24384d; }
+.work-schedule-weekdays, .work-schedule-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); text-align: center; }
+.work-schedule-weekdays { padding-bottom: 6px; color: #8898a9; font-size: 11px; font-weight: 700; }
+.work-schedule-days { gap: 5px; }
+.work-schedule-day { position: relative; display: flex; min-width: 0; min-height: 54px; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 1px solid #edf1f5; border-radius: 8px; background: #fff; color: #23364a; cursor: pointer; }
+.work-schedule-day:hover { border-color: #83b9df; background: #f5faff; }
+.work-schedule-day small { min-width: 20px; padding: 1px 5px; border-radius: 10px; background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; line-height: 15px; }
+.work-schedule-day.is-selected { border-color: #005b94; background: #005b94; color: #fff; }
+.work-schedule-day.is-selected small { background: #fff; color: #005b94; }
+.work-schedule-day.is-today:not(.is-selected) { border-color: #005b94; color: #005b94; font-weight: 700; }
+.work-schedule-day.is-empty { border-color: transparent; background: transparent; cursor: default; }
+.work-schedule-calendar-foot { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid #eef2f6; color: #748397; font-size: 11px; }
+.work-schedule-count-dot { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 50%; background: #22a05a; }
+.work-schedule-day-summary { display: flex; flex-wrap: wrap; gap: 10px; }
+.work-schedule-day-summary > div { display: flex; min-width: 200px; flex: 1; flex-direction: column; gap: 5px; padding: 12px 16px; border: 1px solid #d2dceb; border-radius: 10px; background: #e8eef8; }
+.work-schedule-day-summary span { color: #5e7187; font-size: 12px; }
+.work-schedule-day-summary strong { color: #13283d; font-size: 17px; text-transform: capitalize; }
+.work-schedule-list { padding: 14px 16px; }
+.work-schedule-list-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
+.work-schedule-list-head h2 { margin: 0 0 4px; color: #172b42; font-size: 16px; }
+.work-schedule-list-head > div > span { color: #748397; font-size: 12px; }
+.work-schedule-list-head .admin-search { width: min(360px, 100%); }
+.work-schedule-table td { vertical-align: middle; }
+.work-schedule-employee-code { display: block; color: #748397; font-size: 11px; }
+.work-schedule-employee-name { display: block; margin-top: 3px; color: #1a2c40; font-weight: 600; }
+.work-schedule-table .att-badge { white-space: nowrap; }
 
 .attendance-history-compact .att-card { padding: 12px 16px; }
 .attendance-history-compact .admin-toolbar { gap: 8px; margin-bottom: 10px; }
@@ -400,6 +434,29 @@
 .att-detail-modal-head button { align-self: flex-start; padding: 0 5px; border: 0; background: transparent; color: #68788c; font-size: 24px; cursor: pointer; }
 .attendance-history-compact .att-table th.att-col-approval,
 .attendance-history-compact .att-table td.att-col-approval { text-align: center; }
+/* Căn giữa các cột: Giờ thực, Ảnh vào ca, Ảnh ra ca */
+.attendance-history-compact .att-table th.att-col-actual,
+.attendance-history-compact .att-table td.att-col-actual,
+.attendance-history-compact .att-table th.att-col-photo,
+.attendance-history-compact .att-table td.att-col-photo { text-align: center; }
+.attendance-history-compact .att-table td.att-col-photo .att-photo-cell { align-items: center; }
+/* Trạng thái: tiêu đề và dữ liệu căn giữa */
+.attendance-history-compact .att-table th.att-col-status,
+.attendance-history-compact .att-table td.att-col-status { text-align: center; }
+/* Cột Mã NV hẹp */
+.attendance-history-compact .att-table th.att-col-code,
+.attendance-history-compact .att-table td.att-col-code { width: 90px; white-space: nowrap; }
+
+/* Duyệt (display-only) ở trang lịch sử nhân viên: badge + mốc thời gian xếp dọc, căn giữa */
+.att-approval-cell--view {
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+}
+.att-approval-cell--view small {
+    font-size: 11px;
+    color: #5a6b7b;
+}
 .admin-link-btn--sm { padding: 5px 8px; font-size: 11px; }
 .admin-link-btn--approve { background: #fff7e6; color: #9a5b00; }
 .admin-link-btn--danger { background: #b42323; }
@@ -409,6 +466,14 @@
     .attendance-history-summary > div { padding: 7px; font-size: 11px; }
     .att-cal-footer { align-items: flex-start; flex-direction: column; }
     .att-cal-actions { margin-left: 0; }
+    .work-schedule-calendar { padding: 12px; }
+    .work-schedule-calendar-head { justify-content: flex-start; flex-wrap: wrap; gap: 8px; }
+    .work-schedule-calendar-head h2 { min-width: 0; flex: 1; font-size: 14px; }
+    .work-schedule-date-picker { margin-left: 0; }
+    .work-schedule-day { min-height: 44px; }
+    .work-schedule-calendar-foot { gap: 8px; flex-direction: column; }
+    .work-schedule-list-head { align-items: stretch; flex-direction: column; }
+    .work-schedule-list-head .admin-search { width: 100%; }
 }
 
 @media (max-width: 640px) {
@@ -897,8 +962,11 @@
 /* ===== Hover "Xem chi tiết" trên badge duyệt ===== */
 .att-approval-detail {
     position: relative;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-areas: "status" "meta";
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-items: center;
     gap: 2px;
     cursor: pointer;
     padding: 4px 8px;
@@ -908,15 +976,22 @@
 .att-approval-detail:hover {
     background: #f5f7fa;
 }
+.att-approval-detail > .att-badge { grid-area: status; }
+.att-approval-detail:hover > .att-badge { visibility: hidden; }
 .att-approval-detail small {
+    grid-area: meta;
     color: #63758a;
     font-size: 11px;
+    white-space: nowrap;
 }
 .att-approval-detail-hover {
     display: none;
-    font-size: 11px;
+    grid-area: status;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
     color: #1565c0;
-    margin-top: 2px;
 }
 .att-approval-detail:hover .att-approval-detail-hover {
     display: inline;
