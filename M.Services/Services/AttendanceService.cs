@@ -372,6 +372,7 @@ namespace M.Services.Service
 
             Attendance attendance = await repo.Entities
                 .Include(x => x.AttendanceLogs)
+                .Include(x => x.Approver)
                 .FirstOrDefaultAsync(x =>
                     x.Id == model.Id &&
                     !x.DeletedTime.HasValue)
@@ -445,6 +446,23 @@ namespace M.Services.Service
 
             model.ToEntity(attendance);
 
+            // Neu doi approvalStatus qua form sua, set ApprovedBy (Guid) + Approver.
+            if ((attendance.ApprovalStatus == AttendanceApprovalStatus.Approved ||
+                 attendance.ApprovalStatus == AttendanceApprovalStatus.Rejected) &&
+                attendance.ApprovedBy == null)
+            {
+                IGenericRepository<Employee> empRepoForApprover = _unitOfWork.GetRepository<Employee>();
+                var approver = await empRepoForApprover.Entities
+                    .FirstOrDefaultAsync(x => !x.DeletedTime.HasValue &&
+                        (x.PhoneNumber == currentUser || x.EmployeeCode == currentUser || x.Email == currentUser));
+                if (approver != null)
+                {
+                    attendance.ApprovedBy = approver.Id;
+                    attendance.Approver = approver;
+                }
+                attendance.ApprovedAt = DateTime.Now;
+            }
+
             // Tinh diff va luu vao ChangeSummary
             var changes = new List<string>();
             string oldInStr = FormatTime(oldCheckIn);
@@ -452,15 +470,15 @@ namespace M.Services.Service
             string oldOutStr = FormatTime(oldCheckOut);
             string newOutStr = FormatTime(attendance.CheckOutTime);
             if (oldInStr != newInStr)
-                changes.Add($"Da sua vao ca ({oldInStr} -> {newInStr})");
+                changes.Add($"Đã sửa vào ca ({oldInStr} -> {newInStr})");
             if (oldOutStr != newOutStr)
-                changes.Add($"Da sua ra ca ({oldOutStr} -> {newOutStr})");
+                changes.Add($"Đã sửa ra ca ({oldOutStr} -> {newOutStr})");
             if (oldStatus != attendance.Status)
-                changes.Add($"Da sua trang thai ({oldStatus?.ToString() ?? "null"} -> {attendance.Status?.ToString() ?? "null"})");
+                changes.Add($"Đã sửa trạng thái ({oldStatus?.ToString() ?? "chưa có"} -> {attendance.Status?.ToString() ?? "chưa có"})");
             if (oldActualHours != attendance.ActualHours)
-                changes.Add($"Da sua gio thuc te ({oldActualHours?.ToString() ?? "null"} -> {attendance.ActualHours?.ToString() ?? "null"})");
+                changes.Add($"Đã sửa giờ thực tế ({oldActualHours?.ToString() ?? "chưa có"} -> {attendance.ActualHours?.ToString() ?? "chưa có"})");
             if (oldNote != attendance.Note)
-                changes.Add("Da sua ghi chu");
+                changes.Add("Đã sửa ghi chú");
 
             attendance.ChangeSummary =
                 changes.Count > 0 ? string.Join("; ", changes) : null;
@@ -507,7 +525,7 @@ namespace M.Services.Service
         private static string FormatTime(DateTimeOffset? t) =>
             t.HasValue
                 ? t.Value.ToOffset(TimeSpan.FromHours(7)).ToString("HH:mm")
-                : "chua co";
+                : "chưa có";
 
         public async Task ApproveAsync(ApproveAttendanceModelView model)
         {

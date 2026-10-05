@@ -219,6 +219,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                         {L("Ghi chú")}
                         <textarea
                             rows="2"
+                            required={form.approvalStatus === "2"}
                             value={form.note}
                             onChange={set("note")}
                             placeholder={L("Tùy chọn")}
