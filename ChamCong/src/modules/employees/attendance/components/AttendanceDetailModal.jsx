@@ -1,10 +1,13 @@
 import { useMemo } from "react";
+import { translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 import { statusLabel, statusClass } from "../labels";
 import { formatVnDate, formatVnTime } from "../../../../utils/vnTime";
 
 // Modal chi tiết chấm công của 1 nhân viên trong 1 tháng.
 // Hiển thị bảng ngày / giờ vào / giờ ra / giờ thực tế + tổng kết cuối trang.
 const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
+    const { language } = useLanguage();
+    const L = (text) => translate(text, language);
     const summary = useMemo(() => {
         const total = monthRows.length;
         const worked = monthRows.filter((r) => [1, 2, 3].includes(r.status)).length;
@@ -25,19 +28,19 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
             <section className="att-detail-modal" role="dialog" aria-modal="true">
                 <header className="att-detail-modal-head">
                     <div>
-                        <h2>Chi tiết chấm công</h2>
+                        <h2>{L("Chi tiết chấm công")}</h2>
                         <p>{employeeLabel}</p>
                     </div>
-                    <button type="button" onClick={onClose} aria-label="Đóng">×</button>
+                    <button type="button" onClick={onClose} aria-label={L("Đóng")}>×</button>
                 </header>
 
                 <div className="att-detail-summary">
-                    <div className="att-detail-stat"><span>Tổng</span><strong>{summary.total}</strong></div>
-                    <div className="att-detail-stat att-detail-stat--ok"><span>Công</span><strong>{summary.worked}</strong></div>
-                    <div className="att-detail-stat att-detail-stat--warn"><span>Đi trễ</span><strong>{summary.late}</strong></div>
-                    <div className="att-detail-stat att-detail-stat--bad"><span>Vắng</span><strong>{summary.absent}</strong></div>
-                    <div className="att-detail-stat att-detail-stat--info"><span>Nghỉ phép</span><strong>{summary.leave}</strong></div>
-                    <div className="att-detail-stat"><span>Tổng giờ</span><strong>{summary.hours}h</strong></div>
+                    <div className="att-detail-stat"><span>{L("Tổng")}</span><strong>{summary.total}</strong></div>
+                    <div className="att-detail-stat att-detail-stat--ok"><span>{L("Công")}</span><strong>{summary.worked}</strong></div>
+                    <div className="att-detail-stat att-detail-stat--warn"><span>{L("Đi trễ")}</span><strong>{summary.late}</strong></div>
+                    <div className="att-detail-stat att-detail-stat--bad"><span>{L("Vắng")}</span><strong>{summary.absent}</strong></div>
+                    <div className="att-detail-stat att-detail-stat--info"><span>{L("Nghỉ phép")}</span><strong>{summary.leave}</strong></div>
+                    <div className="att-detail-stat"><span>{L("Tổng giờ")}</span><strong>{summary.hours}h</strong></div>
                 </div>
 
                 {(() => {
@@ -45,7 +48,7 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                     if (changed.length === 0) return null;
                     return (
                         <div className="att-detail-changes">
-                            <strong>Nội dung đã sửa</strong>
+                            <strong>{L("Nội dung đã sửa")}</strong>
                             {changed.map((r) => (
                                 <div key={r.id} className="att-detail-change-row">
                                     <span className="att-muted">{formatVnDate(r.attendanceDate)}</span>
@@ -62,17 +65,17 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                 })()}
 
                 {sorted.length === 0 ? (
-                    <p className="att-muted">Không có bản ghi trong tháng này.</p>
+                    <p className="att-muted">{L("Không có bản ghi trong tháng này.")}</p>
                 ) : (
                     <div className="att-table-wrap">
                         <table className="att-table att-table--compact">
                             <thead>
                                 <tr>
-                                    <th>Ngày</th>
-                                    <th>Giờ vào</th>
-                                    <th>Giờ ra</th>
-                                    <th>Giờ thực tế</th>
-                                    <th>Trạng thái</th>
+                                    <th>{L("Ngày")}</th>
+                                    <th>{L("Giờ vào")}</th>
+                                    <th>{L("Giờ ra")}</th>
+                                    <th>{L("Giờ thực tế")}</th>
+                                    <th>{L("Trạng thái")}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,7 +87,7 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                                         <td>{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
                                         <td>
                                             <span className={`att-badge ${statusClass(row.status)}`}>
-                                                {statusLabel(row.status)}
+                                                {L(statusLabel(row.status))}
                                             </span>
                                         </td>
                                     </tr>
@@ -95,7 +98,7 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                 )}
 
                 <footer>
-                    <button type="button" className="admin-link-btn" onClick={onClose}>Đóng</button>
+                    <button type="button" className="admin-link-btn" onClick={onClose}>{L("Đóng")}</button>
                 </footer>
             </section>
         </div>

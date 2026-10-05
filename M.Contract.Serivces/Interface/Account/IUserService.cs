@@ -15,6 +15,8 @@ namespace M.Contract.Services.Interface
 
         Task SoftDeleteAsync(Guid id);
         Task DeleteAsync(Guid id);
+        Task BlockUserAsync(Guid userId);
+        Task UnblockUserAsync(Guid userId);
 
 
 

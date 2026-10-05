@@ -47,5 +47,19 @@ namespace M.API.Controllers
 
 
 
+
+        /// <summary>
+        /// Retrieves the list of role names assigned to a user
+        /// </summary>
+        [HttpGet("get-roles/{userId}")]
+        public async Task<IActionResult> GetRolesByUser(Guid userId)
+        {
+            IList<string> roles = await _userRoleService.GetRolesByUserAsync(userId);
+            return Ok(new BaseResponse<IList<string>>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: roles
+            ));
+        }
     }
 }

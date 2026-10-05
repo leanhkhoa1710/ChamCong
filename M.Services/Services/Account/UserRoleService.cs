@@ -87,5 +87,17 @@ namespace M.Services.Service
                                          $"Failed to remove role: {errors}");
             }
         }
+
+        public async Task<IList<string>> GetRolesByUserAsync(Guid userId)
+        {
+            ApplicationUser user = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.Id == userId)
+                ?? throw new ErrorException(StatusCodes.Status404NotFound,
+                                            ResponseCodeConstants.NOT_FOUND,
+                                            "User not found");
+
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            return roles;
+        }
     }
 }

@@ -60,9 +60,7 @@ export const useHrFilters = (employees, data) => {
                 return false;
             }
             const contracts = data.contracts.filter((item) => item.employeeId === e.id);
-            const salaries = data.salaries.filter((item) => item.employeeId === e.id);
-            const insurance = data.insurance.filter((item) => item.employeeId === e.id);
-            const hasAccount = Boolean(e.userId || data.users.some((user) => user.employeeId === e.id));
+                        const hasAccount = Boolean(e.userId || data.users.some((user) => user.employeeId === e.id));
             const hasContract = contracts.length > 0;
             const missing = docCompleteness(e, data).missing;
             if ([1, 2, 3].includes(e.status) && quickFilter !== "resigned") {

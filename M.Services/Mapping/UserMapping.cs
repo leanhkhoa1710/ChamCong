@@ -21,6 +21,7 @@ namespace Services.Mappings
                 EmailConfirmed = user.EmailConfirmed,
                 //Check Password
                 HasPassword = !string.IsNullOrEmpty(user.PasswordHash),
+                IsLockedOut = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow,
                 // Audit info
                 CreatedBy = user.CreatedBy,
                 CreatedTime = user.CreatedTime,

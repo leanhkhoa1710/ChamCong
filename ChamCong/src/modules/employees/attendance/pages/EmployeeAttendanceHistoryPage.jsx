@@ -10,6 +10,7 @@ import { statusLabel, statusClass, approvalLabel, approvalClass } from "../label
 import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
 import { toCsv, downloadCsv } from "../../hr/hrUtils";
 import { getAuth } from "../../../../services/auth/auth";
+import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 import "../../../../modules/attendance/attendance.css";
 import "../../employee.css";
 
@@ -18,7 +19,7 @@ const vnToday = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Bangkok
 // Trang quản trị: lịch sử chấm công của TOÀN BỘ nhân viên,
 // + KPI (chấm hôm nay / bất thường / chờ duyệt), duyệt công,
 // xuất file theo tháng và báo cáo công việc.
-const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
+const EmployeeAttendanceHistoryPage = () => {
     const [rows, setRows] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [logs, setLogs] = useState([]);
@@ -31,6 +32,9 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
     const [calMonth, setCalMonth] = useState(() => vnToday().slice(0, 7));
     const [selectedDate, setSelectedDate] = useState(() => vnToday());
     const [search, setSearch] = useState("");
+    const { language } = useLanguage();
+    const locale = localeForLanguage(language);
+    const L = (text) => translate(text, language);
 
     // Modal thêm / sửa
     const [modalOpen, setModalOpen] = useState(false);
@@ -88,8 +92,8 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
         const [year, monthNumber] = calMonth.split("-").map(Number);
         const today = vnToday();
         const day = selectedDate ? Number(selectedDate.slice(8)) : calMonth === today.slice(0, 7) ? Number(today.slice(8)) : "…";
-        return `ngày ${day} ${new Date(year, monthNumber - 1, 1).toLocaleDateString("vi-VN", { month: "long", year: "numeric" })}`;
-    }, [calMonth, selectedDate]);
+        return day !== "…" ? new Date(year, monthNumber - 1, Number(day)).toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) : new Date(year, monthNumber - 1, 1).toLocaleDateString(locale, { month: "long", year: "numeric" });
+    }, [calMonth, selectedDate, locale]);
 
     const dayStatus = useMemo(() => rows.reduce((result, row) => {
         const day = (row.attendanceDate || "").slice(0, 10);
@@ -132,7 +136,7 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
     const approve = async (row, ok) => {
         const auth = getAuth();
         if (!auth?.employeeId) {
-            alert("Không xác định được người duyệt (chưa liên kết nhân viên).");
+            alert(L("Không xác định được người duyệt (chưa liên kết nhân viên)."));
             return;
         }
         try {
@@ -173,7 +177,7 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
 
     const submitModal = async (form, isEdit) => {
         if (isEdit && editRow?.approvalStatus === 1) {
-            setError("Không thể chỉnh sửa bản ghi chấm công đã được duyệt.");
+            setError(L("Không thể chỉnh sửa bản ghi chấm công đã được duyệt."));
             return;
         }
         const asDateTimeOffset = (time, isCheckout = false) => {
@@ -229,23 +233,23 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
             <div className="att-content attendance-history-compact">
                 {error && <div className="att-error">{error}</div>}
                 {loading ? (
-                    <div className="att-loading">Đang tải...</div>
+                    <div className="att-loading">{L("Đang tải...")}</div>
                 ) : (
                     <>
                         <div className="attendance-history-summary">
-                            <div><span>Quân số</span><strong>{kpi.workforce}</strong></div>
-                            <div><span>Đã vào ca</span><strong>{kpi.checkedIn}</strong></div>
-                            <div><span>Đang trong ca</span><strong>{kpi.onShift}</strong></div>
-                            <div><span>Đã ra ca</span><strong>{kpi.checkedOut}</strong></div>
-                            <div><span>Vắng mặt</span><strong>{kpi.absent}</strong></div>
+                            <div><span>{L("Quân số")}</span><strong>{kpi.workforce}</strong></div>
+                            <div><span>{L("Đã vào ca")}</span><strong>{kpi.checkedIn}</strong></div>
+                            <div><span>{L("Đang trong ca")}</span><strong>{kpi.onShift}</strong></div>
+                            <div><span>{L("Đã ra ca")}</span><strong>{kpi.checkedOut}</strong></div>
+                            <div><span>{L("Vắng mặt")}</span><strong>{kpi.absent}</strong></div>
                         </div>
 
                         <div className="att-cal-strip">
                             <div className="att-cal">
                                 <div className="att-cal-head">
-                                    <button type="button" className="att-cal-nav" onClick={() => shiftCalendar(-1)} aria-label="Tháng trước">‹</button>
+                                    <button type="button" className="att-cal-nav" onClick={() => shiftCalendar(-1)} aria-label={L("Tháng trước")}>‹</button>
                                     <span className="att-cal-title">{calTitle}</span>
-                                    <button type="button" className="att-cal-nav" onClick={() => shiftCalendar(1)} aria-label="Tháng sau">›</button>
+                                    <button type="button" className="att-cal-nav" onClick={() => shiftCalendar(1)} aria-label={L("Tháng sau")}>›</button>
                                 </div>
                                 <div className="att-cal-wk"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>CC</span><span>T7</span></div>
                                 <div className="att-cal-grid">
@@ -254,10 +258,10 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                                     ) : <span key={`blank-${index}`} className="att-cal-day att-cal-day--blank" />)}
                                 </div>
                                 <div className="att-cal-footer">
-                                    <div className="att-cal-legend"><span><i className="att-dot att-dot--pending" />Chưa duyệt</span><span><i className="att-dot att-dot--done" />Đã xử lý</span><span><i className="att-dot att-dot--none" />Không có bản ghi</span></div>
+                                    <div className="att-cal-legend"><span><i className="att-dot att-dot--pending" />{L("Chưa duyệt")}</span><span><i className="att-dot att-dot--done" />{L("Đã xử lý")}</span><span><i className="att-dot att-dot--none" />{L("Không có bản ghi")}</span></div>
                                     <div className="att-cal-actions">
-                                        <button type="button" className={`att-cal-action${selectedDate === vnToday() ? " active" : ""}`} onClick={viewToday}>Xem hôm nay</button>
-                                        <button type="button" className={`att-cal-action${selectedDate ? "" : " active"}`} onClick={clearDay}>Xem tất cả</button>
+                                        <button type="button" className={`att-cal-action${selectedDate === vnToday() ? " active" : ""}`} onClick={viewToday}>{L("Xem hôm nay")}</button>
+                                        <button type="button" className={`att-cal-action${selectedDate ? "" : " active"}`} onClick={clearDay}>{L("Xem tất cả")}</button>
                                     </div>
                                 </div>
                             </div>
@@ -271,17 +275,17 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                                         type="search"
                                         value={search}
                                         onChange={(event) => setSearch(event.target.value)}
-                                        placeholder="Tìm mã hoặc tên nhân viên..."
-                                        aria-label="Tìm nhân viên"
+                                        placeholder={L("Tìm mã hoặc tên nhân viên...")}
+                                        aria-label={L("Tìm nhân viên")}
                                     />
                                 </label>
-                                <span className="att-muted">{filtered.length} bản ghi</span>
+                                <span className="att-muted">{filtered.length} {L("bản ghi")}</span>
                                 <button
                                     type="button"
                                     className="admin-link-btn"
                                     onClick={exportMonth}
                                 >
-                                    ⬇ Xuất file tháng
+                                    {L("⬇ Xuất file tháng")}
                                 </button>
                                 <button
                                     type="button"
@@ -291,7 +295,7 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                                         setModalOpen(true);
                                     }}
                                 >
-                                    + Thêm
+                                    {L("+ Thêm")}
                                 </button>
                             </div>
 
@@ -299,21 +303,21 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                                 <table className="att-table">
                                     <thead>
                                         <tr>
-                                            <th>Nhân viên</th>
-                                            <th>Ngày</th>
-                                            <th>Trạng thái</th>
-                                            <th>Giờ vào → ra</th>
-                                            <th>Giờ thực</th>
-                                            <th>Ảnh vào ca</th>
-                                            <th>Ảnh ra ca</th>
-                                            <th className="att-col-approval">Duyệt</th>
+                                            <th>{L("Nhân viên")}</th>
+                                            <th>{L("Ngày")}</th>
+                                            <th>{L("Trạng thái")}</th>
+                                            <th>{L("Giờ vào → ra")}</th>
+                                            <th>{L("Giờ thực")}</th>
+                                            <th>{L("Ảnh vào ca")}</th>
+                                            <th>{L("Ảnh ra ca")}</th>
+                                            <th className="att-col-approval">{L("Duyệt")}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filtered.length === 0 ? (
                                             <tr>
                                                 <td colSpan={8}>
-                                                    <span className="att-muted">Không có bản ghi phù hợp.</span>
+                                                    <span className="att-muted">{L("Không có bản ghi phù hợp.")}</span>
                                                 </td>
                                             </tr>
                                         ) : (
@@ -325,7 +329,7 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                                                         <span
                                                             className={`att-badge ${statusClass(row.status)}`}
                                                         >
-                                                            {statusLabel(row.status)}
+                                                            {L(statusLabel(row.status))}
                                                         </span>
                                                     </td>
                                                     <td>
@@ -333,8 +337,8 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                                                         {formatVnTime(row.checkOutTime) || "—"}
                                                     </td>
                                                     <td>{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
-                                                    <td><PhotoCell src={row.checkInPhoto} alt="Vào ca" /></td>
-                                                    <td><PhotoCell src={row.checkOutPhoto} alt="Ra ca" /></td>
+                                                    <td><PhotoCell src={row.checkInPhoto} alt={L("Vào ca")} /></td>
+                                                    <td><PhotoCell src={row.checkOutPhoto} alt={L("Ra ca")} /></td>
                                                     <td>
                                                         <div className="att-approval-cell">
                                                             {row.approvalStatus === 0 ? (
@@ -344,19 +348,19 @@ const EmployeeAttendanceHistoryPage = ({ hrMode = false }) => {
                                                                         className="admin-link-btn admin-link-btn--sm admin-link-btn--approve"
                                                                         onClick={() => approve(row, true)}
                                                                     >
-                                                                        Duyệt
+                                                                        {L("Duyệt")}
                                                                     </button>
-                                                                    <button type="button" className="admin-link-btn admin-link-btn--sm" onClick={() => { setEditRow(row); setModalOpen(true); }}>Sửa</button>
+                                                                    <button type="button" className="admin-link-btn admin-link-btn--sm" onClick={() => { setEditRow(row); setModalOpen(true); }}>{L("Sửa")}</button>
                                                                 </>
                                                             ) : (
                                                                 <div
                                                                     className="att-approval-detail"
                                                                     onClick={() => setHistoryRow(row)}
-                                                                    title="Xem chi tiết"
+                                                                    title={L("Xem chi tiết")}
                                                                 >
-                                                                    <span className={`att-badge ${approvalClass(row.approvalStatus)}`}>{approvalLabel(row.approvalStatus)}</span>
+                                                                    <span className={`att-badge ${approvalClass(row.approvalStatus)}`}>{L(approvalLabel(row.approvalStatus))}</span>
                                                                     {row.approvedAt && <small>{formatVnTime(row.approvedAt)} · {formatVnDate(row.approvedAt)}</small>}
-                                                                    <span className="att-approval-detail-hover">Xem chi tiết</span>
+                                                                    <span className="att-approval-detail-hover">{L("Xem chi tiết")}</span>
                                                                 </div>
                                                             )}
                                                         </div>

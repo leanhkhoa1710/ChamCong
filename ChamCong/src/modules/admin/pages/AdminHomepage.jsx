@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AdminAppLayout from "../layout/AdminAppLayout";
 import "../../../modules/attendance/attendance.css";
 import "../admin.css";
+import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 
 // ===== Đồng hồ giờ Việt Nam (UTC+7) =====
 // Lấy "bây giờ" theo giờ VN dù máy chạy ở múi giờ khác.
@@ -15,7 +16,7 @@ const pad = (n) => String(n).padStart(2, "0");
 
 // 9 chức năng chính trên trang chủ admin (icon + nhãn phụ).
 const ICONS = [
-    { to: "/employees", icon: "👥", label: "Nhân sự", sub: "Hồ sơ & tuyển mới" },
+    { to: "/admin/employees", icon: "👥", label: "Nhân sự", sub: "Hồ sơ & tuyển mới" },
     { to: "/admin/attendance-history", icon: "⏱️", label: "Chấm công", sub: "Lịch sử & duyệt công" },
     { to: "/admin/statistics", icon: "📊", label: "Thống kê", sub: "Công tác theo tháng" },
     { to: "/admin/contracts", icon: "📄", label: "Hợp đồng", sub: "Ký & theo dõi hạn" },
@@ -28,6 +29,9 @@ const ICONS = [
 
 const VnClock = () => {
     const [now, setNow] = useState(vnNow());
+    const { language } = useLanguage();
+    const locale = localeForLanguage(language);
+    const L = (text) => translate(text, language);
 
     useEffect(() => {
         const id = setInterval(() => setNow(vnNow()), 1000);
@@ -36,7 +40,7 @@ const VnClock = () => {
 
     const minuteDeg = (now.getMinutes() / 60) * 360;
     const hourDeg = ((now.getHours() % 12) + now.getMinutes() / 60) * 30;
-    const dateLabel = now.toLocaleDateString("vi-VN", {
+    const dateLabel = now.toLocaleDateString(locale, {
         weekday: "long",
         day: "2-digit",
         month: "2-digit",
@@ -71,7 +75,7 @@ const VnClock = () => {
                     {pad(now.getHours())}:{pad(now.getMinutes())}:{pad(now.getSeconds())}
                 </strong>
                 <span style={{ textTransform: "capitalize" }}>{dateLabel}</span>
-                <span className="admhome-clock-tz">Giờ Việt Nam · GMT+7</span>
+                <span className="admhome-clock-tz">{L("Giờ Việt Nam · GMT+7")}</span>
             </div>
         </div>
     );
@@ -79,11 +83,13 @@ const VnClock = () => {
 
 const AdminHomepage = () => {
     const navigate = useNavigate();
+    const { language } = useLanguage();
+    const L = (text) => translate(text, language);
 
     return (
         <AdminAppLayout
-            title="Trang chủ"
-            subtitle="Chọn chức năng để quản lý"
+            title={L("Trang chủ")}
+            subtitle={L("Chọn chức năng để quản lý")}
         >
             <div className="att-content">
                 <div className="admhome">
@@ -100,8 +106,8 @@ const AdminHomepage = () => {
                                 onClick={() => navigate(x.to)}
                             >
                                 <span className="admhome-tile-ico">{x.icon}</span>
-                                <span className="admhome-tile-label">{x.label}</span>
-                                <span className="admhome-tile-sub">{x.sub}</span>
+                                <span className="admhome-tile-label">{L(x.label)}</span>
+                                <span className="admhome-tile-sub">{L(x.sub)}</span>
                             </button>
                         ))}
                     </div>

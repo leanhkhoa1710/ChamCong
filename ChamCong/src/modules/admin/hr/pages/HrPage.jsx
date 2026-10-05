@@ -167,7 +167,7 @@ const HrPage = () => {
                     if (!value) return null;
                     let match = value.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
                     if (!match) {
-                        const local = value.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4})$/);
+                        const local = value.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/);
                         if (local) match = [local[0], local[3], local[2], local[1]];
                     }
                     const label = HR_HEADER_BY_KEY[key];

@@ -115,6 +115,38 @@ namespace M.API.Controllers
                 data: "User deleted successfully!"
             ));
         }
+
+        /// <summary>
+        /// Blocks a user (they cannot log in)
+        /// </summary>
+        [HttpPost("{id}/block")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Block(Guid id)
+        {
+            await _userService.BlockUserAsync(id);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "User blocked successfully!"
+            ));
+        }
+
+        /// <summary>
+        /// Unblocks a user
+        /// </summary>
+        [HttpPost("{id}/unblock")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Unblock(Guid id)
+        {
+            await _userService.UnblockUserAsync(id);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "User unblocked successfully!"
+            ));
+        }
         #endregion
 
     }

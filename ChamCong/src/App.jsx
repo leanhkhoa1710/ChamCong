@@ -16,11 +16,15 @@ import AdminHomepage from "./modules/admin/pages/AdminHomepage";
 import AdminAttendanceHistoryPage from "./modules/admin/attendance/pages/AdminAttendanceHistoryPage";
 import AdminStatisticsPage from "./modules/admin/attendance/pages/AdminStatisticsPage";
 import AdminContractPage from "./modules/admin/contracts/pages/AdminContractPage";
+import AdminHrPage from "./modules/admin/hr/pages/HrPage";
+import AdminPromotionsPage from "./modules/admin/hr/pages/PromotionsPage";
+import AdminWorkPage from "./modules/admin/work/AdminWorkPage";
+import AdminBlockAccountPage from "./modules/admin/block-account/AdminBlockAccountPage";
+import AdminRolesPage from "./modules/admin/roles/AdminRolesPage";
 import AdminLeaveAdminPage from "./modules/admin/leaves/pages/LeaveAdminPage";
 import {
     PayrollAdminPage,
     ResignedPage as AdminResignedPage,
-    ReportPage as AdminReportPage,
 } from "./modules/admin/leaves/pages/PayrollResignedReport";
 import AdminAccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
 import EmployeeAttendanceHistoryPage from "./modules/employees/attendance/pages/EmployeeAttendanceHistoryPage";
@@ -121,12 +125,27 @@ function App() {
                 />
                 <Route
                     path="/admin/reports"
-                    element={guarded("/admin/reports", <AdminReportPage />)}
+                    element={guarded("/admin/reports", <ReportsPage admin />)}
                 />
                 <Route
                     path="/admin/accounts"
                     element={guarded("/admin/accounts", <AdminAccountIssuancePage />)}
                 />
+                <Route
+                    path="/admin/employees"
+                    element={guarded("/admin/employees", <AdminHrPage />)}
+                />
+                                <Route path="/admin/employees/attendance-history" element={guarded("/admin/employees/attendance-history", <AdminAttendanceHistoryPage hrMode />)} />
+                <Route path="/admin/employees/statistics" element={guarded("/admin/employees/statistics", <AdminStatisticsPage hrMode />)} />
+                <Route path="/admin/employees/leaves" element={guarded("/admin/employees/leaves", <AdminLeaveAdminPage hrMode />)} />
+                <Route path="/admin/employees/handover" element={guarded("/admin/employees/handover", <HandoverPage admin />)} />
+                <Route path="/admin/employees/reports" element={guarded("/admin/employees/reports", <ReportsPage admin />)} />
+                <Route path="/admin/employees/accounts" element={guarded("/admin/employees/accounts", <AdminAccountIssuancePage hrMode />)} />
+                <Route path="/admin/employees/promotions" element={guarded("/admin/employees/promotions", <AdminPromotionsPage />)} />
+                <Route path="/admin/employees/contracts" element={guarded("/admin/employees/contracts", <AdminContractPage hrMode />)} />
+<Route path="/admin/work" element={guarded("/admin/work", <AdminWorkPage />)} />
+                <Route path="/admin/roles" element={guarded("/admin/roles", <AdminRolesPage />)} />
+<Route path="/admin/block-accounts" element={guarded("/admin/block-accounts", <AdminBlockAccountPage />)} />
                 <Route path="/admin" element={guarded("/admin", <AdminHomepage />)} />
 
                 {/* Khu nhân viên */}

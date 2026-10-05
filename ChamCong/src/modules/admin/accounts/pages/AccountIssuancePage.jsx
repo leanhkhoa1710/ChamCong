@@ -5,6 +5,7 @@ import adminApi from "../../api/adminApi";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
 import "../account-issuance.css";
+import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 
 const workingStatus = [1, 2, 3];
 const activationCodeValidityMinutes = 1440;
@@ -14,6 +15,7 @@ const isCodeActive = (code) => !code.isUsed && new Date(code.expiresAt) > new Da
 const initials = (employee) => `${employee.givenName?.[0] || ""}${employee.familyName?.[0] || ""}`.toLocaleUpperCase("vi");
 const maskCitizenId = (value) => value ? `${value.slice(0, 4)} ${"•".repeat(Math.max(4, value.length - 7))} ${value.slice(-3)}` : "Chưa cập nhật";
 const gender = (value) => ({ 1: "Nam", 2: "Nữ" })[value] || "Chưa cập nhật";
+// eslint-disable-next-line no-control-regex
 const xmlEscape = (value) => String(value ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 
 const downloadUnlinkedEmployees = (employees) => {
@@ -45,6 +47,11 @@ const AccountIssuancePage = ({ hrMode = false }) => {
     const [busy, setBusy] = useState(false);
     const [, refreshExpiry] = useState(0);
 
+    const { language } = useLanguage();
+    const locale = localeForLanguage(language);
+    const L = useCallback((text) => translate(text, language), [language]);
+    const d = (value) => value ? new Date(value).toLocaleDateString(locale) : "—";
+
     const load = useCallback(async () => {
         setLoading(true);
         try {
@@ -52,9 +59,9 @@ const AccountIssuancePage = ({ hrMode = false }) => {
             setEmployees(e.data.data?.items || []);
             setUsers(u.data.data?.items || []);
             setCodes(c.data.data?.items || []);
-        } catch (err) { setError(err.response?.data?.message || err.message || "Không tải được danh sách tài khoản."); }
+        } catch (err) { setError(err.response?.data?.message || err.message || L("Không tải được danh sách tài khoản.")); }
         finally { setLoading(false); }
-    }, []);
+    }, [L]);
     useEffect(() => { load(); }, [load]);
     useEffect(() => {
         const timer = setInterval(() => refreshExpiry(Date.now()), 30_000);
@@ -107,97 +114,73 @@ const AccountIssuancePage = ({ hrMode = false }) => {
             const employee = working.find((item) => item.id === id);
             return employee && rowState(employee).key === "none";
         });
-        if (!ids.length) { setError("Chọn nhân viên hợp lệ chưa có tài khoản."); return; }
+        if (!ids.length) { setError(L("Chọn nhân viên hợp lệ chưa có tài khoản.")); return; }
         setBusy(true); setError("");
         let success = 0;
         for (const id of ids) {
             try { await adminApi.createActivationCode({ employeeId: id, code: generateCode(), validMinutes: activationCodeValidityMinutes }); success++; }
             catch { /* report the total below and reload the actual codes */ }
         }
-        setIssued(`Đã cấp ${success}/${ids.length} mã kích hoạt (hạn 1 ngày).`);
+        setIssued(`${L("Đã cấp")} ${success}/${ids.length} ${L("mã kích hoạt (hạn 1 ngày).")}`);
         setSelected(new Set());
         setBusy(false);
         await load();
     };
-    const openVerification = async (employee) => {
-        setError(""); setIssued(""); setBusy(true);
-        try {
-            let code = activeCodeFor(employee.id);
-            if (!code) {
-                const value = generateCode();
-                const response = await adminApi.createActivationCode({ employeeId: employee.id, code: value, validMinutes: activationCodeValidityMinutes });
-                code = response.data.data;
-                setCodes((previous) => [...previous, code]);
-            }
-            setVerificationEmployee(employee);
-            setActivationCode(code.code);
-            setConfirmed(false);
-        } catch (err) { setError(err.response?.data?.message || "Không cấp được mã kích hoạt."); }
-        finally { setBusy(false); }
-    };
-    const renewAccount = async (employee) => {
-        if (!isLinked(employee)) { await openVerification(employee); return; }
-        setBusy(true); setError(""); setIssued("");
-        try {
-            const response = await adminApi.createActivationCode({ employeeId: employee.id, code: generateCode(), validMinutes: activationCodeValidityMinutes });
-            setCodes((previous) => [...previous.filter((code) => code.employeeId !== employee.id || code.isUsed), response.data.data]);
-            setIssued(`Đã cấp lại mã kích hoạt cho ${employee.fullName}. Mã có hiệu lực trong 1 ngày.`);
-        } catch (err) { setError(err.response?.data?.message || "Không cấp lại được mã kích hoạt."); }
-        finally { setBusy(false); }
-    };
+
+
     const verifyAndCreate = async (event) => {
         event.preventDefault();
-        if (!confirmed) { setError("Vui lòng xác nhận đã kiểm tra thông tin nhân sự."); return; }
+        if (!confirmed) { setError(L("Vui lòng xác nhận đã kiểm tra thông tin nhân sự.")); return; }
         const code = codes.find((item) => item.employeeId === verificationEmployee.id && item.code === activationCode.trim() && isCodeActive(item));
-        if (!code) { setError("Mã kích hoạt không đúng, đã dùng hoặc hết hạn."); return; }
+        if (!code) { setError(L("Mã kích hoạt không đúng, đã dùng hoặc hết hạn.")); return; }
         setBusy(true); setError("");
         try {
             await adminApi.verifyEmployeeActivation({ employeeId: verificationEmployee.id, code: activationCode.trim() });
             setVerificationEmployee(null);
-            setIssued(`Đã xác minh thông tin và mã kích hoạt cho ${verificationEmployee.fullName}. Nhân viên dùng mã này để đặt hoặc đặt lại mật khẩu.`);
+            setIssued(`${L("Đã xác minh thông tin và mã kích hoạt cho")} ${verificationEmployee.fullName} ${L("Nhân viên dùng mã này để đặt hoặc đặt lại mật khẩu.")}`);
             await load();
-        } catch (err) { setError(err.response?.data?.message || "Không xác minh được mã kích hoạt."); }
+        } catch (err) { setError(err.response?.data?.message || L("Không xác minh được mã kích hoạt.")); }
         finally { setBusy(false); }
     };
     const PageLayout = hrMode ? HrAppLayout : AdminAppLayout;
 
-    return <PageLayout title="Cấp tài khoản" subtitle="Xác minh hồ sơ và cấp mã kích hoạt cho nhân viên">
+    return <PageLayout title={L("Cấp tài khoản")} subtitle={L("Xác minh hồ sơ và cấp mã kích hoạt cho nhân viên")}>
         <div className="att-content account-issuance">
             {error && <div className="att-error">{error}<button onClick={() => setError("")}>×</button></div>}
             {issued && <div className="att-notice account-notice">✓ {issued}</div>}
-            {loading && <div className="att-loading">Đang tải...</div>}
+            {loading && <div className="att-loading">{L("Đang tải...")}</div>}
             {!loading && <>
                 <div className="account-kpis">
-                    {[["Tổng hồ sơ", kpis.total, ""], ["Đang làm", kpis.working, ""], ["Đã có tài khoản", kpis.has, "ok"], ["Chưa có", kpis.none, "warn"], ["Không hợp lệ", kpis.invalid, "bad"], ["Trùng mã", kpis.dup, "bad"], ["Sẵn sàng cấp", kpis.ready, "ok"], ["Đang chọn", kpis.choosing, "warn"]].map(([label, value, tone]) => <div key={label} className={`account-kpi account-kpi--${tone || "neutral"}`}><span className="account-kpi-icon">◷</span><span className="account-kpi-label">{label}</span><strong>{value}</strong></div>)}
+                    {[["Tổng hồ sơ", kpis.total, ""], ["Đang làm", kpis.working, ""], ["Đã có tài khoản", kpis.has, "ok"], ["Chưa có", kpis.none, "warn"], ["Không hợp lệ", kpis.invalid, "bad"], ["Trùng mã", kpis.dup, "bad"], ["Sẵn sàng cấp", kpis.ready, "ok"], ["Đang chọn", kpis.choosing, "warn"]].map(([label, value, tone]) => <div key={label} className={`account-kpi account-kpi--${tone || "neutral"}`}><span className="account-kpi-icon">◷</span><span className="account-kpi-label">{L(label)}</span><strong>{value}</strong></div>)}
                 </div>
                 <div className="att-card">
-                    <div className="admin-toolbar account-toolbar"><span className="att-muted">{visibleEmployees.length}/{working.length} nhân viên đang làm việc</span><div className="account-toolbar-actions"><label className="account-search"><span>⌕</span><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm mã, họ tên, email..." aria-label="Tìm nhân viên" /></label><button type="button" className="account-export-btn" onClick={() => downloadUnlinkedEmployees(unlinked)}>{`Xuất Excel (${unlinked.length})`}</button><button type="button" className="account-export-btn" onClick={issueCodes} disabled={busy || !selected.size}>{`Cấp mã (${selected.size})`}</button></div></div>
-                    <div className="att-table-wrap"><table className="att-table account-table"><thead><tr><th>Chọn</th><th>Mã</th><th>Họ tên</th><th>Trạng thái</th><th>Email</th><th>Mã kích hoạt</th></tr></thead><tbody>
-                        {visibleEmployees.length === 0 ? <tr><td colSpan={6} className="att-muted">{search ? "Không tìm thấy nhân viên phù hợp." : "Không có nhân viên đang làm."}</td></tr> : visibleEmployees.map((employee) => {
+                    <div className="admin-toolbar account-toolbar"><span className="att-muted">{visibleEmployees.length}/{working.length} {L("nhân viên đang làm việc")}</span><div className="account-toolbar-actions"><label className="account-search"><span>⌕</span><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={L("Tìm mã, họ tên, email...")} aria-label={L("Tìm nhân viên")} /></label><button type="button" className="account-export-btn" onClick={() => downloadUnlinkedEmployees(unlinked)}>{`${L("Xuất Excel")} (${unlinked.length})`}</button><button type="button" className="account-export-btn" onClick={issueCodes} disabled={busy || !selected.size}>{`${L("Cấp mã")} (${selected.size})`}</button></div></div>
+                    <div className="att-table-wrap"><table className="att-table account-table"><thead><tr><th>{L("Chọn")}</th><th>{L("Mã")}</th><th>{L("Họ tên")}</th><th>{L("Trạng thái")}</th><th>{L("Email")}</th><th>{L("Mã kích hoạt")}</th></tr></thead><tbody>
+                        {visibleEmployees.length === 0 ? <tr><td colSpan={6} className="att-muted">{search ? L("Không tìm thấy nhân viên phù hợp.") : L("Không có nhân viên đang làm.")}</td></tr> : visibleEmployees.map((employee) => {
                             const state = rowState(employee);
                             const code = activeCodeFor(employee.id);
                             const canIssue = state.key === "none";
-                            return <tr key={employee.id}><td><input type="checkbox" className="admin-check" checked={selected.has(employee.id)} disabled={!canIssue} onChange={() => toggle(employee.id)} /></td><td>{employee.employeeCode}</td><td>{employee.fullName}</td><td><span className={`att-badge ${state.cls}`}>{state.label}</span></td><td>{employee.email || "—"}</td><td>{code ? <code className="account-code">{code.code}</code> : "—"}</td></tr>;
+                            return <tr key={employee.id}><td><input type="checkbox" className="admin-check" checked={selected.has(employee.id)} disabled={!canIssue} onChange={() => toggle(employee.id)} /></td><td>{employee.employeeCode}</td><td>{employee.fullName}</td><td><span className={`att-badge ${state.cls}`}>{L(state.label)}</span></td><td>{employee.email || "—"}</td><td>{code ? <code className="account-code">{code.code}</code> : "—"}</td></tr>;
                         })}
                     </tbody></table></div>
                 </div>
             </>}
             {verificationEmployee && <div className="account-overlay" onMouseDown={(event) => event.target === event.currentTarget && setVerificationEmployee(null)}><form className="account-modal" onSubmit={verifyAndCreate}>
-                <header><div><h2>Xác minh mã kích hoạt</h2><p>Kiểm tra thông tin nhân sự trước khi xác nhận tài khoản</p></div><button type="button" aria-label="Đóng" onClick={() => setVerificationEmployee(null)}>×</button></header>
-                <section className="account-profile"><h3>Thông tin nhân sự</h3><div className="account-identity"><div className="account-avatar">{initials(verificationEmployee)}</div><div><strong>{verificationEmployee.fullName}</strong><span>Mã nhân viên: {verificationEmployee.employeeCode}</span><i>● Chưa kích hoạt</i></div></div>
+                <header><div><h2>{L("Xác minh mã kích hoạt")}</h2><p>{L("Kiểm tra thông tin nhân sự trước khi xác nhận tài khoản")}</p></div><button type="button" aria-label={L("Đóng")} onClick={() => setVerificationEmployee(null)}>×</button></header>
+                <section className="account-profile"><h3>{L("Thông tin nhân sự")}</h3><div className="account-identity"><div className="account-avatar">{initials(verificationEmployee)}</div><div><strong>{verificationEmployee.fullName}</strong><span>{L("Mã nhân viên:")}{verificationEmployee.employeeCode}</span><i>{L("● Chưa kích hoạt")}</i></div></div>
                     <div className="account-profile-grid">{[
                         ["Họ và tên", verificationEmployee.fullName], ["Mã nhân viên", verificationEmployee.employeeCode],
-                        ["CCCD / căn cước", maskCitizenId(verificationEmployee.citizenId)], ["Ngày sinh", date(verificationEmployee.birthDate)],
-                        ["Giới tính", gender(verificationEmployee.gender)], ["Số điện thoại", verificationEmployee.phoneNumber || "Chưa cập nhật"],
-                        ["Email", verificationEmployee.email || "Chưa cập nhật"], ["Chức vụ", verificationEmployee.positionName || "Chưa cập nhật"],
-                        ["Phòng ban", verificationEmployee.departmentName || "Chưa cập nhật"], ["Chi nhánh", verificationEmployee.branchName || "Chưa cập nhật"],
-                        ["Ngày vào làm", date(verificationEmployee.startDate)], ["Người quản lý", verificationEmployee.managerName || "Chưa cập nhật"],
-                    ].map(([label, value]) => <div key={label}><small>{label}</small><strong>{value}</strong></div>)}</div>
+                        ["CCCD / căn cước", maskCitizenId(verificationEmployee.citizenId)], ["Ngày sinh", d(verificationEmployee.birthDate)],
+                        ["Giới tính", L(gender(verificationEmployee.gender))], ["Số điện thoại", verificationEmployee.phoneNumber || L("Chưa cập nhật")],
+                        ["Email", verificationEmployee.email || L("Chưa cập nhật")], ["Chức vụ", verificationEmployee.positionName || L("Chưa cập nhật")],
+                        ["Phòng ban", verificationEmployee.departmentName || L("Chưa cập nhật")], ["Chi nhánh", verificationEmployee.branchName || L("Chưa cập nhật")],
+                        ["Ngày vào làm", d(verificationEmployee.startDate)], ["Người quản lý", verificationEmployee.managerName || L("Chưa cập nhật")],
+                    ].map(([label, value]) => <div key={label}><small>{L(label)}</small><strong>{value}</strong></div>)}</div>
                 </section>
-                <section className="account-verify"><h3>Xác minh mã kích hoạt</h3><label>Mã kích hoạt<input autoFocus required value={activationCode} onChange={(event) => { setActivationCode(event.target.value.toUpperCase()); setError(""); }} placeholder="Nhập mã kích hoạt" /></label><small>Mã còn hạn đến {date(activeCodeFor(verificationEmployee.id)?.expiresAt)}.</small><label className="account-confirm"><input type="checkbox" checked={confirmed} onChange={(event) => { setConfirmed(event.target.checked); setError(""); }} />Tôi xác nhận đã kiểm tra đúng thông tin nhân sự.</label></section>
+                <section className="account-verify"><h3>{L("Xác minh mã kích hoạt")}</h3><label>{L("Mã kích hoạt")}<input autoFocus required value={activationCode} onChange={(event) => { setActivationCode(event.target.value.toUpperCase()); setError(""); }} placeholder={L("Nhập mã kích hoạt")} /></label><small>{L("Mã còn hạn đến")} {d(activeCodeFor(verificationEmployee.id)?.expiresAt)}.</small><label className="account-confirm"><input type="checkbox" checked={confirmed} onChange={(event) => { setConfirmed(event.target.checked); setError(""); }} />{L("Tôi xác nhận đã kiểm tra đúng thông tin nhân sự.")}</label></section>
                 {error && <div className="account-modal-error" role="alert">{error}</div>}
-                <p className="account-activation-note">Sau khi xác minh, nhân viên sẽ dùng mã này để tự đặt mật khẩu và hoàn tất kích hoạt tài khoản.</p>
-                <footer><button type="button" onClick={() => setVerificationEmployee(null)}>Hủy</button><button className="account-confirm-btn" disabled={busy}>{busy ? "Đang xác minh…" : "✓ Xác minh & kích hoạt"}</button></footer>
+                <p className="account-activation-note">{L("Sau khi xác minh, nhân viên sẽ dùng mã này để tự đặt mật khẩu và hoàn tất kích hoạt tài khoản.")}</p>
+                <footer><button type="button" onClick={() => setVerificationEmployee(null)}>{L("Hủy")}</button><button className="account-confirm-btn" disabled={busy}>{busy ? L("Đang xác minh…") : L("✓ Xác minh & kích hoạt")}</button></footer>
             </form></div>}
         </div>
     </PageLayout>;

@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
 import AdminAppLayout from "../../layout/AdminAppLayout";
 import HrAppLayout from "../../hr/layout/HrAppLayout";
 import adminAttendanceApi from "../api/adminAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
+import AttendanceDetailModal from "../../../employees/attendance/components/AttendanceDetailModal";
 import { formatVnDate } from "../../../../utils/vnTime";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
+import "../../../employees/employee.css";
 
 // Trang quản trị: thống kê công của TOÀN BỘ nhân viên theo tháng,
 // dạng bảng có nút Thêm / Sửa / Xóa.
@@ -28,6 +29,7 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [editRow, setEditRow] = useState(null);
+    const [detailEmpId, setDetailEmpId] = useState(null);
 
     const empMap = useMemo(
         () => Object.fromEntries(employees.map((e) => [e.id, e])),
@@ -156,9 +158,6 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
     };
 
     const PageLayout = hrMode ? HrAppLayout : AdminAppLayout;
-    const attendanceHistoryPath = hrMode
-        ? "/employees/attendance-history"
-        : "/admin/attendance-history";
 
     return (
         <PageLayout
@@ -304,12 +303,13 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
                                                         </td>
                                                         <td>
                                                             <div className="admin-row-actions">
-                                                                <Link
-                                                                    to={`${attendanceHistoryPath}?employee=${emp.id}`}
+                                                                <button
+                                                                    type="button"
                                                                     className="admin-view-link"
-                                                                >
+                                                                    onClick={() => setDetailEmpId(emp.id)}
+                                                                    >
                                                                     Chi tiết
-                                                                </Link>
+                                                                </button>
                                                                 <button
                                                                     type="button"
                                                                     className="admin-link-btn"
@@ -363,6 +363,17 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
                     }}
                     onSubmit={submitModal}
                 />
+
+                {detailEmpId && (
+                    <AttendanceDetailModal
+                        monthRows={rows.filter((r) => r.employeeId === detailEmpId && monthOf(r.attendanceDate) === month)}
+                        employeeLabel={(() => {
+                            const e = empMap[detailEmpId];
+                            return e ? `${e.employeeCode} · ${e.fullName}` : String(detailEmpId);
+                        })()}
+                        onClose={() => setDetailEmpId(null)}
+                    />
+                )}
             </div>
         </PageLayout>
     );

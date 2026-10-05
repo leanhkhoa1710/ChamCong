@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 
 // Modal thêm / sửa bản ghi chấm công (admin).
 // row = null -> thêm mới; row có giá trị -> sửa.
@@ -54,6 +55,8 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
     const [error, setError] = useState("");
     const [employeeSearch, setEmployeeSearch] = useState("");
     const [showEmployeeOptions, setShowEmployeeOptions] = useState(false);
+    const { language } = useLanguage();
+    const L = (text) => translate(text, language);
 
     // Nạp form mỗi lần mở (thêm: trống, sửa: từ row)
     useEffect(() => {
@@ -93,7 +96,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
     const submit = async (e) => {
         e.preventDefault();
         if (!form.employeeId || !form.attendanceDate) {
-            setError("Chọn nhân viên và ngày là bắt buộc.");
+            setError(L("Chọn nhân viên và ngày là bắt buộc."));
             return;
         }
         setError("");
@@ -108,10 +111,10 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
     return (
         <div className="att-guide-overlay">
             <div className="att-form-modal" onClick={(e) => e.stopPropagation()}>
-                <h2>{row ? "Sửa bản ghi chấm công" : "Thêm bản ghi chấm công"}</h2>
+                <h2>{row ? L("Sửa bản ghi chấm công") : L("Thêm bản ghi chấm công")}</h2>
                 <form onSubmit={submit} className="att-form">
                     <label>
-                        Nhân viên
+                        {L("Nhân viên")}
                         <div className="att-employee-picker" onBlur={(event) => {
                             if (!event.currentTarget.contains(event.relatedTarget)) setShowEmployeeOptions(false);
                         }}>
@@ -122,7 +125,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                                 aria-expanded={showEmployeeOptions && employeeOptions.length > 0}
                                 aria-controls="att-employee-options"
                                 value={employeeSearch}
-                                placeholder="Nhập họ tên hoặc mã nhân viên..."
+                                placeholder={L("Nhập họ tên hoặc mã nhân viên...")}
                                 onFocus={() => setShowEmployeeOptions(true)}
                                 onChange={(event) => {
                                     setEmployeeSearch(event.target.value);
@@ -151,14 +154,14 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                                 </div>
                             )}
                             {showEmployeeOptions && searchTerm && employeeOptions.length === 0 && (
-                                <div className="att-employee-empty">Không tìm thấy nhân viên phù hợp.</div>
+                                <div className="att-employee-empty">{L("Không tìm thấy nhân viên phù hợp.")}</div>
                             )}
                         </div>
                     </label>
 
                     <div className="att-form-row">
                         <label>
-                            Ngày
+                            {L("Ngày")}
                             <input
                                 type="date"
                                 required
@@ -168,11 +171,11 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                         </label>
 
                         <label>
-                            Trạng thái
+                            {L("Trạng thái")}
                             <select value={form.status} onChange={set("status")}>
                                 {STATUS_OPTIONS.map((o) => (
                                     <option key={o.l} value={o.v}>
-                                        {o.l}
+                                        {L(o.l)}
                                     </option>
                                 ))}
                             </select>
@@ -180,32 +183,32 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                     </div>
 
                     <div className="att-form-row">
-                            <label>Giờ vào ca<input type="time" value={form.checkInTime} onChange={setTime("checkInTime")} /></label>
-                            <label>Giờ ra ca<input type="time" value={form.checkOutTime} onChange={setTime("checkOutTime")} /></label>
+                            <label>{L("Giờ vào ca")}<input type="time" value={form.checkInTime} onChange={setTime("checkInTime")} /></label>
+                            <label>{L("Giờ ra ca")}<input type="time" value={form.checkOutTime} onChange={setTime("checkOutTime")} /></label>
                         </div>
 
                     <div className="att-form-row">
                         <label>
-                            Giờ thực tế
+                            {L("Giờ thực tế")}
                             <input
                                 type="number"
                                 min="0"
                                 step="1"
                                 value={form.actualHours}
                                 onChange={set("actualHours")}
-                                placeholder="Tùy chọn"
+                                placeholder={L("Tùy chọn")}
                             />
                         </label>
 
                         <label>
-                            Phê duyệt
+                            {L("Phê duyệt")}
                             <select
                                 value={form.approvalStatus}
                                 onChange={set("approvalStatus")}
                             >
                                 {APPROVAL_OPTIONS.map((o) => (
                                     <option key={o.v} value={o.v}>
-                                        {o.l}
+                                        {L(o.l)}
                                     </option>
                                 ))}
                             </select>
@@ -213,12 +216,12 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                     </div>
 
                     <label>
-                        Ghi chú
+                        {L("Ghi chú")}
                         <textarea
                             rows="2"
                             value={form.note}
                             onChange={set("note")}
-                            placeholder="Tùy chọn"
+                            placeholder={L("Tùy chọn")}
                         />
                     </label>
 
@@ -230,10 +233,10 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                             className="att-cam-btn-remove"
                             onClick={onClose}
                         >
-                            Hủy
+                            {L("Hủy")}
                         </button>
                         <button type="submit" className="admin-link-btn">
-                            {row ? "Lưu sửa" : "Thêm mới"}
+                            {row ? L("Lưu sửa") : L("Thêm mới")}
                         </button>
                     </div>
                 </form>

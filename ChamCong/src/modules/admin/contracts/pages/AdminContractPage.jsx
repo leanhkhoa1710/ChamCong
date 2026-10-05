@@ -5,6 +5,7 @@ import adminApi from "../../api/adminApi";
 import employeeApi from "../../../employees/api/employeeApi";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
+import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 
 // 5 trạng thái hợp đồng (tính từ endDate so với hôm nay, giờ VN).
 const CONTRACT_STATUS = {
@@ -50,6 +51,9 @@ const AdminContractPage = ({ hrMode = false }) => {
         startDate: "",
         endDate: "",
     });
+    const { language } = useLanguage();
+    const locale = localeForLanguage(language);
+    const L = (text) => translate(text, language);
     const PageLayout = hrMode ? HrAppLayout : AdminAppLayout;
     const api = hrMode ? employeeApi : adminApi;
 
@@ -68,9 +72,11 @@ const AdminContractPage = ({ hrMode = false }) => {
         }
     };
 
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         load();
     }, []);
+    /* eslint-enable react-hooks/exhaustive-deps */
 
     const stateMap = useMemo(
         () =>
@@ -104,7 +110,7 @@ const AdminContractPage = ({ hrMode = false }) => {
 
     const submitContract = async () => {
         if (!form.employeeId || !form.contractNumber) {
-            alert("Chọn nhân viên và nhập số hợp đồng.");
+            alert(L("Chọn nhân viên và nhập số hợp đồng."));
             return;
         }
         try {
@@ -125,7 +131,7 @@ const AdminContractPage = ({ hrMode = false }) => {
             });
             load(); // "tải lại" sau khi tạo
         } catch (err) {
-            alert("Tạo thất bại: " + (err.response?.data?.message || err.message));
+            alert(L("Tạo thất bại:") + " " + (err.response?.data?.message || err.message));
         }
     };
 
@@ -133,51 +139,54 @@ const AdminContractPage = ({ hrMode = false }) => {
 
     return (
         <PageLayout
-            title="Hợp đồng lao động"
-            subtitle="Quản lý hợp đồng: hết hạn · sắp hết hạn · chờ ký · chưa lập · đã ký"
+            title={L("Hợp đồng lao động")}
+            subtitle={L("Quản lý hợp đồng: hết hạn · sắp hết hạn · chờ ký · chưa lập · đã ký")}
         >
             <div className="att-content">
                 {error && <div className="att-error">{error}</div>}
-                {loading && <div className="att-loading">Đang tải...</div>}
+                {loading && <div className="att-loading">{L("Đang tải...")}</div>}
 
                 {!loading && !error && (
                     <>
                         {/* Thanh tìm kiếm + tạo + tải lại */}
-                        <div className="admin-toolbar">
-                            <input
-                                type="search"
-                                placeholder="🔍 Tìm tên, mã NV..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                style={{ width: 240 }}
-                            />
+                        <div className="admin-toolbar contract-toolbar">
+                            <div className="admin-search">
+                                <span>⌕</span>
+                                <input
+                                    type="search"
+                                    placeholder={L("Tìm tên, mã NV...")}
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    aria-label={L("Tìm nhân viên")}
+                                />
+                            </div>
                             <select
                                 value={state}
                                 onChange={(e) => setState(e.target.value)}
                             >
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="expired">Hết hạn ({counts.expired})</option>
-                                <option value="expiring">Sắp hết hạn ({counts.expiring})</option>
-                                <option value="pending">Chờ ký</option>
-                                <option value="none">Chưa lập ({counts.none})</option>
-                                <option value="signed">Đã ký ({counts.signed})</option>
+                                <option value="">{L("Tất cả trạng thái")}</option>
+                                <option value="expired">{L("Hết hạn")} ({counts.expired})</option>
+                                <option value="expiring">{L("Sắp hết hạn")} ({counts.expiring})</option>
+                                <option value="pending">{L("Chờ ký")}</option>
+                                <option value="none">{L("Chưa lập")} ({counts.none})</option>
+                                <option value="signed">{L("Đã ký")} ({counts.signed})</option>
                             </select>
                             <span className="att-muted">
-                                {filtered.length} hồ sơ
+                                {filtered.length} {L("hồ sơ")}
                             </span>
                             <button
                                 type="button"
                                 className="admin-link-btn"
                                 onClick={load}
                             >
-                                ⟳ Tải lại
+                                {L("⟳ Tải lại")}
                             </button>
                             <button
                                 type="button"
                                 className="admin-link-btn"
                                 onClick={() => setShowModal(true)}
                             >
-                                + Tạo hợp đồng
+                                {L("+ Tạo hợp đồng")}
                             </button>
                         </div>
 
@@ -186,20 +195,20 @@ const AdminContractPage = ({ hrMode = false }) => {
                                 <table className="att-table">
                                     <thead>
                                         <tr>
-                                            <th>Nhân viên</th>
-                                            <th>Phòng ban</th>
-                                            <th>Số HĐ</th>
-                                            <th>Loại</th>
-                                            <th>Bắt đầu</th>
-                                            <th>Hết hạn</th>
-                                            <th>Trạng thái</th>
+                                            <th>{L("Nhân viên")}</th>
+                                            <th>{L("Phòng ban")}</th>
+                                            <th>{L("Số HĐ")}</th>
+                                            <th>{L("Loại")}</th>
+                                            <th>{L("Bắt đầu")}</th>
+                                            <th>{L("Hết hạn")}</th>
+                                            <th>{L("Trạng thái")}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filtered.length === 0 ? (
                                             <tr>
                                                 <td colSpan={7} className="att-muted">
-                                                    Không có hợp đồng phù hợp.
+                                                    {L("Không có hợp đồng phù hợp.")}
                                                 </td>
                                             </tr>
                                         ) : (
@@ -226,10 +235,10 @@ const AdminContractPage = ({ hrMode = false }) => {
                                                         <td>
                                                             {
                                                                 ({
-                                                                    1: "Thử việc",
-                                                                    2: "Hạn định",
-                                                                    3: "Không xác định",
-                                                                    4: "Mùa vụ",
+                                                                    1: L("Thử việc"),
+                                                                    2: L("Hạn định"),
+                                                                    3: L("Không xác định"),
+                                                                    4: L("Mùa vụ"),
                                                                 })[
                                                                     c
                                                                         ? c.contractType
@@ -243,7 +252,7 @@ const AdminContractPage = ({ hrMode = false }) => {
                                                                       c
                                                                           .startDate
                                                                   ).toLocaleDateString(
-                                                                      "vi-VN"
+                                                                      locale
                                                                   )
                                                                 : "—"}
                                                         </td>
@@ -252,10 +261,10 @@ const AdminContractPage = ({ hrMode = false }) => {
                                                                 ? new Date(
                                                                       c.endDate
                                                                   ).toLocaleDateString(
-                                                                      "vi-VN"
+                                                                      locale
                                                                   )
                                                                 : c
-                                                                ? "Không xác định"
+                                                                ? L("Không xác định")
                                                                 : "—"}
                                                         </td>
                                                         <td>
@@ -263,9 +272,7 @@ const AdminContractPage = ({ hrMode = false }) => {
                                                                 className={`att-badge ${CONTRACT_STATUS[s].cls}`}
                                                             >
                                                                 {
-                                                                    CONTRACT_STATUS[
-                                                                        s
-                                                                    ].label
+                                                                    L(CONTRACT_STATUS[s].label)
                                                                 }
                                                             </span>
                                                         </td>
@@ -279,28 +286,29 @@ const AdminContractPage = ({ hrMode = false }) => {
                         </div>
 
                         {showModal && (
-                            <div
-                                className="att-form-modal"
-                            >
+                            <div className="att-overlay" onClick={() => setShowModal(false)}>
                                 <div
-                                    className="att-form"
+                                    className="att-form-modal"
                                     onClick={(e) => e.stopPropagation()}
                                 >
-                                    <h2>Tạo hợp đồng lao động</h2>
+                                    <div className="att-form">
+                                    <div className="att-form-head">
+                                        <h2>{L("Tạo hợp đồng lao động")}</h2>
+                                        <button type="button" className="att-form-close" aria-label={L("Đóng")} onClick={() => setShowModal(false)}>×</button>
+                                    </div>
                                     <label>
-                                        Nhân viên
+                                        {L("Nhân viên")}
                                         <select
                                             value={form.employeeId}
                                             onChange={set("employeeId")}
                                         >
                                             <option value="">
-                                                — Chọn nhân viên —
+                                                {L("— Chọn nhân viên —")}
                                             </option>
                                             {employees
                                                 .filter((e) =>
-                                                    [1, 2, 3].includes(
-                                                        e.status
-                                                    )
+                                                    [1, 2, 3].includes(e.status) &&
+                                                    ["none", "expired"].includes(stateMap[e.id])
                                                 )
                                                 .map((e) => (
                                                     <option
@@ -312,9 +320,12 @@ const AdminContractPage = ({ hrMode = false }) => {
                                                     </option>
                                                 ))}
                                         </select>
+                                        <small className="att-muted">
+                                            {L("Nhân viên có hợp đồng đang hiệu lực không được tạo hợp đồng mới.")}
+                                        </small>
                                     </label>
                                     <label>
-                                        Số hợp đồng
+                                        {L("Số hợp đồng")}
                                         <input
                                             value={form.contractNumber}
                                             onChange={set("contractNumber")}
@@ -322,21 +333,21 @@ const AdminContractPage = ({ hrMode = false }) => {
                                         />
                                     </label>
                                     <label>
-                                        Loại hợp đồng
+                                        {L("Loại hợp đồng")}
                                         <select
                                             value={form.contractType}
                                             onChange={set("contractType")}
                                         >
-                                            <option value={1}>Thử việc</option>
-                                            <option value={2}>Hạn định</option>
+                                            <option value={1}>{L("Thử việc")}</option>
+                                            <option value={2}>{L("Hạn định")}</option>
                                             <option value={3}>
-                                                Không xác định
+                                                {L("Không xác định")}
                                             </option>
-                                            <option value={4}>Mùa vụ</option>
+                                            <option value={4}>{L("Mùa vụ")}</option>
                                         </select>
                                     </label>
                                     <label>
-                                        Ngày bắt đầu
+                                        {L("Ngày bắt đầu")}
                                         <input
                                             type="date"
                                             value={form.startDate}
@@ -344,7 +355,7 @@ const AdminContractPage = ({ hrMode = false }) => {
                                         />
                                     </label>
                                     <label>
-                                        Ngày hết hạn
+                                        {L("Ngày hết hạn")}
                                         <input
                                             type="date"
                                             value={form.endDate}
@@ -357,17 +368,18 @@ const AdminContractPage = ({ hrMode = false }) => {
                                             className="att-form-btn"
                                             onClick={() => setShowModal(false)}
                                         >
-                                            Hủy
+                                            {L("Hủy")}
                                         </button>
                                         <button
                                             type="button"
                                             className="att-form-btn att-form-btn--primary"
                                             onClick={submitContract}
                                         >
-                                            Lưu hợp đồng
+                                            {L("Lưu hợp đồng")}
                                         </button>
                                     </div>
                                 </div>
+                            </div>
                             </div>
                         )}
                     </>

@@ -4,20 +4,21 @@ import axiosClient from "../../../services/api/axiosClient";
 import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 import AppLayout from "../../../components/layout/AppLayout";
 import HrAppLayout from "../../employees/hr/layout/HrAppLayout";
+import AdminHrAppLayout from "../../admin/hr/layout/HrAppLayout";
 import "../handover.css";
 
 const dataOf = (response) => response?.data?.data;
 const statusLabels = ["Chờ duyệt", "Đã duyệt", "Từ chối"];
 const initialAssets = (language) => [
-    { assetType: L("Màn hình máy tính", language), assetCode: "TS-MH-001", condition: "Tốt", note: "" },
+    { assetType: translate("Màn hình máy tính", language), assetCode: "TS-MH-001", condition: "Tốt", note: "" },
     { assetType: "CPU", assetCode: "TS-CPU-001", condition: "Tốt", note: "" },
     { assetType: "PC", assetCode: "TS-PC-001", condition: "Đang sử dụng", note: "" },
-    { assetType: L("Bàn phím", language), assetCode: "TS-BP-001", condition: "Tốt", note: "" },
-    { assetType: L("Chuột", language), assetCode: "TS-CH-001", condition: "Tốt", note: "" },
+    { assetType: translate("Bàn phím", language), assetCode: "TS-BP-001", condition: "Tốt", note: "" },
+    { assetType: translate("Chuột", language), assetCode: "TS-CH-001", condition: "Tốt", note: "" },
 ];
 const initialProjects = (language) => [
-    { projectCode: "DA-001", projectName: "Website ABC", partner: L("Công ty ABC", language), progress: 80, documents: [], handoverFiles: [] },
-    { projectCode: "DA-002", projectName: "Mobile App XYZ", partner: L("Công ty XYZ", language), progress: 45, documents: [], handoverFiles: [] },
+    { projectCode: "DA-001", projectName: "Website ABC", partner: translate("Công ty ABC", language), progress: 80, documents: [], handoverFiles: [] },
+    { projectCode: "DA-002", projectName: "Mobile App XYZ", partner: translate("Công ty XYZ", language), progress: 45, documents: [], handoverFiles: [] },
 ];
 const parseJson = (value) => { try { return JSON.parse(value || "[]"); } catch { return []; } };
 const assetsOf = (row) => parseJson(row.assetsJson ?? row.AssetsJson).map((x) => ({ assetType: x.assetType ?? x.AssetType, assetCode: x.assetCode ?? x.AssetCode, condition: x.condition ?? x.Condition, note: x.note ?? x.Note }));
@@ -41,7 +42,7 @@ const L = (text, language) => language === "vi" ? text : translate(text, languag
 
 const StatusBadge = ({ status }) => (
     <span className={`hv-badge hv-badge--${status}`}>
-        {statusLabels[status] || "Không rõ"}
+        {statusLabels[status] || L("Không rõ")}
     </span>
 );
 
@@ -305,7 +306,7 @@ const HandoverForm = ({ form, setForm, submitting, onSubmit, locale }) => {
                                         {project[kind].length > 0 && (
                                             <div className="hv-pending-files">
                                                 {project[kind].map((file, fileIndex) => (
-                                                    <button type="button" key={`${file.name}-${fileIndex}`} title="Xóa tệp đã chọn"
+                                                    <button type="button" key={`${file.name}-${fileIndex}`} title={L("Xóa tệp đã chọn")}
                                                         onClick={() => setForm((prev) => ({ ...prev, projects: prev.projects.map((item, i) => (i === index ? { ...item, [kind]: item[kind].filter((_, j) => j !== fileIndex) } : item)) }))}>
                                                         📎 {file.name} <span>×</span>
                                                     </button>
@@ -366,7 +367,7 @@ const HandoverCard = ({ row, locale, reviewMode, onDownload, onReview }) => {
                         <h3>{reviewMode ? row.employeeName : "Yêu cầu bàn giao nghỉ việc"}</h3>
                         <p className="hv-muted">
                             {reviewMode
-                                ? `${row.employeeCode} · ${row.departmentName || "Chưa có phòng ban"}`
+                                ? `${row.employeeCode} · ${row.departmentName || L("Chưa có phòng ban")}`
                                 : `Quản lý duyệt: ${row.managerName}`}
                         </p>
                     </div>
@@ -376,9 +377,9 @@ const HandoverCard = ({ row, locale, reviewMode, onDownload, onReview }) => {
 
             <div className="hv-card-facts">
                 <div><small>Ngày làm việc cuối</small><b>{dateLabel(row.lastWorkingDate, locale)}</b></div>
-                <div><small>Tài khoản công ty</small><b>{row.accountIssued ? "Đã cấp" : "Chưa cấp"}</b></div>
+                <div><small>Tài khoản công ty</small><b>{row.accountIssued ? L("Đã cấp") : L("Chưa cấp")}</b></div>
                 <div><small>Gửi ngày</small><b>{row.createdTime ? new Date(row.createdTime).toLocaleDateString(locale) : "—"}</b></div>
-                <div><small>File đính kèm</small><b>{pendingFiles} tệp</b></div>
+                <div><small>{L("File đính kèm")}</small><b>{pendingFiles} {L("tệp")}</b></div>
             </div>
 
             <p className="hv-reason"><strong>Lý do:</strong> {row.reason}</p>
@@ -423,13 +424,13 @@ const ReviewDialog = ({ selected, locale, saving, onDownload, onApprove, onRejec
                 <button className="hv-close" onClick={onClose} disabled={saving}>×</button>
                 <span className="hv-eyebrow">DUYỆT BÀN GIAO</span>
                 <h2>{selected.employeeName}</h2>
-                <p className="hv-muted">{selected.employeeCode} · {selected.departmentName || "Chưa có phòng ban"}</p>
+                <p className="hv-muted">{selected.employeeCode} · {selected.departmentName || L("Chưa có phòng ban")}</p>
 
                 <div className="hv-dialog-facts">
                     <div><small>Ngày làm việc cuối</small><b>{dateLabel(selected.lastWorkingDate, locale)}</b></div>
-                    <div><small>Tài khoản công ty</small><b>{selected.accountIssued ? "Đã cấp" : "Chưa cấp"}</b></div>
-                    <div><small>Tài sản khai báo</small><b>{assets.length} mục</b></div>
-                    <div><small>Dự án</small><b>{projects.length} dự án</b></div>
+                    <div><small>Tài khoản công ty</small><b>{selected.accountIssued ? L("Đã cấp") : L("Chưa cấp")}</b></div>
+                    <div><small>Tài sản khai báo</small><b>{assets.length} {L("mục")}</b></div>
+                    <div><small>Dự án</small><b>{projects.length} {L("dự án")}</b></div>
                 </div>
 
                 <p className="hv-reason"><strong>Lý do nghỉ việc:</strong> {selected.reason}</p>
@@ -460,7 +461,8 @@ const ReviewDialog = ({ selected, locale, saving, onDownload, onApprove, onRejec
 
 // ===== Trang =====
 
-export default function HandoverPage({ reviewMode = false }) {
+export default function HandoverPage({ reviewMode = false, admin = false }) {
+    const isReview = reviewMode || admin;
     const auth = getAuth();
     const { language } = useLanguage();
     const locale = localeForLanguage(language);
@@ -477,14 +479,14 @@ export default function HandoverPage({ reviewMode = false }) {
         setLoading(true);
         setError("");
         try {
-            const response = await axiosClient.get(`/EmployeeHandover/${reviewMode ? "get-all" : "mine"}`);
+            const response = await axiosClient.get(`/EmployeeHandover/${isReview ? "get-all" : "mine"}`);
             setRows(dataOf(response) || []);
         } catch (e) {
             setError(e.response?.data?.message || e.response?.data || e.message || "Không tải được yêu cầu bàn giao.");
         } finally {
             setLoading(false);
         }
-    }, [reviewMode]);
+    }, [isReview]);
 
     useEffect(() => { load(); }, [load]);
 
@@ -557,8 +559,8 @@ export default function HandoverPage({ reviewMode = false }) {
             <header className="hv-header">
 
                 <div className="hv-header-right">
-                    {!reviewMode && <span className="hv-user-chip">{auth?.userName || "Nhân viên"}</span>}
-                    {reviewMode && pendingCount > 0 && (
+                    {!isReview && <span className="hv-user-chip">{auth?.userName || "Nhân viên"}</span>}
+                    {isReview && pendingCount > 0 && (
                         <span className="hv-pending-chip"><b>{pendingCount}</b> chờ xử lý</span>
                     )}
                 </div>
@@ -568,12 +570,12 @@ export default function HandoverPage({ reviewMode = false }) {
             {error && <div className="hv-alert hv-alert--error">{String(error)}</div>}
 
             {/* Form tạo yêu cầu (chỉ nhân viên, khi chưa có yêu cầu đang chờ) */}
-            {!reviewMode && !rows.some((row) => row.status === 0) && (
+            {!isReview && !rows.some((row) => row.status === 0) && (
                 <section className="hv-panel">
                     <HandoverForm form={form} setForm={setForm} submitting={saving} onSubmit={submit} locale={locale} />
                 </section>
             )}
-            {!reviewMode && rows.some((row) => row.status === 0) && (
+            {!isReview && rows.some((row) => row.status === 0) && (
                 <section className="hv-panel hv-panel--waiting">
                     <div className="hv-waiting">
                         <span className="hv-waiting-ico">⏳</span>
@@ -588,7 +590,7 @@ export default function HandoverPage({ reviewMode = false }) {
             {/* Lịch sử / danh sách xử lý */}
             <section className="hv-panel">
                 <div className="hv-list-head">
-                    <h2>{reviewMode ? "Yêu cầu bàn giao cần xử lý" : "Lịch sử yêu cầu của tôi"}</h2>
+                    <h2>{isReview ? "Yêu cầu bàn giao cần xử lý" : "Lịch sử yêu cầu của tôi"}</h2>
                     <button type="button" className="hv-btn hv-btn--ghost" onClick={load} disabled={loading}>↻ Làm mới</button>
                 </div>
                 {loading ? (
@@ -596,7 +598,7 @@ export default function HandoverPage({ reviewMode = false }) {
                 ) : rows.length === 0 ? (
                     <div className="hv-empty">
                         <span className="hv-empty-ico">📋</span>
-                        <p>{reviewMode ? "Chưa có yêu cầu bàn giao nào." : "Bạn chưa gửi yêu cầu bàn giao nào."}</p>
+                        <p>{isReview ? "Chưa có yêu cầu bàn giao nào." : "Bạn chưa gửi yêu cầu bàn giao nào."}</p>
                     </div>
                 ) : (
                     <div className="hv-list">
@@ -605,7 +607,7 @@ export default function HandoverPage({ reviewMode = false }) {
                                 key={row.id}
                                 row={row}
                                 locale={locale}
-                                reviewMode={reviewMode}
+                                reviewMode={isReview}
                                 onDownload={download}
                                 onReview={setSelected}
                             />
@@ -629,7 +631,7 @@ export default function HandoverPage({ reviewMode = false }) {
         </div>
     );
 
-    return reviewMode
-        ? <HrAppLayout>{content}</HrAppLayout>
-        : <AppLayout>{content}</AppLayout>;
+    if (admin) return <AdminHrAppLayout>{content}</AdminHrAppLayout>;
+    if (reviewMode) return <HrAppLayout>{content}</HrAppLayout>;
+    return <AppLayout>{content}</AppLayout>;
 }

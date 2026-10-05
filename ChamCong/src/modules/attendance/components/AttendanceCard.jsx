@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import relatedApi from "../api/relatedApi";
 import { formatVnTime } from "../../../utils/vnTime";
 import CameraCapture from "./CameraCapture";
@@ -35,6 +35,27 @@ const buildWeek = (records) => {
         });
     }
     return { days, count: days.filter((d) => d.checked).length };
+};
+
+const VnClock = () => {
+    const [now, setNow] = useState(() => new Date());
+
+    useEffect(() => {
+        const id = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(id);
+    }, []);
+
+    const time = now.toLocaleTimeString("vi-VN", {
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+        hour12: false, timeZone: "Asia/Ho_Chi_Minh"
+    });
+
+    return (
+        <div className="att-vn-clock" aria-label="Giờ Việt Nam" title="Giờ Việt Nam (GMT+7)">
+            <strong>{time}</strong>
+            <small>Giờ Việt Nam · GMT+7</small>
+        </div>
+    );
 };
 
 const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
@@ -127,6 +148,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     return (
         <section className="att-hero">
             <div className="att-hero-title">
+                <VnClock />
                 <h2>Chấm công</h2>
                 {!isCheckedOut && (
                     <p>

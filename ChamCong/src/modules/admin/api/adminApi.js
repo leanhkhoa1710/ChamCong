@@ -125,6 +125,34 @@ const adminApi = {
     createBankAccount(payload) {
         return axiosClient.post("/EmployeeBankAccount/create", payload);
     },
-};
+    blockUser(userId, payload) {
+        return axiosClient.post(`/User/${userId}/block`, payload);
+    },
+    unblockUser(userId) {
+        return axiosClient.post(`/User/${userId}/unblock`);
+    },
+    // === Phân quyền (Roles / gán role cho user) ===
+    roles() {
+        return axiosClient.get(`/Role/get-all?${P}`);
+    },
+    createRole(payload) {
+        return axiosClient.post("/Role/create", payload);
+    },
+    updateRole(payload) {
+        return axiosClient.put("/Role/update", payload);
+    },
+    deleteRole(id) {
+        return axiosClient.delete(`/Role/soft-delete/${id}`);
+    },
+    userRoles(userId) {
+        return axiosClient.get(`/UserRole/get-roles/${userId}`);
+    },
+    addRoleToUser(userId, roleId) {
+        return axiosClient.post(`/UserRole/add-role?UserId=${userId}&RoleId=${roleId}`);
+    },
+    removeRoleFromUser(userId, roleId) {
+        return axiosClient.delete(`/UserRole/remove-role?UserId=${userId}&RoleId=${roleId}`);
+    },
+    };
 
 export default adminApi;
