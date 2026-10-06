@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 import { statusLabel, statusClass } from "../labels";
-import { formatVnDate, formatVnTime } from "../../../../utils/vnTime";
+import { formatVnDate, formatVnTime, formatWorkHours } from "../../../../utils/vnTime";
 
 // Modal chi tiết chấm công của 1 nhân viên trong 1 tháng.
 // Hiển thị bảng ngày / giờ vào / giờ ra / giờ thực tế + tổng kết cuối trang.
@@ -10,11 +10,12 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
     const L = (text) => translate(text, language);
     const summary = useMemo(() => {
         const total = monthRows.length;
-        const worked = monthRows.filter((r) => [1, 2, 3].includes(r.status)).length;
+        const counted = monthRows.filter((r) => Number(r.approvalStatus) === 1);
+        const worked = counted.filter((r) => [1, 2, 3].includes(r.status)).length;
         const late = monthRows.filter((r) => r.status === 2).length;
         const absent = monthRows.filter((r) => r.status === 4).length;
         const leave = monthRows.filter((r) => r.status === 5).length;
-        const hours = monthRows.reduce((sum, r) => sum + (r.actualHours || 0), 0);
+        const hours = counted.reduce((sum, r) => sum + (r.actualHours || 0), 0);
         return { total, worked, late, absent, leave, hours };
     }, [monthRows]);
 
@@ -40,7 +41,7 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                     <div className="att-detail-stat att-detail-stat--warn"><span>{L("Đi trễ")}</span><strong>{summary.late}</strong></div>
                     <div className="att-detail-stat att-detail-stat--bad"><span>{L("Vắng")}</span><strong>{summary.absent}</strong></div>
                     <div className="att-detail-stat att-detail-stat--info"><span>{L("Nghỉ phép")}</span><strong>{summary.leave}</strong></div>
-                    <div className="att-detail-stat"><span>{L("Tổng giờ")}</span><strong>{summary.hours}h</strong></div>
+                    <div className="att-detail-stat"><span>{L("Tổng giờ")}</span><strong>{formatWorkHours(summary.hours)}</strong></div>
                 </div>
 
                 {(() => {
@@ -76,6 +77,7 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                                     <th>{L("Giờ ra")}</th>
                                     <th>{L("Giờ thực tế")}</th>
                                     <th>{L("Trạng thái")}</th>
+                                    <th>Công được tính</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,12 +86,13 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                                         <td>{formatVnDate(row.attendanceDate)}</td>
                                         <td>{formatVnTime(row.checkInTime) || "—"}</td>
                                         <td>{formatVnTime(row.checkOutTime) || "—"}</td>
-                                        <td>{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
+                                        <td>{formatWorkHours(row.actualHours)}</td>
                                         <td>
                                             <span className={`att-badge ${statusClass(row.status)}`}>
                                                 {L(statusLabel(row.status))}
                                             </span>
                                         </td>
+                                        <td>{Number(row.approvalStatus) === 1 ? formatWorkHours(row.actualHours || 0) : Number(row.approvalStatus) === 2 ? `Không tính công · Lý do: ${row.note || "HR chưa ghi lý do"}` : "Chờ duyệt — chưa tính công"}</td>
                                     </tr>
                                 ))}
                             </tbody>

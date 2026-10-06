@@ -45,6 +45,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     const [error, setError] = useState("");
     // Ảnh vừa chụp, chờ gửi kèm lần chấm công
     const [pendingPhoto, setPendingPhoto] = useState(null);
+    const [capturedAt, setCapturedAt] = useState(null);
     // Đổi key sau mỗi lần chấm công -> camera về trạng thái "chưa chụp"
     const [camKey, setCamKey] = useState(0);
 
@@ -84,6 +85,14 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
         setDone("");
 
         try {
+            if (!navigator.geolocation) throw new Error("Thiết bị không hỗ trợ lấy vị trí.");
+            const location = await new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(
+                ({ coords }) => resolve({ latitude: coords.latitude, longitude: coords.longitude }),
+                (err) => reject(new Error(err.code === 1
+                    ? "Hãy cho phép truy cập vị trí trong cài đặt trình duyệt rồi thử lại."
+                    : "Không lấy được vị trí. Hãy bật định vị trên điện thoại rồi thử lại.")),
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            ));
             let photoUrl = null;
             if (pendingPhoto) {
                 const up = await relatedApi.uploadPhoto(
@@ -103,7 +112,10 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
             const response = await relatedApi.checkin(
                 employeeId,
                 type,
-                photoUrl
+                photoUrl,
+                undefined,
+                location,
+                capturedAt
             );
             const data = response.data.data;
             setDone(
@@ -113,6 +125,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
             );
             // Dùng xong ảnh -> xóa luôn để lần ra/vào ca sau phải chụp mới
             setPendingPhoto(null);
+            setCapturedAt(null);
             setCamKey((k) => k + 1);
             onChanged?.(data?.attendance || null);
         } catch (err) {
@@ -138,11 +151,15 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                     </p>
                 )}
             </div>
+            {Number(record?.approvalStatus) === 2 && <p className="att-checkin-error" role="status">HR đã từ chối công hôm nay — không tính công. Lý do: {record.note || "HR chưa ghi lý do"}</p>}
 
+            {!isCheckedOut && (
+                <p className="att-muted" role="status">Khi vào/ra ca, ứng dụng sẽ xin vị trí để lưu cùng ảnh chấm công cho admin xem.</p>
+            )}
             {!isCheckedOut && (
                 <CameraCapture
                     key={camKey}
-                    onPhoto={setPendingPhoto}
+                    onPhoto={(photo, time) => { setPendingPhoto(photo); setCapturedAt(time || null); }}
                     locked={busy}
                 />
             )}
@@ -154,7 +171,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                         onClick={() => check(1)}
                         disabled={busy || !pendingPhoto}
                     >
-                        Vào ca
+                        {busy ? "Đang lấy vị trí và ghi nhận…" : "Vào ca"}
                     </button>
                     {!pendingPhoto && (
                         <span className="att-cam-hint">
@@ -169,7 +186,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                         onClick={() => check(2)}
                         disabled={busy || !pendingPhoto}
                     >
-                        Ra ca
+                        {busy ? "Đang lấy vị trí và ghi nhận…" : "Ra ca"}
                     </button>
                     {!pendingPhoto && (
                         <span className="att-cam-hint">

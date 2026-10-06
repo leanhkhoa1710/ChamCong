@@ -6,7 +6,7 @@ import adminAttendanceApi from "../api/adminAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
 import PhotoCell from "../../../../modules/attendance/components/PhotoCell";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
-import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
+import { formatVnTime, formatVnDate, formatWorkHours } from "../../../../utils/vnTime";
 import { toCsv, downloadCsv } from "../../hr/hrUtils";
 import "../../../../modules/attendance/attendance.css";
 import "../../admin.css";
@@ -104,7 +104,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                   const d = new Date(r.attendanceDate);
                   return d.getMonth() === todayKey.getMonth() && d.getFullYear() === todayKey.getFullYear();
               });
-        const hours = monthRows.reduce((s, r) => s + (Number(r.actualHours) || 0), 0);
+        const hours = monthRows.filter((r) => Number(r.approvalStatus) === 1).reduce((s, r) => s + (Number(r.actualHours) || 0), 0);
         const late = monthRows.filter((r) => [2, 3].includes(r.status)).length;
         const absent = monthRows.filter((r) => r.status === 4).length;
         return { checkedInToday, abnormalToday, pending, hours, late, absent, people: new Set(monthRows.map((r) => r.employeeId)).size };
@@ -134,7 +134,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                 "Ngày": formatVnDate(r.attendanceDate),
                 "Giờ vào": formatVnTime(r.checkInTime) || "",
                 "Giờ ra": formatVnTime(r.checkOutTime) || "",
-                "Giờ công": r.actualHours != null ? `${r.actualHours}h` : "",
+                "Giờ công": formatWorkHours(r.actualHours),
                 "Trạng thái": statusLabel(r.status),
                 "Duyệt": approvalLabel(r.approvalStatus),
             };
@@ -284,6 +284,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                             <th>Giờ thực</th>
                                             <th>Ảnh vào ca</th>
                                             <th>Ảnh ra ca</th>
+                                            <th>Vị trí chấm công</th>
                                             <th>Duyệt</th>
                                             <th />
                                         </tr>
@@ -291,7 +292,7 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                     <tbody>
                                         {filtered.length === 0 ? (
                                             <tr>
-                                                <td colSpan={9}>
+                                                <td colSpan={10}>
                                                     <span className="att-muted">Không có bản ghi phù hợp.</span>
                                                 </td>
                                             </tr>
@@ -311,9 +312,19 @@ const AdminAttendanceHistoryPage = ({ hrMode = false }) => {
                                                         {formatVnTime(row.checkInTime) || "—"} →{" "}
                                                         {formatVnTime(row.checkOutTime) || "—"}
                                                     </td>
-                                                    <td>{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
+                                                    <td>{formatWorkHours(row.actualHours)}</td>
                                                     <td><PhotoCell src={row.checkInPhoto} alt="Vào ca" /></td>
                                                     <td><PhotoCell src={row.checkOutPhoto} alt="Ra ca" /></td>
+                                                    <td>
+                                                        {logs.filter((log) => log.attendanceId === row.id && log.latitude != null && log.longitude != null).map((log) => (
+                                                            <div key={log.id}>
+                                                                <a href={`https://www.google.com/maps?q=${encodeURIComponent(`${log.latitude},${log.longitude}`)}`} target="_blank" rel="noopener noreferrer">
+                                                                    {log.type === 1 ? "Vào ca" : "Ra ca"} · {formatVnTime(log.logTime)} ↗
+                                                                </a>
+                                                            </div>
+                                                        ))}
+                                                        {!logs.some((log) => log.attendanceId === row.id && log.latitude != null && log.longitude != null) && <span className="att-muted">Chưa có vị trí</span>}
+                                                    </td>
                                                     <td>
                                                         <span
                                                             className={`att-badge ${approvalClass(row.approvalStatus)}`}

@@ -364,7 +364,7 @@ namespace M.Services.Service
             // Chỉ tính được giờ thực tế khi có đủ cặp vào - ra
             attendance.ActualHours =
                 checkIn.HasValue && checkOut.HasValue
-                    ? (int)Math.Round((checkOut.Value - checkIn.Value).TotalHours)
+                    ? decimal.Round((decimal)Math.Max(0, Math.Floor((checkOut.Value - checkIn.Value).TotalMinutes)) / 60m, 6)
                     : null;
         }
     }

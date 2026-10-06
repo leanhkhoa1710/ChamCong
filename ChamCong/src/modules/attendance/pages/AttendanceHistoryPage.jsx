@@ -44,7 +44,7 @@ const AttendanceHistoryPage = () => {
     }, [userId, employeeId]);
 
     return (
-        <AppLayout profile={profile}>
+        <AppLayout profile={profile} mobileAttendance title="Lịch sử chấm công" subtitle="Giờ vào, giờ ra và trạng thái duyệt của bạn">
             {error && <div className="att-error">{error}</div>}
             {loading ? (
                 <div className="att-loading">Đang tải...</div>

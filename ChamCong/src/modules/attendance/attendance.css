@@ -1178,3 +1178,54 @@
     max-height: calc(100vh - 40px);
     overflow-y: auto;
 }
+/* Mobile attendance: drawer navigation and touch-friendly cards. */
+@media (max-width: 900px) {
+    .att-mobile-layout .app-header { height: 64px; padding: 10px 12px; z-index: 50; gap: 8px; box-sizing: border-box; }
+    .att-mobile-layout .app-header-left, .att-mobile-layout .app-header-user { gap: 6px; }
+    .att-mobile-layout .app-header-toggle, .att-mobile-layout .app-header-bell-btn { width: 44px; height: 44px; flex-shrink: 0; }
+    .att-mobile-layout .app-body { display: block; }
+    .att-mobile-layout .att-sidebar { position: fixed; top: 64px; bottom: 0; left: 0; width: min(300px, 85vw); height: auto; z-index: 45; box-sizing: border-box; box-shadow: 8px 0 24px #0e1a261a; }
+    .att-mobile-layout .att-sidebar.collapsed { display: none; }
+    .att-mobile-layout .att-nav-item { min-height: 44px; display: flex; align-items: center; box-sizing: border-box; }
+    .att-menu-backdrop { position: fixed; inset: 64px 0 0; border: 0; background: #0e1a2670; z-index: 40; }
+    .att-mobile-layout .att-main { padding: 16px 12px 28px; }
+    .att-mobile-layout .app-header-menu { right: 0; max-width: calc(100vw - 24px); }
+    .att-mobile-layout .app-header-bell-menu { position: fixed; top: 64px; right: 12px; width: min(340px, calc(100vw - 24px)); max-height: calc(100dvh - 80px); }
+    .att-mobile-layout .lang-toggle { min-height: 44px; padding: 0 10px; }
+    .att-mobile-layout .lang-picker { height: 44px; padding: 0; box-sizing: border-box; }
+    .att-mobile-layout .lang-toggle > span:not(.flag) { display: none; }
+}
+@media (max-width: 600px) {
+    .att-mobile-layout .att-hero, .att-mobile-layout .att-card { padding: 16px; border-radius: 14px; }
+    .att-mobile-layout .att-hero { gap: 16px; }
+    .att-mobile-layout .att-hero-title h2 { font-size: 22px; }
+    .att-mobile-layout .att-hero-title p, .att-mobile-layout .att-muted { font-size: 13px; line-height: 1.6; }
+    .att-mobile-layout .att-hero-actions { flex-direction: column; gap: 8px; }
+    .att-mobile-layout .att-hero-actions button { min-height: 52px; font-size: 16px; width: 100%; }
+    .att-mobile-layout .att-cam-hint { font-size: 12px; line-height: 1.6; white-space: normal; }
+    .att-mobile-layout .att-cam video { height: auto; aspect-ratio: 4 / 3; object-fit: contain; background: #0e1a26; }
+    .att-mobile-layout .att-cam button, .att-mobile-layout .att-cam-done-actions button { min-height: 44px; }
+    .att-mobile-layout .att-cam-done { align-items: flex-start; }
+    .att-mobile-layout .att-cam-done > div { min-width: 0; }
+    .att-mobile-layout .att-hero-times { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .att-mobile-layout .att-hero-slot { padding: 16px 8px; }
+    .att-mobile-layout .att-hero-slot strong { font-size: 26px; }
+    .att-mobile-layout .att-hero-slot:last-child { grid-column: 1 / -1; }
+    .att-mobile-layout .att-hero-slot .att-hero-status { font-size: 22px; }
+    .att-mobile-layout .att-week { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; overflow: visible; }
+    .att-mobile-layout .att-week-day { padding: 10px 2px; min-width: 0; }
+    .att-mobile-layout .att-week-num { font-size: 14px; }
+    .att-mobile-layout .att-week-name { font-size: 10px; }
+    .att-mobile-layout .att-week-head h2 { font-size: 16px; }
+    .att-mobile-layout .att-week-count { font-size: 11px; }
+    .att-mobile-layout .attendance-history-compact .att-table-wrap { overflow: visible; }
+    .att-mobile-layout .attendance-history-compact .att-table { display: block; min-width: 0; width: 100%; }
+    .att-mobile-layout .attendance-history-compact thead { display: none; }
+    .att-mobile-layout .attendance-history-compact tbody { display: grid; gap: 12px; }
+    .att-mobile-layout .attendance-history-compact tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 12px; gap: 12px; border: 1px solid #e8edf2; border-radius: 12px; }
+    .att-mobile-layout .attendance-history-compact .att-table td { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; padding: 0; border: 0; width: auto; white-space: normal; min-width: 0; }
+    .att-mobile-layout .attendance-history-compact td::before { content: attr(data-label); font-size: 11px; color: #5a6b7b; }
+}
+@media (max-width: 380px) {
+    .att-mobile-layout .app-header-logo-text { display: none; }
+}

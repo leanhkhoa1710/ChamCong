@@ -21,7 +21,8 @@ namespace ModelViews.AttendanceModelView
         public Guid? PlannedShiftId { get; set; }
         public string? PlannedShiftName { get; set; }
         public int? PlannedHours { get; set; }
-        public int? ActualHours { get; set; }
+        public decimal? ActualHours { get; set; }
+        public decimal CountedHours { get; set; }
 
         // Giờ thực tế (chấm giờ nào, về giờ đó)
         public DateTimeOffset? CheckInTime { get; set; }
@@ -87,7 +88,7 @@ namespace ModelViews.AttendanceModelView
 
         public Guid? PlannedShiftId { get; set; }
         public int? PlannedHours { get; set; }
-        public int? ActualHours { get; set; }
+        public decimal? ActualHours { get; set; }
 
         // Giờ vào / ra ca (manual override)
         public DateTimeOffset? CheckInTime { get; set; }
@@ -129,6 +130,13 @@ namespace ModelViews.AttendanceModelView
     /// </summary>
     public class CheckInAttendanceModelView
     {
+        public DateTimeOffset? CapturedAt { get; set; }
+        [Range(typeof(decimal), "-90", "90")]
+        public decimal? Latitude { get; set; }
+
+        [Range(typeof(decimal), "-180", "180")]
+        public decimal? Longitude { get; set; }
+
         [Required]
         public Guid EmployeeId { get; set; }
 

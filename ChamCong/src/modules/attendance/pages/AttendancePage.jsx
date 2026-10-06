@@ -67,7 +67,7 @@ const AttendancePage = () => {
     };
 
     return (
-        <AppLayout profile={profile}>
+        <AppLayout profile={profile} mobileAttendance>
             {error && <div className="att-error">{error}</div>}
             {loading ? (
                 <div className="att-loading">Đang tải...</div>

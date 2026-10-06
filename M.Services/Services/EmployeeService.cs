@@ -121,6 +121,20 @@ namespace M.Services.Service
 
             return employee?.ToViewModel();
         }
+        public async Task<string> GetNextCodeAsync(Guid departmentId)
+        {
+            var department = await _unitOfWork.GetRepository<Department>().Entities
+                .FirstOrDefaultAsync(x => x.Id == departmentId && !x.DeletedTime.HasValue)
+                ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Department not found");
+            string prefix = department.Code.Trim().ToUpperInvariant() + "-";
+            var codes = await _unitOfWork.GetRepository<Employee>().Entities
+                .Where(x => x.EmployeeCode.StartsWith(prefix))
+                .Select(x => x.EmployeeCode).ToListAsync();
+            int last = codes.Select(code => int.TryParse(code[prefix.Length..], out int number) ? number : 0)
+                .DefaultIfEmpty(0).Max();
+            return prefix + (last + 1).ToString("D3");
+        }
+
         public async Task<Guid> CreateAsync(CreateEmployeeModelView model)
         {
             if (model.Status == EmployeeStatus.Resigned)

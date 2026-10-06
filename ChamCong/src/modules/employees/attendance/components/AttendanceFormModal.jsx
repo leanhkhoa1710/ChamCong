@@ -81,7 +81,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
             const [outHour, outMinute] = next.checkOutTime.split(":").map(Number);
             let minutes = outHour * 60 + outMinute - (inHour * 60 + inMinute);
             if (minutes < 0) minutes += 24 * 60;
-            next.actualHours = String(Math.round(minutes / 60));
+            next.actualHours = (Math.max(0, Math.floor(minutes)) / 60).toFixed(6);
         }
         setForm(next);
     };
@@ -201,7 +201,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                             <input
                                 type="number"
                                 min="0"
-                                step="1"
+                                step="any"
                                 value={form.actualHours}
                                 onChange={set("actualHours")}
                                 placeholder={L("Tùy chọn")}

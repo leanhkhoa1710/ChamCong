@@ -27,3 +27,15 @@ export const getAuth = () => {
 export const clearAuth = () => {
     localStorage.removeItem(AUTH_KEY);
 };
+
+export const isAuthenticated = () => {
+    const token = getAuth()?.token;
+    if (!token) return false;
+    try {
+        const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+        const { exp } = JSON.parse(atob(payload));
+        return typeof exp === "number" && exp * 1000 > Date.now();
+    } catch {
+        return false;
+    }
+};

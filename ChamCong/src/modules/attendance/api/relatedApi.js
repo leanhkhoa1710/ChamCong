@@ -19,12 +19,15 @@ const relatedApi = {
     },
 
     // Chấm công thực tế (VÀO CA / RA CA)
-    checkin(employeeId, type, photoUrl, note) {
+    checkin(employeeId, type, photoUrl, note, location, capturedAt) {
         return axiosClient.post("/Attendance/checkin", {
             employeeId,
             type,
             photoUrl,
             note,
+            latitude: location?.latitude,
+            longitude: location?.longitude,
+            capturedAt,
         });
     },
 

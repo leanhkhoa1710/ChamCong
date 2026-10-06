@@ -1,6 +1,11 @@
 // Tiện ích giờ Việt Nam (UTC+7) dùng cho module chấm công.
 
 export const VN_TIMEZONE = "Asia/Ho_Chi_Minh";
+export const formatWorkHours = (hours) => {
+    if (hours == null) return "—";
+    const minutes = Math.max(0, Math.round(Number(hours) * 60));
+    return `${Math.floor(minutes / 60)} giờ ${minutes % 60} phút`;
+};
 
 // Định dạng giờ HH:mm tại Việt Nam (rỗng nếu không có giá trị).
 export const formatVnTime = (iso) =>

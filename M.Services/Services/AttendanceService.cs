@@ -129,9 +129,12 @@ namespace M.Services.Service
             }
 
             // Giờ log hiện tại (theo múi giờ máy chủ / VN)
-            DateTime now = DateTime.Now;
-            DateTimeOffset logTime =
-                DateTimeOffset.Now;
+            DateTimeOffset serverTime = DateTimeOffset.UtcNow;
+            DateTimeOffset logTime = model.CapturedAt ?? serverTime;
+            if (logTime > serverTime.AddSeconds(30) || logTime < serverTime.AddMinutes(-5))
+                throw new ErrorException(StatusCodes.Status400BadRequest, "INVALID_CAPTURE_TIME",
+                    "Ảnh đã quá 5 phút hoặc giờ thiết bị chưa đúng. Hãy chụp lại ảnh và bật giờ tự động.");
+            DateTime now = logTime.ToOffset(TimeSpan.FromHours(7)).DateTime;
 
             // Tìm bản ghi Attendance của HÔM NAY (tự tạo nếu chưa có)
             Attendance? attendance = await repo.Entities
@@ -191,6 +194,8 @@ namespace M.Services.Service
                 Type = model.Type,
                 Method = model.Method,
                 PhotoUrl = model.PhotoUrl,
+                Latitude = model.Latitude,
+                Longitude = model.Longitude,
                 Note = model.Note
             };
 
@@ -231,8 +236,8 @@ namespace M.Services.Service
             if (checkIn.HasValue && checkOut.HasValue)
             {
                 attendance.ActualHours =
-                    (int)Math.Round(
-                        (checkOut.Value - checkIn.Value).TotalHours);
+                    decimal.Round((decimal)Math.Max(0, Math.Floor(
+                        (checkOut.Value - checkIn.Value).TotalMinutes)) / 60m, 6);
             }
 
             // Tự đánh trạng thái Đúng giờ / Trễ giờ theo giờ VN (UTC+7):

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEmployeeCode } from "../../../../components/common/useEmployeeCode";
 import adminApi from "../../api/adminApi";
 
 // Component con định nghĩa ở MODULE-LEVEL (ngoài component) để giữ identity ổn định
@@ -102,6 +103,7 @@ const HR_ADDForm = ({
         } : {}),
     }));
 
+    const codeError = useEmployeeCode(form.departmentId, employee, setForm);
     const set = (k) => (e) =>
         setForm((f) => ({ ...f, [k]: e.target.value }));
     const setChk = (k) => (e) =>
@@ -174,7 +176,8 @@ const HR_ADDForm = ({
                 <div className="hrf-body">
                 <Grp t="1. Danh tính">
                     <F l="Mã nhân viên" req>
-                        <input className={inp} value={form.employeeCode} onChange={set("employeeCode")} placeholder="NV001" />
+                        <input className={inp} value={form.employeeCode} onChange={set("employeeCode")} readOnly={!employee} placeholder={form.departmentId ? "Đang lấy mã nhân viên…" : "Chọn bộ phận để tự tạo mã"} />
+                        {codeError && <small role="alert">{codeError}</small>}
                     </F>
                     <F l="Họ / tên đệm" req>
                         <input className={inp} value={form.givenName} onChange={set("givenName")} placeholder="Nguyễn Văn" />
@@ -223,7 +226,7 @@ const HR_ADDForm = ({
 
                 <Grp t="4. Điều kiện làm việc">
                     <F l="Phòng ban">
-                        <select className={sel} value={form.departmentId} onChange={set("departmentId")}>
+                        <select className={sel} value={form.departmentId} onChange={(e) => setForm((f) => ({ ...f, departmentId: e.target.value, employeeCode: employee ? f.employeeCode : "" }))}>
                             <option value="">— Chọn phòng ban —</option>
                             {departments.map((d) => (
                                 <option key={d.id} value={d.id}>{d.name}</option>

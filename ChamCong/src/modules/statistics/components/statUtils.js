@@ -6,17 +6,17 @@ export const pad2 = (n) => String(n).padStart(2, "0");
 export const dkey = (d) =>
     `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 export const durMin = (inIso, outIso) =>
-    Math.round((new Date(outIso) - new Date(inIso)) / 60000);
+    Math.max(0, Math.floor((new Date(outIso) - new Date(inIso)) / 60000));
 // "8h04"
 export const durHm = (min) => {
     if (min == null || min <= 0) return "0h";
+    min = Math.round(min);
     const h = Math.floor(min / 60);
     const m = Math.round(min % 60);
     return `${h}h${m ? pad2(m) : ""}`;
 };
 // "8h"
-export const hoursShort = (min) =>
-    `${Math.max(0, Math.round(min / 60))}h`;
+export const hoursShort = (min) => durHm(min);
 
 // Trạng thái chấm công (đồng bộ AttendanceStatus).
 export const statusLabel = (s) =>
@@ -41,6 +41,8 @@ export const dotClass = (code) =>
         future: "future",
         nodata: "nodata",
         rest: "rest",
+        rejected: "bad",
+        pending: "warn",
     })[code] || "muted";
 
 export const dayStatusText = (code) =>
@@ -52,6 +54,8 @@ export const dayStatusText = (code) =>
         future: "Chưa tới",
         nodata: "Chưa chấm",
         rest: "Nghỉ cuối tuần / lễ",
+        rejected: "Từ chối — không tính công",
+        pending: "Chờ duyệt — chưa tính công",
     })[code] || "";
 
 // ===== Toán thống kê theo tháng =====
@@ -83,7 +87,8 @@ export const computeStats = (
     }
     const standardMin = expectedWorkdays * 8 * 60;
 
-    const worked = monthRows.filter((r) => r.checkInTime);
+    const counted = monthRows.filter((r) => Number(r.approvalStatus) === 1);
+    const worked = counted.filter((r) => r.checkInTime);
     const daysWorked = worked.length;
     const hoursWorked = worked.reduce(
         (sum, r) =>
@@ -93,8 +98,8 @@ export const computeStats = (
                 : (r.actualHours || 0) * 60),
         0
     );
-    const late = monthRows.filter((r) => r.status === 2).length;
-    const leaveDays = monthRows.filter((r) => r.status === 5).length;
+    const late = counted.filter((r) => r.status === 2).length;
+    const leaveDays = counted.filter((r) => r.status === 5).length;
 
     // Phép còn lại
     const usedByType = {};
@@ -122,7 +127,7 @@ export const computeStats = (
     let otWeekday = 0;
     let otWeekend = 0;
     let otHoliday = 0;
-    monthRows
+    counted
         .filter((r) => r.checkInTime && r.checkOutTime)
         .forEach((r) => {
             const key = dkey(new Date(r.attendanceDate));
@@ -153,6 +158,8 @@ export const computeStats = (
 export const dayStatusOf = (date, ctx) => {
     const key = dkey(date);
     const row = ctx.byDate[key];
+    if (row && Number(row.approvalStatus) === 2) return "rejected";
+    if (row && Number(row.approvalStatus) === 0) return "pending";
     const dow = date.getDay();
     const weekend = dow === 0 || dow === 6;
     const ht = ctx.holidayMap[key];
@@ -199,6 +206,8 @@ export const buildWarnings = (monthRows, dayStatus, ym) => {
             list.push(`${label} bạn chưa checkout`);
         if (r.approvalStatus === 0)
             list.push(`${label} đang chờ duyệt công`);
+        if (Number(r.approvalStatus) === 2)
+            list.push(`${label} bị từ chối — không tính công. Lý do: ${r.note || "HR chưa ghi lý do"}`);
     });
     const today = new Date();
     let noDataDays = 0;

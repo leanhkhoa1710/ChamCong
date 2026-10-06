@@ -4,7 +4,7 @@ import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
 
 // Modal lịch sử phê duyệt + chỉnh sửa của 1 bản ghi chấm công.
 // Hiển thị khi hover "Đã duyệt" / "Từ chối" -> click "Xem chi tiết".
-const AttendanceHistoryModal = ({ row, employeeLabel, onClose }) => {
+const AttendanceHistoryModal = ({ row, employeeLabel, logs = [], onClose }) => {
     const { language } = useLanguage();
     const L = (text) => translate(text, language);
     if (!row) return null;
@@ -22,6 +22,18 @@ const AttendanceHistoryModal = ({ row, employeeLabel, onClose }) => {
                 </header>
 
                 <div className="att-history-body">
+                    <div className="att-history-section">
+                        <div className="att-history-section-title"><strong>Vị trí chấm công</strong></div>
+                        {logs.length === 0 && <p className="att-muted">Bản ghi này chưa có vị trí GPS. Vị trí chỉ được lưu ở lần chấm công có cấp quyền định vị.</p>}
+                        {logs.map((log) => (
+                            <div className="att-history-row" key={log.id}>
+                                <span className="att-history-label">{log.type === 1 ? "Vào ca" : "Ra ca"} · {formatVnTime(log.logTime)}</span>
+                                {log.latitude != null && log.longitude != null ? (
+                                    <a href={`https://www.google.com/maps?q=${encodeURIComponent(`${log.latitude},${log.longitude}`)}`} target="_blank" rel="noopener noreferrer">{log.latitude}, {log.longitude} · Xem bản đồ ↗</a>
+                                ) : <span>Chưa có vị trí</span>}
+                            </div>
+                        ))}
+                    </div>
                     {/* ===== 1. PHÊ DUYỆT ===== */}
                     <div className="att-history-section">
                         <div className="att-history-section-title">

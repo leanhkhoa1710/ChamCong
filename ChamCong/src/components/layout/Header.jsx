@@ -87,6 +87,7 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false }) => {
                     <button
                         type="button"
                         className="app-header-toggle"
+                        aria-expanded={!collapsed}
                         aria-label={collapsed ? "Mở thanh menu" : "Gập thanh menu"}
                         onClick={onToggleSidebar}
                     >

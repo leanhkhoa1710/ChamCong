@@ -97,6 +97,17 @@ namespace M.API.Controllers
             ));
         }
 
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpGet("next-code")]
+        public async Task<IActionResult> GetNextCode(Guid departmentId)
+        {
+            string code = await _employeeService.GetNextCodeAsync(departmentId);
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: code));
+        }
+
         /// <summary>
         /// Updates employee information
         /// </summary>

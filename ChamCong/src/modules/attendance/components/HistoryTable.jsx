@@ -1,4 +1,4 @@
-import { formatVnTime, formatVnDate } from "../../../utils/vnTime";
+import { formatVnTime, formatVnDate, formatWorkHours } from "../../../utils/vnTime";
 import PhotoCell from "./PhotoCell";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../../employees/attendance/labels";
 
@@ -34,23 +34,25 @@ const HistoryTable = ({ history }) => {
                         <tbody>
                             {history.map((row) => (
                                 <tr key={row.id}>
-                                    <td>{formatVnDate(row.attendanceDate)}</td>
-                                    <td className="att-col-status">
+                                    <td data-label="Ngày">{formatVnDate(row.attendanceDate)}</td>
+                                    <td data-label="Trạng thái" className="att-col-status">
                                         <span className={`att-badge ${statusClass(row.status)}`}>
                                             {statusLabel(row.status)}
                                         </span>
                                     </td>
-                                    <td>{formatVnTime(row.checkInTime) || "—"}</td>
-                                    <td>{formatVnTime(row.checkOutTime) || "—"}</td>
-                                    <td className="att-col-actual">{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
-                                    <td className="att-col-photo"><PhotoCell src={row.checkInPhoto} alt="Vào ca" hideYesBadge /></td>
-                                    <td className="att-col-photo"><PhotoCell src={row.checkOutPhoto} alt="Ra ca" hideYesBadge /></td>
-                                    <td className="att-col-approval">
+                                    <td data-label="Giờ vào">{formatVnTime(row.checkInTime) || "—"}</td>
+                                    <td data-label="Giờ ra">{formatVnTime(row.checkOutTime) || "—"}</td>
+                                    <td data-label="Giờ thực" className="att-col-actual">{formatWorkHours(row.actualHours)}</td>
+                                    <td data-label="Ảnh vào ca" className="att-col-photo"><PhotoCell src={row.checkInPhoto} alt="Vào ca" hideYesBadge /></td>
+                                    <td data-label="Ảnh ra ca" className="att-col-photo"><PhotoCell src={row.checkOutPhoto} alt="Ra ca" hideYesBadge /></td>
+                                    <td data-label="Duyệt" className="att-col-approval">
                                         <div className="att-approval-cell att-approval-cell--view">
                                             <span className={`att-badge ${approvalClass(row.approvalStatus)}`}>
                                                 {approvalLabel(row.approvalStatus)}
                                             </span>
                                             {row.approvedAt && <small>{formatVnTime(row.approvedAt)} · {formatVnDate(row.approvedAt)}</small>}
+                                            {Number(row.approvalStatus) === 2 && <small className="att-checkin-error">Không tính công · Lý do: {row.note || "HR chưa ghi lý do"}</small>}
+                                            {Number(row.approvalStatus) === 0 && <small>Chờ duyệt — chưa tính công</small>}
                                         </div>
                                     </td>
                                 </tr>

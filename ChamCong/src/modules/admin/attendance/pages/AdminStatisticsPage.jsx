@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { formatWorkHours } from "../../../../utils/vnTime";
 import AdminAppLayout from "../../layout/AdminAppLayout";
 import HrAppLayout from "../../hr/layout/HrAppLayout";
 import adminAttendanceApi from "../api/adminAttendanceApi";
@@ -73,6 +74,7 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
                 hours: 0,
             });
             e.days += 1;
+            if (Number(r.approvalStatus) !== 1) return;
             if ([1, 2, 3].includes(r.status)) e.worked += 1;
             if (r.status === 2) e.late += 1;
             if (r.status === 4) e.absent += 1;
@@ -244,7 +246,7 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
                                     <thead>
                                         <tr>
                                             <th>Nhân viên</th>
-                                            <th>Ngày đã làm</th>
+                                            <th>Công đã duyệt</th>
                                             <th>Đi trễ</th>
                                             <th>Vắng mặt</th>
                                             <th>Nghỉ phép</th>
@@ -298,7 +300,7 @@ const AdminStatisticsPage = ({ hrMode = false }) => {
                                                         </td>
                                                         <td>
                                                             {stat
-                                                                ? `${stat.hours}h`
+                                                                ? formatWorkHours(stat.hours)
                                                                 : "—"}
                                                         </td>
                                                         <td>

@@ -32,10 +32,16 @@ const employeeAttendanceApi = {
     approve(payload) {
         return axiosClient.post("/Attendance/approve", payload);
     },
-    logsAll(page = 1, size = 2000) {
-        return axiosClient.get(
-            `/AttendanceLog/get-all?pageNumber=${page}&pageSize=${size}`
-        );
+    async logsAll(page = 1, size = 2000) {
+        const response = await axiosClient.get(`/AttendanceLog/get-all?pageNumber=${page}&pageSize=${size}`);
+        const data = response.data.data;
+        if (data) {
+            for (let next = page + 1; next <= data.totalPages; next++) {
+                const more = await axiosClient.get(`/AttendanceLog/get-all?pageNumber=${next}&pageSize=${size}`);
+                data.items.push(...(more.data.data?.items || []));
+            }
+        }
+        return response;
     },
 };
 

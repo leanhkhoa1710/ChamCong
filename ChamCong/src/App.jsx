@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { isAuthenticated } from "./services/auth/auth";
 import LoginPage from "./modules/login/pages/LoginPage";
 import ActivatePage from "./modules/activate/pages/ActivatePage";
 import HrPage from "./modules/employees/hr/pages/HrPage";
@@ -42,6 +43,7 @@ import PromotionsPage from "./modules/employees/hr/pages/PromotionsPage";
 import HandoverPage from "./modules/handover/pages/HandoverPage";
 
 const guarded = (to, el) => <RequireModule to={to}>{el}</RequireModule>;
+const RequireLogin = () => isAuthenticated() ? <Outlet /> : <Navigate to="/login" replace />;
 
 function App() {
     return (
@@ -49,6 +51,7 @@ function App() {
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/kich-hoat" element={<ActivatePage />} />
+                <Route element={<RequireLogin />}>
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
@@ -172,6 +175,7 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
 
                 <Route path="*" element={<Navigate to="/home" replace />} />
+                </Route>
             </Routes>
         </BrowserRouter>
     );

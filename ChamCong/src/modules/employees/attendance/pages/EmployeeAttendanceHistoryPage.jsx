@@ -7,7 +7,7 @@ import AttendanceFormModal from "../components/AttendanceFormModal";
 import AttendanceHistoryModal from "../components/AttendanceHistoryModal";
 import PhotoCell from "../../../../modules/attendance/components/PhotoCell";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
-import { formatVnTime, formatVnDate } from "../../../../utils/vnTime";
+import { formatVnTime, formatVnDate, formatWorkHours } from "../../../../utils/vnTime";
 import { toCsv, downloadCsv } from "../../hr/hrUtils";
 import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 import "../../../../modules/attendance/attendance.css";
@@ -166,7 +166,7 @@ const EmployeeAttendanceHistoryPage = () => {
                 "Ngày": formatVnDate(r.attendanceDate),
                 "Giờ vào": formatVnTime(r.checkInTime) || "",
                 "Giờ ra": formatVnTime(r.checkOutTime) || "",
-                "Giờ công": r.actualHours != null ? `${r.actualHours}h` : "",
+                "Giờ công": formatWorkHours(r.actualHours),
                 "Trạng thái": statusLabel(r.status),
                 "Duyệt": approvalLabel(r.approvalStatus),
             };
@@ -334,14 +334,14 @@ const EmployeeAttendanceHistoryPage = () => {
                                             <th>Giờ ra</th>
                                             <th className="att-col-actual">Giờ thực</th>
                                             <th className="att-col-photo">Ảnh vào ca</th>
-                                            <th className="att-col-photo">Ảnh ra ca</th>
+                                            <th className="att-col-photo">Ảnh ra ca</th>                                            <th>Vị trí chấm công</th>
                                             <th className="att-col-approval">Duyệt</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filtered.length === 0 ? (
                                             <tr>
-                                                <td colSpan={9}>
+                                                <td colSpan={10}>
                                                     <span className="att-muted">Không có bản ghi phù hợp.</span>
                                                 </td>
                                             </tr>
@@ -359,9 +359,9 @@ const EmployeeAttendanceHistoryPage = () => {
                                                     </td>
                                                     <td>{formatVnTime(row.checkInTime) || "—"}</td>
                                                     <td>{formatVnTime(row.checkOutTime) || "—"}</td>
-                                                    <td className="att-col-actual">{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
+                                                    <td className="att-col-actual">{formatWorkHours(row.actualHours)}</td>
                                                     <td className="att-col-photo"><PhotoCell src={row.checkInPhoto} alt="Vào ca" hideYesBadge /></td>
-                                                    <td className="att-col-photo"><PhotoCell src={row.checkOutPhoto} alt="Ra ca" hideYesBadge /></td>
+                                                    <td className="att-col-photo"><PhotoCell src={row.checkOutPhoto} alt="Ra ca" hideYesBadge /></td>                                                    <td>                                                        {logs.filter((log) => log.attendanceId === row.id && log.latitude != null && log.longitude != null).map((log) => (                                                            <div key={log.id}>                                                                <a href={`https://www.google.com/maps?q=${encodeURIComponent(`${log.latitude},${log.longitude}`)}`} target="_blank" rel="noopener noreferrer">                                                                    {log.type === 1 ? "Vào ca" : "Ra ca"} · {formatVnTime(log.logTime)} ↗                                                                </a>                                                            </div>                                                        ))}                                                        {!logs.some((log) => log.attendanceId === row.id && log.latitude != null && log.longitude != null) && <span className="att-muted">Chưa có vị trí</span>}                                                    </td>
                                                     <td>
                                                         <div className="att-approval-cell">
                                                             {row.approvalStatus === 0 ? (
@@ -387,7 +387,7 @@ const EmployeeAttendanceHistoryPage = () => {
                                                                 >
                                                                     <span className={`att-badge ${approvalClass(row.approvalStatus)}`}>{L(approvalLabel(row.approvalStatus))}</span>
                                                                     {row.approvedAt && <small>{formatVnTime(row.approvedAt)} · {formatVnDate(row.approvedAt)}</small>}
-                                                                    <span className="att-approval-detail-hover">{L("Xem chi tiết")}</span>
+                                                                    <span className="att-approval-detail-hover">{L("Xem chi tiết")}</span>                                                                    {Number(row.approvalStatus) === 2 && <small className="att-approval-reason">Không tính công · {row.note || "HR chưa ghi lý do"}</small>}
                                                                 </div>
                                                             )}
                                                         </div>
@@ -448,7 +448,7 @@ const EmployeeAttendanceHistoryPage = () => {
 
                 {historyRow && (
                     <AttendanceHistoryModal
-                        row={historyRow}
+                        row={historyRow}                        logs={logs.filter((log) => log.attendanceId === historyRow.id)}
                         employeeLabel={`${empCode(historyRow)} · ${empFull(historyRow)}`}
                         onClose={() => setHistoryRow(null)}
                     />

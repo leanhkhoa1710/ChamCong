@@ -3,7 +3,7 @@ import { visibleModules } from "../../services/auth/permission";
 
 const NAV_ITEMS = visibleModules();
 
-const Sidebar = ({ collapsed }) => {
+const Sidebar = ({ collapsed, onNavigate }) => {
     return (
         <aside className={`att-sidebar${collapsed ? " collapsed" : ""}`}>
             <nav className="att-sidebar-nav">
@@ -11,6 +11,7 @@ const Sidebar = ({ collapsed }) => {
                     <NavLink
                         key={item.to}
                         to={item.to}
+                        onClick={onNavigate}
                         title={collapsed ? item.label : undefined}
                         className={({ isActive }) =>
                             `att-nav-item${isActive ? " active" : ""}`

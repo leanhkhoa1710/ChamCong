@@ -39,7 +39,9 @@ const StatDetailTable = ({ monthRows, holidayMap }) => {
                             const outT = row.checkOutTime
                                 ? formatVnTime(row.checkOutTime)
                                 : "";
-                            const mins =
+                            const counted = Number(row.approvalStatus) === 1;
+                            const rejected = Number(row.approvalStatus) === 2;
+                            const mins = !counted ? 0 :
                                 inT && outT
                                     ? durMin(row.checkInTime, row.checkOutTime)
                                     : (row.actualHours || 0) * 60;
@@ -65,12 +67,13 @@ const StatDetailTable = ({ monthRows, holidayMap }) => {
                                     <td>{durHm(overtime)}</td>
                                     <td>
                                         <span
-                                            className={`att-badge ${short ? "warn" : "ok"}`}
+                                            className={`att-badge ${rejected ? "bad" : !counted || short ? "warn" : "ok"}`}
                                         >
-                                            {short
+                                            {rejected ? "Từ chối — không tính công" : !counted ? "Chờ duyệt — chưa tính công" : short
                                                 ? "● Thiếu công"
                                                 : "● Đủ công"}
                                         </span>
+                                        {rejected && <div className="att-muted">Lý do: {row.note || "HR chưa ghi lý do"}</div>}
                                     </td>
                                 </tr>
                             );

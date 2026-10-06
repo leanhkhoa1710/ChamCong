@@ -46,7 +46,8 @@ namespace M.Contract.Repositories.Entities
         public int? PlannedHours { get; set; }
 
         // Số giờ làm thực tế (tính từ các log)
-        public int? ActualHours { get; set; }
+        [Column(TypeName = "decimal(10,6)")]
+        public decimal? ActualHours { get; set; }
 
         // =========================================================
         // ẢNH CHỤP KHI CHẤM CÔNG (có thể null nếu chấm không kèm ảnh)

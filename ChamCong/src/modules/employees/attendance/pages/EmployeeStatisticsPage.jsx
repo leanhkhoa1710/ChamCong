@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { formatWorkHours } from "../../../../utils/vnTime";
 
 import HrAppLayout from "../../hr/layout/HrAppLayout";
 import employeeAttendanceApi from "../api/employeeAttendanceApi";
@@ -73,6 +74,7 @@ const EmployeeStatisticsPage = () => {
                 hours: 0,
             });
             e.days += 1;
+            if (Number(r.approvalStatus) !== 1) return;
             if ([1, 2, 3].includes(r.status)) e.worked += 1;
             if (r.status === 2) e.late += 1;
             if (r.status === 4) e.absent += 1;
@@ -231,11 +233,11 @@ const EmployeeStatisticsPage = () => {
                                     <thead>
                                         <tr>
                                             <th>{L("Nhân viên")}</th>
-                                            <th>{L("Ngày đã làm")}</th>
+                                            <th>Công đã duyệt</th>
                                             <th>{L("Đi trễ")}</th>
                                             <th>{L("Vắng mặt")}</th>
                                             <th>{L("Nghỉ phép")}</th>
-                                            <th>{L("Tổng giờ")}</th>
+                                            <th>Giờ công được tính</th>
                                             <th /></tr>
                                     </thead>
                                     <tbody>
@@ -283,7 +285,7 @@ const EmployeeStatisticsPage = () => {
                                                         </td>
                                                         <td>
                                                             {stat
-                                                                ? `${stat.hours}h`
+                                                                ? formatWorkHours(stat.hours)
                                                                 : "—"}
                                                         </td>
                                                         <td>

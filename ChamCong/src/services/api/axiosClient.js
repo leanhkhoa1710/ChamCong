@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAuth } from "../auth/auth";
+import { getAuth, clearAuth } from "../auth/auth";
 import { API_BASE_URL } from "./apiConfig";
 
 const axiosClient = axios.create({
@@ -16,6 +16,14 @@ axiosClient.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
+});
+
+axiosClient.interceptors.response.use((response) => response, (error) => {
+    if (error.response?.status === 401 && !["/login", "/kich-hoat"].includes(window.location.pathname)) {
+        clearAuth();
+        window.location.replace("/login");
+    }
+    return Promise.reject(error);
 });
 
 export default axiosClient;

@@ -37,6 +37,8 @@ namespace M.Services.Mappings
                 PlannedShiftName = entity.PlannedShift?.Name,
                 PlannedHours = entity.PlannedHours,
                 ActualHours = entity.ActualHours,
+                CountedHours = entity.ApprovalStatus == AttendanceApprovalStatus.Approved
+                    ? Math.Max(0, entity.ActualHours ?? 0) : 0,
                 CheckInTime = checkInTime,
                 CheckOutTime = checkOutTime,
                 CheckInPhoto = entity.CheckInPhoto,
