@@ -326,5 +326,43 @@ namespace M.Services.Service
         #endregion
 
 
+
+        #region Block / Unblock
+
+        public async Task BlockUserAsync(Guid userId)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(userId.ToString())
+                ?? throw new ErrorException(
+                    StatusCodes.Status404NotFound,
+                    ResponseCodeConstants.NOT_FOUND,
+                    "User not found");
+
+            user.LockoutEnabled = true;
+            user.LockoutEnd = DateTimeOffset.UtcNow.AddYears(100);
+
+            user.LastUpdatedBy = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
+            user.LastUpdatedTime = CoreHelper.SystemTimeNow;
+            await _userManager.UpdateAsync(user);
+        }
+
+        public async Task UnblockUserAsync(Guid userId)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(userId.ToString())
+                ?? throw new ErrorException(
+                    StatusCodes.Status404NotFound,
+                    ResponseCodeConstants.NOT_FOUND,
+                    "User not found");
+
+            user.LockoutEnabled = false;
+            user.LockoutEnd = null;
+
+            user.LastUpdatedBy = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
+            user.LastUpdatedTime = CoreHelper.SystemTimeNow;
+            await _userManager.UpdateAsync(user);
+        }
+
+        #endregion
+
     }
+
 }

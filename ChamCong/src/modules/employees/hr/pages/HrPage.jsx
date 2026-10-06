@@ -10,6 +10,7 @@ import HrAddForm from "../components/HrAddForm";
 import { downloadExcel, hrTemplate, exportEmployees, HR_HEADER_BY_KEY, parseCsv, readExcel } from "../hrUtils";
 import "../../../../modules/attendance/attendance.css";
 import "../hr.css";
+import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 
 const formatImportError = (error) => {
     const body = error.response?.data;
@@ -26,8 +27,9 @@ const formatImportError = (error) => {
 };
 
 const PAGE_SIZE = 20;
-const formatDate = (value) => value ? new Date(value).toLocaleDateString("vi-VN") : "—";
-const formatMoney = (value) => value != null && value !== "" ? `${Number(value).toLocaleString("vi-VN")} ₫` : "—";
+let activeLocale = "vi-VN";
+const formatDate = (value) => value ? new Date(value).toLocaleDateString(activeLocale) : "—";
+const formatMoney = (value) => value != null && value !== "" ? `${Number(value).toLocaleString(activeLocale)} ₫` : "—";
 
 const HrPage = () => {
     const data = useHrData();
@@ -38,6 +40,9 @@ const HrPage = () => {
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [viewEmp, setViewEmp] = useState(null);
     const [importReport, setImportReport] = useState(null);
+    const { language } = useLanguage();
+    const L = (text) => translate(text, language);
+    activeLocale = localeForLanguage(language);
 
     const relatedFor = (employeeId) => {
         const newest = (items, dateKey) => items
@@ -71,24 +76,24 @@ const HrPage = () => {
         );
 
     const archiveEmployee = async (employee) => {
-        if (!window.confirm(`Lưu trữ ${employee.fullName} và chuyển hồ sơ sang danh sách Đã nghỉ việc?`)) return;
+        if (!window.confirm(`${L("Lưu trữ")} ${employee.fullName} ${L("và chuyển hồ sơ sang danh sách Đã nghỉ việc?")}`)) return;
         try {
             await employeeApi.softDeleteEmployee(employee.id);
             await data.reload();
             setters.setQuickFilter("resigned");
         } catch (error) {
-            window.alert(error.response?.data?.message || error.message || "Không thể lưu trữ nhân viên.");
+            window.alert(error.response?.data?.message || error.message || L("Không thể lưu trữ nhân viên."));
         }
     };
 
     const restoreEmployee = async (employee) => {
-        if (!window.confirm(`Khôi phục hồ sơ ${employee.fullName} về danh sách nhân viên?`)) return;
+        if (!window.confirm(`${L("Khôi phục hồ sơ")} ${employee.fullName} ${L("về danh sách nhân viên?")}`)) return;
         try {
             await employeeApi.restoreEmployee(employee.id);
             await data.reload();
             setters.setQuickFilter("all");
         } catch (error) {
-            window.alert(error.response?.data?.message || error.message || "Không thể khôi phục nhân viên.");
+            window.alert(error.response?.data?.message || error.message || L("Không thể khôi phục nhân viên."));
         }
     };
 
@@ -99,7 +104,7 @@ const HrPage = () => {
         if (!file) return;
         const extension = file.name.split(".").pop().toLowerCase();
         if (!["csv", "xlsx"].includes(extension)) {
-            setImportReport({ created: 0, skipped: 0, errors: 1, warnings: 0, rows: [{ row: "—", code: "", status: "Không đọc được", details: ["Vui lòng chọn file .xlsx hoặc .csv."] }] });
+            setImportReport({ created: 0, skipped: 0, errors: 1, warnings: 0, rows: [{ row: "—", code: "", status: L("Không đọc được"), details: ["Vui lòng chọn file .xlsx hoặc .csv."] }] });
             return;
         }
         try {
@@ -107,7 +112,7 @@ const HrPage = () => {
                 ? await readExcel(file)
                 : parseCsv(await file.text());
             if (rows.length < 2) {
-                setImportReport({ created: 0, skipped: 0, errors: 1, warnings: 0, rows: [{ row: "—", code: "", status: "Không đọc được", details: ["File rỗng hoặc thiếu dòng dữ liệu."] }] });
+                setImportReport({ created: 0, skipped: 0, errors: 1, warnings: 0, rows: [{ row: "—", code: "", status: L("Không đọc được"), details: ["File rỗng hoặc thiếu dòng dữ liệu."] }] });
                 return;
             }
             const headers = rows[0].map((h) => h.trim().toLowerCase());
@@ -119,7 +124,7 @@ const HrPage = () => {
             if (absentHeaders.length) {
                 setImportReport({
                     created: 0, skipped: 0, errors: 1, warnings: 0,
-                    rows: [{ row: 1, code: "", status: "Thiếu cột", details: absentHeaders.map((key) => `Thiếu cột “${HR_HEADER_BY_KEY[key]}”.`) }],
+                    rows: [{ row: 1, code: "", status: L("Thiếu cột"), details: absentHeaders.map((key) => `Thiếu cột “${HR_HEADER_BY_KEY[key]}”.`) }],
                 });
                 return;
             }
@@ -190,7 +195,7 @@ const HrPage = () => {
                     if (!value) return null;
                     let match = value.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
                     if (!match) {
-                        const local = value.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4})$/);
+                        const local = value.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/);
                         if (local) match = [local[0], local[3], local[2], local[1]];
                     }
                     const label = HR_HEADER_BY_KEY[key];
@@ -256,7 +261,7 @@ const HrPage = () => {
                 if (duplicateReasons.length || details.length) {
                     if (duplicateReasons.length) skipped++;
                     else errors++;
-                    reportRows.push({ row: rowNumber, code, status: duplicateReasons.length ? "Đã tồn tại — bỏ qua" : "Cần chỉnh sửa", details: [...duplicateReasons, ...details] });
+                    reportRows.push({ row: rowNumber, code, status: duplicateReasons.length ? L("Đã tồn tại — bỏ qua") : L("Cần chỉnh sửa"), details: [...duplicateReasons, ...details] });
                     continue;
                 }
 
@@ -308,8 +313,8 @@ const HrPage = () => {
                         if (get("EndWorkDate") || get("EndWorkReason")) warningsForRow.push("API hiện chưa lưu Ngày/Lý do kết thúc làm việc.");
                         if (warningsForRow.length) {
                             warnings++;
-                            reportRows.push({ row: rowNumber, code, status: "Đã thêm, cần kiểm tra", details: warningsForRow });
-                        } else reportRows.push({ row: rowNumber, code, status: "Đã thêm thành công", details: [] });
+                            reportRows.push({ row: rowNumber, code, status: L("Đã thêm, cần kiểm tra"), details: warningsForRow });
+                        } else reportRows.push({ row: rowNumber, code, status: L("Đã thêm thành công"), details: [] });
                         continue;
                     }
                     const relatedRequests = [];
@@ -357,24 +362,24 @@ const HrPage = () => {
                     if (get("EndWorkDate") || get("EndWorkReason")) warningsForRow.push("API hiện chưa lưu Ngày/Lý do kết thúc làm việc.");
                     if (warningsForRow.length) {
                         warnings++;
-                        reportRows.push({ row: rowNumber, code, status: "Đã thêm, cần kiểm tra", details: warningsForRow });
-                    } else reportRows.push({ row: rowNumber, code, status: "Đã thêm thành công", details: [] });
+                        reportRows.push({ row: rowNumber, code, status: L("Đã thêm, cần kiểm tra"), details: warningsForRow });
+                    } else reportRows.push({ row: rowNumber, code, status: L("Đã thêm thành công"), details: [] });
                 } catch (error) {
                     errors++;
-                    reportRows.push({ row: rowNumber, code, status: "Không thêm được", details: formatImportError(error) });
+                    reportRows.push({ row: rowNumber, code, status: L("Không thêm được"), details: formatImportError(error) });
                 }
             }
             await data.reload();
             setImportReport({ created, skipped, errors, warnings, rows: reportRows });
         } catch (error) {
-            setImportReport({ created: 0, skipped: 0, errors: 1, warnings: 0, rows: [{ row: "—", code: "", status: "Không đọc được", details: [error.message] }] });
+            setImportReport({ created: 0, skipped: 0, errors: 1, warnings: 0, rows: [{ row: "—", code: "", status: L("Không đọc được"), details: [error.message] }] });
         }
     };
 
     return (
         <HrAppLayout>
             {data.error && <div className="att-error">{data.error}</div>}
-            {data.loading && <div className="att-loading">Đang tải...</div>}
+            {data.loading && <div className="att-loading">{L("Đang tải...")}</div>}
 
                 {!data.loading && !data.error && (
                     <div className="hr-body">
@@ -384,30 +389,30 @@ const HrPage = () => {
                                     type="button"
                                     className="hr-btn hr-btn--ghost"
                                     onClick={() => document.getElementById("hr-import-file")?.click()}
-                                    title="Nhập danh sách nhân viên từ tệp Excel hoặc CSV"
+                                    title={L("Nhập danh sách nhân viên từ tệp Excel hoặc CSV")}
                                 >
-                                    ⬆ Nhập Excel
+                                    {L("⬆ Nhập Excel")}
                                 </button>
                                 <button
                                     type="button"
                                     className="hr-btn hr-btn--ghost"
                                     onClick={onTemplate}
                                 >
-                                    ⬇ Tải mẫu
+                                    {L("⬇ Tải mẫu")}
                                 </button>
                                 <button
                                     type="button"
                                     className="hr-btn hr-btn--ghost"
                                     onClick={onExport}
                                 >
-                                    ⬇ Xuất danh sách
+                                    {L("⬇ Xuất danh sách")}
                                 </button>
                                 <button
                                     type="button"
                                     className="hr-btn hr-btn--primary"
                                     onClick={() => { setEditingEmployee(null); setShowForm(true); }}
                                 >
-                                    + Thêm nhân viên
+                                    {L("+ Thêm nhân viên")}
                                 </button>
                             </div>
                         </div>
@@ -494,15 +499,15 @@ const HrPage = () => {
                                     {(() => {
                                         const { contract, salary, insurance, bankAccount } = relatedFor(viewEmp.id);
                                         const sections = [
-                                            { title: "1. Danh tính", rows: [["Mã nhân viên", viewEmp.employeeCode], ["Họ và tên", viewEmp.fullName], ["Ngày sinh", formatDate(viewEmp.birthDate)], ["Giới tính", ({ 1: "Nam", 2: "Nữ" })[viewEmp.gender] || "Không tiết lộ"]] },
-                                            { title: "2. Giấy tờ pháp lý", rows: [["CCCD / CMT", viewEmp.citizenId], ["Ngày cấp", formatDate(viewEmp.citizenIdIssuedDate)], ["Nơi cấp", viewEmp.citizenIdIssuedPlace]] },
-                                            { title: "3. Địa chỉ liên hệ", rows: [["Điện thoại", viewEmp.phoneNumber], ["Email", viewEmp.email], ["Địa chỉ thường trú", viewEmp.permanentAddress], ["Địa chỉ hiện tại", viewEmp.currentAddress]] },
-                                            { title: "4. Điều kiện làm việc", rows: [["Phòng ban", viewEmp.departmentName], ["Chức vụ", viewEmp.positionName], ["Ngày vào làm", formatDate(viewEmp.startDate)], ["Kết thúc thử việc", formatDate(viewEmp.probationEndDate)], ["Loại lao động", ({ 1: "Chính thức", 2: "Bán thời gian", 3: "Thực tập sinh", 4: "Cộng tác viên" })[viewEmp.laborType]], ["Trạng thái", ({ 1: "Thử việc", 2: "Đang làm", 3: "Tạm nghỉ", 4: "Đã nghỉ việc", 5: "Chấm dứt hợp đồng" })[viewEmp.status]], ["Chấm công qua điện thoại", viewEmp.usePhoneAttendance ? "Có" : "Không"]] },
-                                            { title: "5. Hợp đồng", rows: [["Số hợp đồng", contract?.contractNumber], ["Loại hợp đồng", ({ 1: "Thử việc", 2: "Có thời hạn", 3: "Không xác định thời hạn", 4: "Mùa vụ" })[contract?.contractType]], ["Ngày ký / bắt đầu", formatDate(contract?.startDate)], ["Ngày hết hạn", formatDate(contract?.endDate)], ["Ghi chú hợp đồng", contract?.note]] },
-                                            { title: "6. Lương & chế độ", rows: [["Hình thức trả lương", ({ 1: "Theo tháng", 2: "Theo ngày", 3: "Theo giờ", 4: "Theo sản phẩm" })[salary?.paymentType]], ["Lương cơ bản", formatMoney(salary?.basicSalary)], ["Lương theo ngày", formatMoney(salary?.dailyRate)], ["Phụ cấp chức vụ", formatMoney(salary?.positionAllowance)], ["Phụ cấp khác", formatMoney(salary?.otherAllowance)], ["Thưởng", formatMoney(salary?.bonus)], ["Lương đóng BHXH", formatMoney(salary?.socialInsuranceSalary)], ["Hiệu lực từ", formatDate(salary?.effectiveFrom)], ["Hiệu lực đến", formatDate(salary?.effectiveTo)]] },
-                                            { title: "7. Bảo hiểm & thuế", rows: [["Số BHXH", insurance?.socialInsuranceNumber], ["Số bảo hiểm y tế (BHYT)", insurance?.healthInsuranceNumber], ["Mã số thuế cá nhân", insurance?.personalTaxCode], ["Tham gia BHXH", insurance ? (insurance.isSocialInsuranceParticipant ? "Có" : "Không") : null], ["Ngày bắt đầu tham gia", formatDate(insurance?.participationStartDate)], ["Ngày kết thúc tham gia", formatDate(insurance?.participationEndDate)], ["Mức lương đóng BHXH", formatMoney(insurance?.socialInsuranceSalary)], ["Trạng thái bảo hiểm", ({ 1: "Đang tham gia", 2: "Tạm dừng", 3: "Đã chốt sổ" })[insurance?.status]]] },
-                                            { title: "8. Thanh toán", rows: [["Ngân hàng", bankAccount?.bankName], ["Số tài khoản", bankAccount?.accountNumber], ["Chủ tài khoản", bankAccount?.accountHolderName], ["Tài khoản chính", bankAccount ? (bankAccount.isPrimary ? "Có" : "Không") : null], ["Trạng thái tài khoản", bankAccount ? (bankAccount.status === 1 ? "Đang dùng" : "Đã ngưng") : null]] },
-                                            { title: "Ghi chú", rows: [["Ghi chú nhân viên", viewEmp.note]] },
+                                            { title: L("1. Danh tính"), rows: [["Mã nhân viên", viewEmp.employeeCode], ["Họ và tên", viewEmp.fullName], ["Ngày sinh", formatDate(viewEmp.birthDate)], ["Giới tính", ({ 1: "Nam", 2: "Nữ" })[viewEmp.gender] || "Không tiết lộ"]] },
+                                            { title: L("2. Giấy tờ pháp lý"), rows: [["CCCD / CMT", viewEmp.citizenId], ["Ngày cấp", formatDate(viewEmp.citizenIdIssuedDate)], ["Nơi cấp", viewEmp.citizenIdIssuedPlace]] },
+                                            { title: L("3. Địa chỉ liên hệ"), rows: [["Điện thoại", viewEmp.phoneNumber], ["Email", viewEmp.email], ["Địa chỉ thường trú", viewEmp.permanentAddress], ["Địa chỉ hiện tại", viewEmp.currentAddress]] },
+                                            { title: L("4. Điều kiện làm việc"), rows: [["Phòng ban", viewEmp.departmentName], ["Chức vụ", viewEmp.positionName], ["Ngày vào làm", formatDate(viewEmp.startDate)], ["Kết thúc thử việc", formatDate(viewEmp.probationEndDate)], ["Loại lao động", ({ 1: "Chính thức", 2: "Bán thời gian", 3: "Thực tập sinh", 4: "Cộng tác viên" })[viewEmp.laborType]], ["Trạng thái", ({ 1: "Thử việc", 2: "Đang làm", 3: "Tạm nghỉ", 4: "Đã nghỉ việc", 5: "Chấm dứt hợp đồng" })[viewEmp.status]], ["Chấm công qua điện thoại", viewEmp.usePhoneAttendance ? "Có" : "Không"]] },
+                                            { title: L("5. Hợp đồng"), rows: [["Số hợp đồng", contract?.contractNumber], ["Loại hợp đồng", ({ 1: "Thử việc", 2: "Có thời hạn", 3: "Không xác định thời hạn", 4: "Mùa vụ" })[contract?.contractType]], ["Ngày ký / bắt đầu", formatDate(contract?.startDate)], ["Ngày hết hạn", formatDate(contract?.endDate)], ["Ghi chú hợp đồng", contract?.note]] },
+                                            { title: L("6. Lương & chế độ"), rows: [["Hình thức trả lương", ({ 1: "Theo tháng", 2: "Theo ngày", 3: "Theo giờ", 4: "Theo sản phẩm" })[salary?.paymentType]], ["Lương cơ bản", formatMoney(salary?.basicSalary)], ["Lương theo ngày", formatMoney(salary?.dailyRate)], ["Phụ cấp chức vụ", formatMoney(salary?.positionAllowance)], ["Phụ cấp khác", formatMoney(salary?.otherAllowance)], ["Thưởng", formatMoney(salary?.bonus)], ["Lương đóng BHXH", formatMoney(salary?.socialInsuranceSalary)], ["Hiệu lực từ", formatDate(salary?.effectiveFrom)], ["Hiệu lực đến", formatDate(salary?.effectiveTo)]] },
+                                            { title: L("7. Bảo hiểm & thuế"), rows: [["Số BHXH", insurance?.socialInsuranceNumber], ["Số bảo hiểm y tế (BHYT)", insurance?.healthInsuranceNumber], ["Mã số thuế cá nhân", insurance?.personalTaxCode], ["Tham gia BHXH", insurance ? (insurance.isSocialInsuranceParticipant ? "Có" : "Không") : null], ["Ngày bắt đầu tham gia", formatDate(insurance?.participationStartDate)], ["Ngày kết thúc tham gia", formatDate(insurance?.participationEndDate)], ["Mức lương đóng BHXH", formatMoney(insurance?.socialInsuranceSalary)], ["Trạng thái bảo hiểm", ({ 1: "Đang tham gia", 2: "Tạm dừng", 3: "Đã chốt sổ" })[insurance?.status]]] },
+                                            { title: L("8. Thanh toán"), rows: [["Ngân hàng", bankAccount?.bankName], ["Số tài khoản", bankAccount?.accountNumber], ["Chủ tài khoản", bankAccount?.accountHolderName], ["Tài khoản chính", bankAccount ? (bankAccount.isPrimary ? "Có" : "Không") : null], ["Trạng thái tài khoản", bankAccount ? (bankAccount.status === 1 ? "Đang dùng" : "Đã ngưng") : null]] },
+                                            { title: L("Ghi chú"), rows: [["Ghi chú nhân viên", viewEmp.note]] },
                                         ];
                                         return sections.map((section) => (
                                             <section className="hr-view-section" key={section.title}>
@@ -514,8 +519,8 @@ const HrPage = () => {
                                         ));
                                     })()}
                                     <div className="hr-view-actions">
-                                        <button type="button" className="hr-btn hr-btn--ghost" onClick={() => setViewEmp(null)}>Đóng</button>
-                                        <button type="button" className="hr-btn hr-btn--primary" onClick={() => { setEditingEmployee(viewEmp); setViewEmp(null); setShowForm(true); }}>Sửa hồ sơ</button>
+                                        <button type="button" className="hr-btn hr-btn--ghost" onClick={() => setViewEmp(null)}>{L("Đóng")}</button>
+                                        <button type="button" className="hr-btn hr-btn--primary" onClick={() => { setEditingEmployee(viewEmp); setViewEmp(null); setShowForm(true); }}>{L("Sửa hồ sơ")}</button>
                                     </div>
                                 </div>
                             </div>
@@ -525,8 +530,8 @@ const HrPage = () => {
                             <div className="hr-view-modal" onClick={() => setImportReport(null)}>
                                 <section className="hr-import-report" role="dialog" aria-modal="true" aria-labelledby="hr-import-report-title" onClick={(event) => event.stopPropagation()}>
                                     <header className="hr-import-report-head">
-                                        <h3 id="hr-import-report-title">Kết quả nhập nhân viên</h3>
-                                        <button type="button" aria-label="Đóng" onClick={() => setImportReport(null)}>×</button>
+                                        <h3 id="hr-import-report-title">{L("Kết quả nhập nhân viên")}</h3>
+                                        <button type="button" aria-label={L("Đóng")} onClick={() => setImportReport(null)}>×</button>
                                     </header>
                                     <p className="hr-import-summary">
                                         Đã thêm <strong>{importReport.created}</strong> · Bỏ qua do trùng <strong>{importReport.skipped}</strong> · Lỗi <strong>{importReport.errors}</strong> · Cảnh báo <strong>{importReport.warnings}</strong>
@@ -543,9 +548,9 @@ const HrPage = () => {
                                                 ))}</tbody>
                                             </table>
                                         </div>
-                                    ) : <p className="hr-import-empty">Tất cả dòng hợp lệ đã được nhập.</p>}
+                                    ) : <p className="hr-import-empty">{L("Tất cả dòng hợp lệ đã được nhập.")}</p>}
                                     <div className="hr-import-report-actions">
-                                        <button type="button" className="hr-btn hr-btn--primary" onClick={() => setImportReport(null)}>Đóng</button>
+                                        <button type="button" className="hr-btn hr-btn--primary" onClick={() => setImportReport(null)}>{L("Đóng")}</button>
                                     </div>
                                 </section>
                             </div>

@@ -26,7 +26,19 @@ export default [
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
       'react-refresh/only-export-components': [
         'warn',
-        { allowConstantExport: true },
+        {
+          allowConstantExport: true,
+          // LanguageProvider.jsx vừa export component (LanguageProvider) vừa export
+          // các helper i18n (getLanguage / translate / localeForLanguage / useLanguage).
+          // Whitelist giúp Fast Refresh không cảnh báo; không tách file để tránh
+          // circular-import (phrases dict + LanguageContext là module-private).
+          allowExportNames: [
+            'getLanguage',
+            'translate',
+            'localeForLanguage',
+            'useLanguage',
+          ],
+        },
       ],
     },
   },

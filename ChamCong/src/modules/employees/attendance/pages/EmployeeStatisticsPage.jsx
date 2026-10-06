@@ -4,6 +4,7 @@ import HrAppLayout from "../../hr/layout/HrAppLayout";
 import employeeAttendanceApi from "../api/employeeAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
 import AttendanceDetailModal from "../components/AttendanceDetailModal";
+import { translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 import "../../../../modules/attendance/attendance.css";
 import "../../employee.css";
 
@@ -11,7 +12,7 @@ import "../../employee.css";
 // Trích "YYYY-MM" từ chuỗi ngày (bất biến theo múi giờ).
 const monthOf = (iso) => (iso || "").slice(0, 7);
 
-const EmployeeStatisticsPage = ({ hrMode = false }) => {
+const EmployeeStatisticsPage = () => {
     const [rows, setRows] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -25,6 +26,8 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
     const [search, setSearch] = useState("");
 
     const [modalOpen, setModalOpen] = useState(false);
+    const { language } = useLanguage();
+    const L = (text) => translate(text, language);
     const [detailEmpId, setDetailEmpId] = useState(null);
     const [editRow, setEditRow] = useState(null);
 
@@ -151,35 +154,35 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
             <div className="att-content">
                 {error && <div className="att-error">{error}</div>}
                 {loading ? (
-                    <div className="att-loading">Đang tải...</div>
+                    <div className="att-loading">{L("Đang tải...")}</div>
                 ) : (
                     <>
                         <section className="admin-card">
                             <div className="admin-kpi-row">
                                 <div className="admin-kpi">
-                                    <span className="admin-kpi-label">Nhân viên</span>
+                                    <span className="admin-kpi-label">{L("Nhân viên")}</span>
                                     <strong>{kpi.total}</strong>
-                                    <span className="admin-kpi-sub">đang làm</span>
+                                    <span className="admin-kpi-sub">{L("đang làm")}</span>
                                 </div>
                                 <div className="admin-kpi">
-                                    <span className="admin-kpi-label">Có ngày công</span>
+                                    <span className="admin-kpi-label">{L("Có ngày công")}</span>
                                     <strong>{kpi.active}</strong>
-                                    <span className="admin-kpi-sub">trong tháng</span>
+                                    <span className="admin-kpi-sub">{L("trong tháng")}</span>
                                 </div>
                                 <div className="admin-kpi">
-                                    <span className="admin-kpi-label">Bản ghi</span>
+                                    <span className="admin-kpi-label">{L("Bản ghi")}</span>
                                     <strong>{kpi.records}</strong>
-                                    <span className="admin-kpi-sub">trong tháng</span>
+                                    <span className="admin-kpi-sub">{L("trong tháng")}</span>
                                 </div>
                                 <div className="admin-kpi admin-kpi--bad">
-                                    <span className="admin-kpi-label">Đi trễ</span>
+                                    <span className="admin-kpi-label">{L("Đi trễ")}</span>
                                     <strong>{kpi.late}</strong>
-                                    <span className="admin-kpi-sub">lượt</span>
+                                    <span className="admin-kpi-sub">{L("lượt")}</span>
                                 </div>
                                 <div className="admin-kpi admin-kpi--bad">
-                                    <span className="admin-kpi-label">Vắng mặt</span>
+                                    <span className="admin-kpi-label">{L("Vắng mặt")}</span>
                                     <strong>{kpi.absent}</strong>
-                                    <span className="admin-kpi-sub">lượt</span>
+                                    <span className="admin-kpi-sub">{L("lượt")}</span>
                                 </div>
                             </div>
                         </section>
@@ -199,7 +202,7 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
                                             setShowAll(e.target.checked)
                                         }
                                     />
-                                    hiện cả người chưa có
+                                    {L("hiện cả người chưa có")}
                                 </label>
                                 <button
                                     type="button"
@@ -209,7 +212,7 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
                                         setModalOpen(true);
                                     }}
                                 >
-                                    + Thêm bản ghi
+                                    {L("+ Thêm bản ghi")}
                                 </button>
                                 <label className="admin-search">
                                     <span aria-hidden="true">⌕</span>
@@ -217,8 +220,8 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
                                         type="search"
                                         value={search}
                                         onChange={(event) => setSearch(event.target.value)}
-                                        placeholder="Tìm mã hoặc tên nhân viên..."
-                                        aria-label="Tìm nhân viên"
+                                        placeholder={L("Tìm mã hoặc tên nhân viên...")}
+                                        aria-label={L("Tìm nhân viên")}
                                     />
                                 </label>
                             </div>
@@ -227,12 +230,12 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
                                 <table className="att-table">
                                     <thead>
                                         <tr>
-                                            <th>Nhân viên</th>
-                                            <th>Ngày đã làm</th>
-                                            <th>Đi trễ</th>
-                                            <th>Vắng mặt</th>
-                                            <th>Nghỉ phép</th>
-                                            <th>Tổng giờ</th>
+                                            <th>{L("Nhân viên")}</th>
+                                            <th>{L("Ngày đã làm")}</th>
+                                            <th>{L("Đi trễ")}</th>
+                                            <th>{L("Vắng mặt")}</th>
+                                            <th>{L("Nghỉ phép")}</th>
+                                            <th>{L("Tổng giờ")}</th>
                                             <th /></tr>
                                     </thead>
                                     <tbody>
@@ -241,8 +244,8 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
                                                 <td colSpan="7">
                                                     <span className="att-muted">
                                                         {search.trim()
-                                                            ? "Không tìm thấy nhân viên phù hợp."
-                                                            : "Chưa có dữ liệu trong tháng này."}
+                                                            ? L("Không tìm thấy nhân viên phù hợp.")
+                                                            : L("Chưa có dữ liệu trong tháng này.")}
                                                     </span>
                                                 </td>
                                             </tr>
@@ -290,7 +293,7 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
                                                                     className="admin-view-link"
                                                                     onClick={() => setDetailEmpId(emp.id)}
                                                                 >
-                                                                    Chi tiết
+                                                                    {L("Chi tiết")}
                                                                 </button>
                                                                 <button
                                                                     type="button"
@@ -307,7 +310,7 @@ const EmployeeStatisticsPage = ({ hrMode = false }) => {
                                                                         );
                                                                     }}
                                                                 >
-                                                                    Sửa
+                                                                    {L("Sửa")}
                                                                 </button>
                                                             </div>
                                                         </td>

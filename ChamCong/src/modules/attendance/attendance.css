@@ -1159,3 +1159,47 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Overlay cho modal tạo / sửa (căn giữa màn, che nền) */
+.att-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(14, 26, 38, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.att-overlay .att-form-modal {
+    width: 100%;
+    max-width: 460px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+/* Clock on attendance page (Vietnam time) */
+.att-vn-clock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: #fff8e1;
+    border: 1px solid #ffe08a;
+}
+.att-vn-clock strong {
+    font-family: 'Montserrat', 'Be Vietnam Pro', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0e1a26;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.att-vn-clock small {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #8a6d00;
+}

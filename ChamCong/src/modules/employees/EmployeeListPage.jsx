@@ -4,6 +4,7 @@ import HrAppLayout from "./hr/layout/HrAppLayout";
 import { useEmployeeList } from "./hooks/useEmployeeList";
 import ApproveButtons from "./components/ApproveButtons";
 import { toCsv, downloadCsv } from "./hr/hrUtils";
+import { localeForLanguage, translate, useLanguage } from "../../services/i18n/LanguageProvider";
 import "../../modules/attendance/attendance.css";
 import "./employee.css";
 
@@ -21,11 +22,13 @@ const EmployeeListPage = ({
     reject,
     pendingOf,
     emptyText,
-    hrMode = false,
 }) => {
     const { rows, loading, error, reload } = useEmployeeList(fetcher);
     const [search, setSearch] = useState("");
     const [filterVal, setFilterVal] = useState("");
+    const { language } = useLanguage();
+    const locale = localeForLanguage(language);
+    const L = (text) => translate(text, language);
 
     const filtered = useMemo(() => {
         const q = search.trim().toLowerCase();
@@ -49,8 +52,8 @@ const EmployeeListPage = ({
             reload();
         } catch (e) {
             alert(
-                (fn === reject ? "Từ chối" : "Duyệt") +
-                    " thất bại: " +
+                (fn === reject ? L("Từ chối") : L("Duyệt")) +
+                    L("thất bại:") + " " +
                     (e.response?.data?.message || e.message)
             );
         }
@@ -80,7 +83,7 @@ const EmployeeListPage = ({
         }
         const v = x[c.key];
         if (v == null || v === "") return "—";
-        if (c.date) return new Date(v).toLocaleDateString("vi-VN");
+        if (c.date) return new Date(v).toLocaleDateString(locale);
         if (c.badge)
             return (
                 <span className={`att-badge ${c.badge(v)}`}>
@@ -97,7 +100,7 @@ const EmployeeListPage = ({
         <PageLayout title={title} subtitle={subtitle}>
             <div className="att-content">
                 {error && <div className="att-error">{error}</div>}
-                {loading && <div className="att-loading">Đang tải...</div>}
+                {loading && <div className="att-loading">{L("Đang tải...")}</div>}
                 {!loading && !error && (
                     <div className="att-card">
                         <div className="admin-toolbar">
@@ -105,10 +108,10 @@ const EmployeeListPage = ({
                                 <span aria-hidden="true">⌕</span>
                                 <input
                                     type="search"
-                                    placeholder={searchPlaceholder}
+                                    placeholder={L(searchPlaceholder)}
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    aria-label={searchPlaceholder}
+                                    aria-label={L(searchPlaceholder)}
                                 />
                             </label>
                             {filter?.options && filter.options.length > 0 && (
@@ -118,7 +121,7 @@ const EmployeeListPage = ({
                                         setFilterVal(e.target.value)
                                     }
                                 >
-                                    <option value="">Tất cả</option>
+                                    <option value="">{L("Tất cả")}</option>
                                     {filter.options.map(([v, l]) => (
                                         <option key={v} value={v}>
                                             {l}
@@ -127,14 +130,14 @@ const EmployeeListPage = ({
                                 </select>
                             )}
                             <span className="att-muted">
-                                {filtered.length} bản ghi
+                                {filtered.length} {L("bản ghi")}
                             </span>
                             <button
                                 type="button"
                                 className="admin-link-btn"
                                 onClick={exportCsv}
                             >
-                                ⬇ Xuất CSV
+                                {L("⬇ Xuất CSV")}
                             </button>
                         </div>
 
@@ -159,7 +162,7 @@ const EmployeeListPage = ({
                                                 className="att-muted"
                                             >
                                                 {emptyText ||
-                                                    "Không có dữ liệu."}
+                                                    L("Không có dữ liệu.")}
                                             </td>
                                         </tr>
                                     ) : (

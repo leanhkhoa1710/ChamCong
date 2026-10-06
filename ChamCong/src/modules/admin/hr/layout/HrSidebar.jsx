@@ -1,15 +1,12 @@
 import { NavLink } from "react-router-dom";
 
 const HR_NAV_ITEMS = [
-    { to: "/employees", label: "Danh sách" },
-    { to: "/employees/attendance-history", label: "Duyệt công" },
-    { to: "/employees/work-schedule", label: "Lịch làm" },
-    { to: "/employees/statistics", label: "Thống kê công" },
-    { to: "/employees/leaves", label: "Duyệt nghỉ phép" },
-    { to: "/employees/handover", label: "Bàn giao" },
-    { to: "/employees/reports", label: "Báo cáo" },
-    { to: "/employees/accounts", label: "Cấp tài khoản" },
-    { to: "/employees/promotions", label: "Thăng chức" },
+    { to: "/admin/employees", label: "Danh sách nhân viên" },
+    { to: "/admin/employees/attendance-history", label: "Lịch sử & duyệt công" },
+    { to: "/admin/employees/statistics", label: "Thống kê công" },
+    { to: "/admin/employees/leaves", label: "Duyệt nghỉ phép" },
+    { to: "/admin/employees/handover", label: "Bàn giao" },
+    { to: "/admin/employees/promotions", label: "Thăng chức" },
 ];
 
 const HrSidebar = ({ collapsed }) => (
@@ -19,7 +16,7 @@ const HrSidebar = ({ collapsed }) => (
                 <NavLink
                     key={item.to}
                     to={item.to}
-                    end={item.to === "/employees"}
+                    end={item.to === "/admin/employees"}
                     title={collapsed ? item.label : undefined}
                     className={({ isActive }) =>
                         `att-nav-item${isActive ? " active" : ""}`
@@ -28,6 +25,14 @@ const HrSidebar = ({ collapsed }) => (
                     {item.label}
                 </NavLink>
             ))}
+                <NavLink
+                    to="/admin"
+                    title={collapsed ? "Quay lại Dashboard" : undefined}
+                    className="att-nav-item att-nav-back"
+                >
+                    <span aria-hidden="true">←</span>
+                    <span>Quay lại Dashboard</span>
+                </NavLink>
         </nav>
     </aside>
 );

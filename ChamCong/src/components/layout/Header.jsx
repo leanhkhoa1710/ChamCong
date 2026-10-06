@@ -9,7 +9,7 @@ import {
 import { GuideModal } from "./GuideModal";
 import LanguagePicker from "./LanguagePicker";
 import ChangePasswordModal from "./ChangePasswordModal";
-import { useLanguage } from "../../services/i18n/LanguageProvider";
+
 import "./header.css";
 
 
@@ -18,7 +18,7 @@ import "./header.css";
 const Header = ({ profile, onToggleSidebar, collapsed, minimal = false }) => {
     const auth = getAuth();
     const key = auth?.userId;
-    const { language, setLanguage } = useLanguage();
+    
 
     const [open, setOpen] = useState(false);
     const [modal, setModal] = useState(null);
