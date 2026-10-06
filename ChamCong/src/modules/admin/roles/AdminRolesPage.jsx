@@ -26,6 +26,7 @@ const AdminRolesPage = () => {
     const [showNew, setShowNew] = useState(false);
     const [form, setForm] = useState({ name: "", description: "" });
     const [viewUser, setViewUser] = useState(null);
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [addUserForm, setAddUserForm] = useState({ roleName: "", code: "" });
     const [dragCol, setDragCol] = useState(null);
     const [colOrder, setColOrder] = useState(() => {
@@ -215,35 +216,13 @@ const AdminRolesPage = () => {
                             <div className="att-card"><p className="att-muted">{L("Chưa có vai trò nào. Hãy tạo vai trò đầu tiên.")}</p></div>
                         ) : (
                             <>
-                            <div className="att-card roles-add-panel">
-                                <div className="roles-add-panel-head">
+                            
+                            <div className="att-card roles-add-card">
+                                <div className="roles-add-card-head">
                                     <h3>{L("Thêm người dùng vào vai trò")}</h3>
-                                    <p className="att-muted">{L("Nhập mã nhân viên (VD: NV001) hoặc mã User để gán vào vai trò đã chọn.")}</p>
+                                    <button type="button" className="roles-add-btn" onClick={() => { setAddUserForm({ roleName: roles[0]?.name || "", code: "" }); setShowAddUserModal(true); }}>+ {L("Thêm")}</button>
                                 </div>
-                                <div className="roles-add-form">
-                                    <select
-                                        value={addUserForm.roleName}
-                                        onChange={(e) => setAddUserForm({ ...addUserForm, roleName: e.target.value })}
-                                    >
-                                        <option value="">{L("Chọn vai trò...")}</option>
-                                        {roles.map((r) => <option key={r.id} value={r.name}>{r.name}</option>)}
-                                    </select>
-                                    <input
-                                        type="text"
-                                        placeholder={L("Mã nhân viên (VD: NV001)")}
-                                        value={addUserForm.code}
-                                        onChange={(e) => setAddUserForm({ ...addUserForm, code: e.target.value })}
-                                        onKeyDown={(e) => e.key === "Enter" && addUserByCode()}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="roles-add-btn"
-                                        onClick={addUserByCode}
-                                        disabled={!addUserForm.roleName || !addUserForm.code.trim()}
-                                    >
-                                        + {L("Thêm")}
-                                    </button>
-                                </div>
+                                <p className="att-muted">{L("Nhập mã nhân viên (VD: NV001) hoặc mã User để gán vào vai trò đã chọn.")}</p>
                             </div>
 
                             <div className="roles-grid">
@@ -342,6 +321,50 @@ const AdminRolesPage = () => {
                 )}
 
                 {/* Modal xem thông tin người dùng */}
+                
+                {/* Modal thêm người dùng vào vai trò */}
+                {showAddUserModal && (
+                    <div className="att-guide-overlay roles-overlay" onMouseDown={(e) => e.target === e.currentTarget && setShowAddUserModal(false)}>
+                        <section className="att-detail-modal roles-modal">
+                            <header className="att-detail-modal-head">
+                                <div>
+                                    <h2>{L("Thêm người dùng vào vai trò")}</h2>
+                                    <p>{L("Nhập mã nhân viên (VD: NV001) hoặc mã User để gán vào vai trò đã chọn.")}</p>
+                                </div>
+                                <button type="button" onClick={() => setShowAddUserModal(false)} aria-label={L("Đóng")}>×</button>
+                            </header>
+                            <div className="roles-add-form">
+                                <select
+                                    value={addUserForm.roleName}
+                                    onChange={(e) => setAddUserForm({ ...addUserForm, roleName: e.target.value })}
+                                >
+                                    <option value="">{L("Chọn vai trò...")}</option>
+                                    {roles.map((r) => <option key={r.id} value={r.name}>{r.name}</option>)}
+                                </select>
+                                <input
+                                    type="text"
+                                    placeholder={L("Mã nhân viên (VD: NV001)")}
+                                    value={addUserForm.code}
+                                    onChange={(e) => setAddUserForm({ ...addUserForm, code: e.target.value })}
+                                    onKeyDown={(e) => e.key === "Enter" && addUserByCode()}
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="roles-add-actions">
+                                <button type="button" className="admin-link-btn" onClick={() => setShowAddUserModal(false)}>{L("Hủy")}</button>
+                                <button
+                                    type="button"
+                                    className="roles-add-btn"
+                                    onClick={async () => { await addUserByCode(); setShowAddUserModal(false); }}
+                                    disabled={!addUserForm.roleName || !addUserForm.code.trim()}
+                                >
+                                    + {L("Thêm")}
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+                )}
+
                 {viewUser && (
                     <div className="att-guide-overlay roles-overlay" onMouseDown={(e) => e.target === e.currentTarget && setViewUser(null)}>
                         <section className="att-detail-modal roles-modal">

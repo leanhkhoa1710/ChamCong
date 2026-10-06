@@ -8,6 +8,7 @@ import {
 } from "../../services/avatar/avatar";
 import { GuideModal } from "./GuideModal";
 import LanguagePicker from "./LanguagePicker";
+import NotificationBell from "./NotificationBell";
 import ChangePasswordModal from "./ChangePasswordModal";
 
 import "./header.css";
@@ -106,7 +107,8 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false }) => {
             </div>
 
             <div className="app-header-user" ref={userRef}>
-                                <LanguagePicker />
+                                <NotificationBell />
+                <LanguagePicker />
                 <button
                     type="button"
                     className="app-header-avatar-btn"

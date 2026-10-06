@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { getAuth } from "../../../services/auth/auth";
 import axiosClient from "../../../services/api/axiosClient";
 import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 import AppLayout from "../../../components/layout/AppLayout";
@@ -463,7 +462,6 @@ const ReviewDialog = ({ selected, locale, saving, onDownload, onApprove, onRejec
 
 export default function HandoverPage({ reviewMode = false, admin = false }) {
     const isReview = reviewMode || admin;
-    const auth = getAuth();
     const { language } = useLanguage();
     const locale = localeForLanguage(language);
 
@@ -559,7 +557,6 @@ export default function HandoverPage({ reviewMode = false, admin = false }) {
             <header className="hv-header">
 
                 <div className="hv-header-right">
-                    {!isReview && <span className="hv-user-chip">{auth?.userName || "Nhân viên"}</span>}
                     {isReview && pendingCount > 0 && (
                         <span className="hv-pending-chip"><b>{pendingCount}</b> chờ xử lý</span>
                     )}
