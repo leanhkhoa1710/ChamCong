@@ -1,8 +1,56 @@
 /* ===== KHU CÔNG VIỆC (Work space) ===== */
 .work-shell { display: flex; flex-direction: column; gap: 18px; }
 
-/* Sidebar + search (dùng chung class att-sidebar/att-search từ employee.css) */
-.work-sidebar .att-search { margin-bottom: 14px; }
+/* ===== Search bar đẹp ===== */
+.work-search {
+    position: relative;
+    display: block;
+    margin: 12px 0 14px;
+}
+.work-search > span {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b5;
+    font-size: 15px;
+    pointer-events: none;
+    transition: color .15s;
+}
+.work-search input {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: 10px 34px 10px 36px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f6f9fc;
+    font-size: 13px;
+    color: #172b42;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+}
+.work-search input::placeholder { color: #94a3b5; }
+.work-search input:focus {
+    background: #fff;
+    border-color: #2f6df6;
+    box-shadow: 0 0 0 3px rgba(47, 109, 246, .14);
+}
+.work-search input:focus ~ span,
+.work-search:focus-within > span { color: #2f6df6; }
+/* Nút xóa (clear) bên phải khi có nội dung */
+.work-search input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #c3cedd;
+    cursor: pointer;
+}
+/* Khi sidebar gập: ẩn label tìm kiếm để không vỡ layout */
+.work-sidebar.collapsed .work-search { display: none; }
 .work-nav-item { display: flex; align-items: center; gap: 9px; }
 .work-nav-ico { width: 20px; text-align: center; opacity: .8; font-size: 14px; }
 
