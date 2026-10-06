@@ -19,6 +19,7 @@ const MODULES = [
     { to: "/kich-hoat", icon: "◈", title: "Kích hoạt tài khoản", detail: "Nhập mã kích hoạt để đặt mật khẩu", color: "blue" },
     { to: "/employees", icon: "♙", title: "Nhân sự", detail: "Hồ sơ và danh sách nhân viên", color: "pink" },
     { to: "/admin", icon: "▦", title: "Dashboard", detail: "Điều hành và quản lý hệ thống", color: "blue" },
+    { to: "/work", icon: "✦", title: "Công việc", detail: "Tổng quan và việc cần xử lý của bạn", color: "amber" },
 ];
 
 const HomePage = () => (

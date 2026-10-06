@@ -769,3 +769,21 @@
 .roles-add-form input { flex: 1.5; min-width: 200px; padding: 9px 12px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; color: #172b42; font-family: "Consolas","SF Mono",monospace; }
 .roles-add-form select:focus, .roles-add-form input:focus { outline: none; border-color: #2f6df6; }
 .roles-add-form .roles-add-btn { margin-left: auto; }
+
+/* ===== QUÁ TRÌNH CÔNG TÁC - nút + bảng ===== */
+.work-add-btn { padding: 9px 16px; background: #2f6df6; color: #fff; border: 0; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(47,109,246,.25); }
+.work-add-btn:hover { background: #1f5ae0; }
+.work-emp-cell { display: flex; flex-direction: column; gap: 1px; }
+.work-emp-cell strong { font-size: 13px; color: #172b42; font-family: "Consolas","SF Mono",monospace; }
+.work-emp-cell small { font-size: 11px; color: #8a99ab; }
+.work-note-preview { margin: 0; font-size: 12px; }
+
+/* ===== PHÂN QUYỀN - nút thêm user thành modal ===== */
+.roles-add-card { padding: 18px 20px; margin-bottom: 16px; }
+.roles-add-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.roles-add-card-head h3 { margin: 0; font-size: 15px; font-weight: 600; color: #172b42; }
+.roles-add-form { display: flex; flex-direction: column; gap: 12px; }
+.roles-add-form select { padding: 9px 12px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; color: #172b42; background: #fff; }
+.roles-add-form input { padding: 9px 12px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; color: #172b42; font-family: "Consolas","SF Mono",monospace; }
+.roles-add-form select:focus, .roles-add-form input:focus { outline: none; border-color: #2f6df6; }
+.roles-add-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }

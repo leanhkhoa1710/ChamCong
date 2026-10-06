@@ -1,0 +1,69 @@
+/* ===== KHU CÔNG VIỆC (Work space) ===== */
+.work-shell { display: flex; flex-direction: column; gap: 18px; }
+
+/* Sidebar + search (dùng chung class att-sidebar/att-search từ employee.css) */
+.work-sidebar .att-search { margin-bottom: 14px; }
+.work-nav-item { display: flex; align-items: center; gap: 9px; }
+.work-nav-ico { width: 20px; text-align: center; opacity: .8; font-size: 14px; }
+
+/* ===== Overview ===== */
+.work-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.work-kpi { border: 1px solid #e6edf5; border-radius: 12px; padding: 14px 16px; background: #fff; display: flex; flex-direction: column; gap: 4px; }
+.work-kpi span { font-size: 11px; color: #8a99ab; text-transform: uppercase; letter-spacing: .3px; }
+.work-kpi strong { font-size: 24px; color: #172b42; }
+.work-kpi--ok { border-left: 3px solid #2e7d32; }
+.work-kpi--bad { border-left: 3px solid #c62828; }
+.work-ov-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
+.work-ov-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.work-ov-head h3 { margin: 0; font-size: 15px; color: #172b42; }
+.work-quick-link { border: 0; background: transparent; color: #2f6df6; cursor: pointer; font-size: 13px; font-weight: 600; }
+.work-ov-list { display: flex; flex-direction: column; gap: 6px; }
+.work-ov-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #eef2f7; border-radius: 10px; background: #fbfcfe; }
+.work-ov-ico { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex: 0 0 auto; }
+.work-ov-ico.report { background: #eef4ff; color: #2f6df6; }
+.work-ov-ico.leave { background: #fdeaea; color: #c62828; }
+.work-ov-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.work-ov-text strong { font-size: 13px; color: #172b42; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.work-ov-text small { font-size: 11px; color: #8a99ab; }
+
+/* Status badge */
+.work-status { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+.work-status--ok { background: #eaf5ea; color: #2e7d32; }
+.work-status--warn { background: #fff4e5; color: #e65100; }
+.work-status--bad { background: #fdecec; color: #c62828; }
+.work-status--info { background: #eef4ff; color: #1565c0; }
+.work-status--muted { background: #f1f5f9; color: #8a99ab; }
+
+/* ===== Tasks ===== */
+.work-card-title { margin: 0 0 12px; font-size: 15px; color: #172b42; }
+
+/* ===== Reports ===== */
+.work-reports-note p { font-size: 13px; color: #63758a; margin: 0; }
+.work-reports-list { display: flex; flex-direction: column; gap: 12px; }
+.work-report { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #e6edf5; border-radius: 12px; background: #fff; }
+.work-report-ico { width: 40px; height: 40px; border-radius: 10px; background: #eef4ff; color: #2f6df6; display: flex; align-items: center; justify-content: center; font-size: 17px; flex: 0 0 auto; }
+.work-report-main { flex: 1; min-width: 0; }
+.work-report-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.work-report-top strong { font-size: 14px; color: #172b42; }
+.work-report-main > small { font-size: 11px; color: #8a99ab; }
+.work-report-comment { font-size: 12px; color: #63758a; margin: 6px 0 0; padding: 6px 10px; background: #f8fafc; border-radius: 8px; }
+.work-report-comment--upper { background: #fff4e5; }
+.work-report-btn { border: 1px solid #d5dee8; background: #fff; color: #172b42; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; white-space: nowrap; }
+.work-report-btn:hover { border-color: #2f6df6; color: #2f6df6; }
+
+/* ===== Detail modal ===== */
+.work-overlay { position: fixed; inset: 0; background: rgba(14, 26, 38, .45); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.work-detail { max-width: 560px; width: 94%; max-height: 88vh; overflow: auto; }
+.work-detail-note, .work-detail-block { margin: 12px 0; padding: 10px 12px; background: #f8fafc; border-radius: 10px; }
+.work-detail-note--upper { background: #fff4e5; }
+.work-detail-block strong, .work-detail-note strong { font-size: 12px; color: #63758a; text-transform: uppercase; letter-spacing: .3px; }
+.work-detail-block p, .work-detail-note p { font-size: 13px; color: #172b42; margin: 6px 0 0; line-height: 1.5; }
+.work-detail-file { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #eef2f7; font-size: 13px; color: #4a5a6d; }
+.work-detail-file small { color: #8a99ab; margin-left: 4px; }
+.work-detail-file button { border: 1px solid #d5dee8; background: #fff; color: #2f6df6; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+
+/* Responsive */
+@media (max-width: 900px) {
+    .work-kpis { grid-template-columns: repeat(2, 1fr); }
+    .work-ov-grid { grid-template-columns: 1fr; }
+}

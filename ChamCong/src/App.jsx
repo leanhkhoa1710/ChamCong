@@ -3,6 +3,7 @@ import LoginPage from "./modules/login/pages/LoginPage";
 import ActivatePage from "./modules/activate/pages/ActivatePage";
 import HrPage from "./modules/employees/hr/pages/HrPage";
 import ReportsPage from "./modules/employees/hr/pages/ReportsPage";
+import WorkPage from "./modules/work/WorkPage";
 import AttendancePage from "./modules/attendance/pages/AttendancePage";
 import LeavePage from "./modules/leave/pages/LeavePage";
 import ContractPage from "./modules/contracts/pages/ContractPage";
@@ -162,6 +163,7 @@ function App() {
                 <Route path="/statistics" element={<StatisticsPage />} />
                 <Route path="/leave" element={<LeavePage />} />
                 <Route path="/reports" element={guarded("/reports", <MyReportsPage />)} />
+<Route path="/work" element={guarded("/work", <WorkPage />)} />
                 <Route path="/promotions" element={guarded("/promotions", <PromotionsPage selfMode />)} />
                 <Route path="/contracts" element={<ContractPage />} />
                 <Route path="/salary" element={<SalaryPage />} />

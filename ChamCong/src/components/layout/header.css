@@ -313,3 +313,103 @@
         right: 48px;
     }
 }
+
+
+/* ===== CHUÔNG THÔNG BÁO (Notification Bell) ===== */
+.app-header-bell { position: relative; }
+.app-header-bell-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d5dee8;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background .15s, border-color .15s;
+}
+.app-header-bell-btn:hover { background: #f5f8ff; border-color: #2f6df6; }
+.app-header-bell-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: #e65100;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px #fff;
+}
+.app-header-bell-menu {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    width: 340px;
+    max-height: 420px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(15, 30, 50, .12);
+    z-index: 300;
+}
+.app-header-bell-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #eef2f7;
+    background: #fbfcfe;
+    position: sticky;
+    top: 0;
+}
+.app-header-bell-head strong { font-size: 14px; color: #172b42; }
+.app-header-bell-readall {
+    border: 0;
+    background: #eef4ff;
+    color: #2f6df6;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.app-header-bell-readall:hover { background: #dbe8ff; }
+.app-header-bell-list { padding: 8px; }
+.app-header-bell-empty { padding: 24px 16px; text-align: center; color: #8a99ab; font-size: 13px; }
+.app-header-bell-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border-left: 3px solid transparent;
+}
+.app-header-bell-item:hover { background: #f8fafc; }
+.app-header-bell-item:not(.is-read) { border-left-color: #2f6df6; }
+.app-header-bell-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.app-header-bell-item-main strong { font-size: 13px; color: #172b42; }
+.app-header-bell-item:not(.is-read) .app-header-bell-item-main strong { font-weight: 700; }
+.app-header-bell-item-main span { font-size: 12px; color: #8a99ab; }
+.app-header-bell-item-read {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 auto;
+    border: 1px solid #d5dee8;
+    background: #fff;
+    color: #2f6df6;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 13px;
+}
+.app-header-bell-item-read:hover { background: #eef4ff; border-color: #2f6df6; }
+.app-header-bell-item-done { color: #9aa8b8; font-size: 14px; }
