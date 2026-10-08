@@ -866,3 +866,7 @@
         margin-left: 0;
     }
 }
+.hrf-hint { font-size: 12px; line-height: 1.5; color: #64748b; }
+.hrf-body > .hrf-hint { grid-column: 1 / -1; margin: 0; }
+.hrf-error { font-size: 12px; line-height: 1.5; color: #b91c1c; }
+.hrf-field--invalid .hrf-input { border-color: #dc2626; }

@@ -4,22 +4,12 @@ import { canAccessModule } from "../../../services/auth/permission";
 import "../home.css";
 
 const MODULES = [
-    { to: "/attendance", icon: "◷", title: "Chấm công", detail: "Vào ca và ra ca", color: "blue" },
-    { to: "/attendance-history", icon: "◷", title: "Lịch sử chấm công", detail: "Tra cứu các lượt chấm công", color: "amber" },
-    { to: "/statistics", icon: "▥", title: "Thống kê công", detail: "Tổng hợp ngày công", color: "lime" },
-    { to: "/leave", icon: "▣", title: "Nghỉ phép", detail: "Theo dõi ngày phép và đơn nghỉ", color: "red" },
-    { to: "/reports", icon: "▤", title: "Báo cáo", detail: "Nộp báo cáo và theo dõi kết quả duyệt", color: "blue" },
-    { to: "/promotions", icon: "↗", title: "Đề xuất thăng chức", detail: "Gửi nguyện vọng phát triển nghề nghiệp", color: "lime" },
-    { to: "/handover", icon: "⇥", title: "Bàn giao nghỉ việc", detail: "Hoàn tất bàn giao trước ngày nghỉ", color: "amber" },
-    { to: "/contracts", icon: "▤", title: "Hợp đồng", detail: "Thông tin và thời hạn hợp đồng", color: "blue" },
-    { to: "/salary", icon: "＄", title: "Bảng lương", detail: "Xem lương theo kỳ", color: "lime" },
-    { to: "/insurance", icon: "◇", title: "Bảo hiểm & thuế", detail: "Thông tin bảo hiểm và thuế", color: "pink" },
-    { to: "/bank-accounts", icon: "▤", title: "Tài khoản ngân hàng", detail: "Thông tin nhận lương", color: "amber" },
-    { to: "/profile", icon: "♙", title: "Hồ sơ", detail: "Thông tin cá nhân của bạn", color: "red" },
-    { to: "/kich-hoat", icon: "◈", title: "Kích hoạt tài khoản", detail: "Nhập mã kích hoạt để đặt mật khẩu", color: "blue" },
+    { to: "/attendance", icon: "◷", title: "Chấm công", detail: "Vào / ra ca, lịch sử, thống kê và nghỉ phép", color: "blue" },
+    { to: "/work", icon: "▤", title: "Công việc", detail: "Theo dõi công việc và các yêu cầu cần xử lý", color: "blue" },
+    { to: "/profile", icon: "♙", title: "Hồ sơ cá nhân", detail: "Thông tin nhân viên và hồ sơ của bạn", color: "blue" },
+    { to: "/salary", icon: "＄", title: "Lương & chế độ", detail: "Bảng lương, bảo hiểm, thuế và tài khoản nhận lương", color: "blue" },
     { to: "/employees", icon: "♙", title: "Nhân sự", detail: "Hồ sơ và danh sách nhân viên", color: "pink" },
     { to: "/admin", icon: "▦", title: "Dashboard", detail: "Điều hành và quản lý hệ thống", color: "blue" },
-    { to: "/work", icon: "✦", title: "Công việc", detail: "Tổng quan và việc cần xử lý của bạn", color: "amber" },
 ];
 
 const HomePage = () => (
@@ -30,16 +20,15 @@ const HomePage = () => (
                 <div>
                     <span className="home-eyebrow">MARIXA · PEOPLE OPERATIONS</span>
                     <h1>Mọi công việc trong một không gian.</h1>
-                    <p>Chọn module để chấm công, quản lý hồ sơ và theo dõi các nghiệp vụ nhân sự hằng ngày.</p>
-                    <Link className="home-cta" to="/attendance">Bắt đầu chấm công <span aria-hidden="true">↗</span></Link>
+                    <p>Chọn khu vực làm việc bên dưới. Các chức năng chi tiết nằm trong menu của từng trang.</p>
                 </div>
                 <div className="home-hero-art" aria-hidden="true"><span>M</span><i /><i /><i /></div>
             </section>
 
             <section className="home-launcher" aria-labelledby="home-title">
                 <div className="home-heading">
-                    <div><span className="home-eyebrow">BUSINESS LAUNCHER</span><h2 id="home-title">Không gian làm việc</h2></div>
-                    <p>Chọn một module để tiếp tục.</p>
+                    <div><span className="home-eyebrow">MARIXA</span><h2 id="home-title">Không gian làm việc</h2></div>
+                    <p>Truy cập nhanh các khu vực chính.</p>
                 </div>
                 <div className="home-grid">
                     {MODULES.filter((module) => canAccessModule(module.to)).map((module) => (

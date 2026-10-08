@@ -3,6 +3,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ModelViews.EmployeeModelView
 {
+    public class UpdateMyProfileModelView
+    {
+        [Required, MaxLength(100)]
+        public string GivenName { get; set; } = string.Empty;
+        [Required, MaxLength(100)]
+        public string FamilyName { get; set; } = string.Empty;
+        public DateTime? BirthDate { get; set; }
+        [Range(0, 2)]
+        public GenderType Gender { get; set; }
+        [RegularExpression(@"^(0\d{9}|\+84\d{9})$")]
+        public string? PhoneNumber { get; set; }
+        [EmailAddress, MaxLength(150)]
+        public string? Email { get; set; }
+        [MaxLength(500)]
+        public string? PermanentAddress { get; set; }
+        [MaxLength(500)]
+        public string? CurrentAddress { get; set; }
+    }
+
     public class EmployeeResponseModelView
     {
         public Guid Id { get; set; }

@@ -22,6 +22,9 @@ const hasAnyRole = (roles) =>
 // - "access: admin": chỉ role quản trị (Admin).
 // - "access: user" / không khai báo: mọi tài khoản đã đăng nhập.
 export const canAccessModule = (to) => {
+    if (!getAuth()?.token) return false;
+    if (to === "/admin" || to.startsWith("/admin/")) return hasAdminRole();
+    if (to === "/employees" || to.startsWith("/employees/")) return hasAnyRole(["HR", "Manager", "Admin"]);
     const m = MODULES.find((x) => x.to === to);
     if (!m) return true; // đường dẫn tự do (login, hồ sơ...)
     if (m.roles) return hasAnyRole(m.roles);

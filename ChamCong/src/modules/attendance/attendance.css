@@ -1229,3 +1229,22 @@
 @media (max-width: 380px) {
     .att-mobile-layout .app-header-logo-text { display: none; }
 }
+.att-month-summary { margin-bottom: 20px; }
+.att-month-summary-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+.att-month-summary-head h2 { margin: 0 0 6px; font-size: 20px; }
+.att-month-summary-head p { margin: 0; }
+.att-month-summary-head label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; flex-shrink: 0; }
+.att-month-summary-head input { min-height: 44px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; background: #fff; color: inherit; }
+.att-month-summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.att-month-summary-grid > div { display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #f6f8fb; border: 1px solid #e8edf2; border-radius: 10px; }
+.att-month-summary-grid span, .att-month-summary-grid small { color: #5a6b7b; font-size: 12px; }
+.att-month-summary-grid strong { font-size: 20px; line-height: 1.4; }
+@media (max-width: 900px) {
+    .att-month-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    .att-month-summary-head { align-items: stretch; flex-direction: column; }
+    .att-month-summary-grid > div { padding: 12px; }
+    .att-month-summary-grid strong { font-size: 17px; }
+}
+.att-sidebar-section-title { padding: 16px 12px 8px; color: #64748b; font-size: 11px; font-weight: 700; letter-spacing: .04em; }

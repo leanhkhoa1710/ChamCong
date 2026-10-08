@@ -21,6 +21,7 @@ namespace M.Contract.Services.Interface
         Task<string> GetNextCodeAsync(Guid departmentId);
 
         Task UpdateAsync(UpdateEmployeeModelView model);
+        Task<EmployeeResponseModelView> UpdateMyProfileAsync(Guid userId, UpdateMyProfileModelView model);
 
         Task SoftDeleteAsync(Guid id);
 

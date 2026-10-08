@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 import employeeApi from "../../api/employeeApi";
 import { useEmployeeCode } from "../../../../components/common/useEmployeeCode";
 
@@ -12,15 +12,50 @@ const Grp = ({ t, children }) => (
         {children}
     </div>
 );
-const F = ({ l, req, children }) => (
-    <label className="hrf-field">
-        <span>
-            {l}
-            {req && <i className="req">*</i>}
-        </span>
-        {children}
-    </label>
-);
+const FieldContext = createContext({ errors: {}, touched: {}, touch: () => {} });
+const required = (value) => value.trim() ? "" : "Vui lòng nhập trường này.";
+const money = (value) => value === "" || (Number.isFinite(Number(value)) && Number(value) >= 0) ? "" : "Nhập số tiền từ 0 trở lên.";
+const today = () => new Date().toLocaleDateString("sv-SE");
+const after = (startKey, label) => (value, form) => !value || !form[startKey] || value >= form[startKey] ? "" : `Ngày này không được trước ${label}.`;
+const rules = {
+    "Mã nhân viên": ["employeeCode", "Mã được tạo tự động sau khi chọn phòng ban.", required],
+    "Họ / tên đệm": ["givenName", "Ví dụ: Nguyễn Văn. Tối đa 100 ký tự.", required],
+    "Tên": ["familyName", "Ví dụ: An. Tối đa 100 ký tự.", required],
+    "Ngày sinh": ["birthDate", "Chọn ngày sinh; không được là ngày tương lai.", (value) => !value || value <= today() ? "" : "Ngày sinh không được ở tương lai."],
+    "CCCD / CMT": ["citizenId", "CCCD: 12 chữ số; CMND cũ: 9 chữ số.", (value) => !value || /^(\d{9}|\d{12})$/.test(value) ? "" : "Nhập 9 hoặc 12 chữ số, không có khoảng trắng."],
+    "Ngày cấp": ["citizenIdIssuedDate", "Ngày cấp phải từ ngày sinh đến hôm nay.", (value, form) => !value ? "" : value > today() ? "Ngày cấp không được ở tương lai." : after("birthDate", "ngày sinh")(value, form)],
+    "Điện thoại": ["phoneNumber", "Ví dụ: 0901234567 hoặc +84901234567.", (value) => !value || /^(0\d{9}|\+84\d{9})$/.test(value) ? "" : "Nhập 10 chữ số bắt đầu bằng 0, hoặc +84 và 9 chữ số."],
+    "Email": ["email", "Ví dụ: ten@congty.com; có thể để trống.", (value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? "" : "Email chưa đúng định dạng, ví dụ: ten@congty.com."],
+    "Hết thử việc": ["probationEndDate", "Không trước ngày vào làm.", after("startDate", "ngày vào làm")],
+    "Số hợp đồng": ["contractNumber", "Nếu thêm hợp đồng, nhập số hợp đồng và ngày ký.", (value, form) => !value && (form.contractStart || form.contractEnd) ? "Vui lòng nhập số hợp đồng." : ""],
+    "Ngày ký": ["contractStart", "Bắt buộc khi nhập số hợp đồng.", (value, form) => form.contractNumber && !value ? "Vui lòng chọn ngày ký hợp đồng." : ""],
+    "Hết hạn": ["contractEnd", "Không trước ngày ký; để trống nếu không xác định thời hạn.", after("contractStart", "ngày ký")],
+    "Lương cơ bản": ["basicSalary", "Đơn vị VNĐ. Nhập số, ví dụ: 15000000.", money],
+    "Lương theo ngày": ["dailyRate", "Đơn vị VNĐ/ngày; để trống nếu không áp dụng.", money],
+    "Phụ cấp chức vụ": ["positionAllowance", "Đơn vị VNĐ; không có thì để trống hoặc nhập 0.", money],
+    "Phụ cấp khác": ["otherAllowance", "Đơn vị VNĐ; không có thì để trống hoặc nhập 0.", money],
+    "Thưởng": ["bonus", "Đơn vị VNĐ; không có thì để trống hoặc nhập 0.", money],
+    "Lương đóng BHXH": ["salaryInsuranceBase", "Đơn vị VNĐ, từ 0 trở lên.", money],
+    "Hiệu lực đến": ["salaryEffectiveTo", "Không trước ngày hiệu lực từ; có thể để trống.", after("salaryEffectiveFrom", "ngày hiệu lực từ")],
+    "Số BHXH": ["socialInsuranceNumber", "Nếu có, nhập mã BHXH gồm 10 chữ số.", (value) => !value || /^\d{10}$/.test(value) ? "" : "Mã BHXH phải có 10 chữ số."],
+    "Ngày kết thúc tham gia": ["insuranceEndDate", "Không trước ngày bắt đầu tham gia.", after("insuranceStartDate", "ngày bắt đầu tham gia")],
+    "Mức lương đóng BHXH": ["insuranceSalary", "Đơn vị VNĐ, từ 0 trở lên.", money],
+    "Ngân hàng": ["bankId", "Chọn ngân hàng nếu nhập thông tin nhận lương.", (value, form) => !value && (form.accountNumber || form.accountHolderName) ? "Vui lòng chọn ngân hàng." : ""],
+    "Số tài khoản": ["accountNumber", "Nhập 6–30 chữ số; không nhập số thẻ ngân hàng.", (value, form) => !value ? form.bankId || form.accountHolderName ? "Vui lòng nhập số tài khoản." : "" : /^\d{6,30}$/.test(value) ? "" : "Số tài khoản phải gồm 6–30 chữ số."],
+    "Tên chủ tài khoản": ["accountHolderName", "Nhập đúng tên chủ tài khoản tại ngân hàng."],
+};
+const F = ({ l, req, children }) => {
+    const { errors, touched, touch } = useContext(FieldContext);
+    const [key, hint] = rules[l] || [];
+    const error = touched[key] && errors[key];
+    return (
+        <label className={`hrf-field${error ? " hrf-field--invalid" : ""}`} onBlur={() => key && touch(key)}>
+            <span>{l}{req && <i className="req">*</i>}</span>
+            {children}
+            {error ? <small className="hrf-error" role="alert">{error}</small> : hint && <small className="hrf-hint">{hint}</small>}
+        </label>
+    );
+};
 
 // Form hồ sơ nhân viên theo 8 nhóm; chỉ mã và họ tên là bắt buộc.
 // Chỉ cho lưu khi đủ: Mã NV + Họ và tên (group 1) + Điều kiện làm việc.
@@ -117,6 +152,13 @@ const HR_ADDForm = ({
         } : {}),
     }));
 
+    const [saving, setSaving] = useState(false);
+    const [touched, setTouched] = useState({});
+    const errors = Object.fromEntries(Object.values(rules).filter(([, , validate]) => validate).map(([key, , validate]) => [key, validate(form[key], form)]));
+    if (form.givenName.length > 100) errors.givenName = "Tối đa 100 ký tự.";
+    if (form.familyName.length > 100) errors.familyName = "Tối đa 100 ký tự.";
+    const savingRef = useRef(false);
+    const createdId = useRef(null);
     const codeError = useEmployeeCode(form.departmentId, employee, setForm);
     const set = (k) => (e) =>
         setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -126,12 +168,16 @@ const HR_ADDForm = ({
     // Bắt buộc: mã NV + họ tên (given hoặc family phải có).
     const missing = [];
     if (!form.employeeCode.trim()) missing.push("Mã NV");
-    if (!form.givenName.trim() && !form.familyName.trim())
-        missing.push("Họ và tên");
+    if (!form.givenName.trim()) missing.push("Họ / tên đệm");
+    if (!form.familyName.trim()) missing.push("Tên");
     const canSave = missing.length === 0;
 
     const save = async () => {
-        if (!canSave) return;
+        if (!canSave || savingRef.current) return;
+        setTouched(Object.fromEntries(Object.keys(errors).map((key) => [key, true])));
+        if (Object.values(errors).some(Boolean)) return;
+        savingRef.current = true;
+        setSaving(true);
         const d = employeeApi;
         const base = {
             employeeCode: form.employeeCode.trim(),
@@ -156,34 +202,41 @@ const HR_ADDForm = ({
             note: form.note || null,
         };
         try {
-            const res = employee
-                ? await d.updateEmployee({ ...base, id: employee.id, userId: employee.userId, managerId: employee.managerId })
+            const existingId = employee?.id || createdId.current;
+            const res = existingId
+                ? await d.updateEmployee({ ...base, id: existingId, userId: employee?.userId, managerId: employee?.managerId })
                 : await d.createEmployee(base);
-            const employeeId = employee?.id || res?.data?.data?.id;
+            const employeeId = existingId || res?.data?.data;
             if (!employeeId) throw new Error("Không nhận được mã nhân viên để lưu các mục hồ sơ.");
+            let savedRelated = related;
+            if (createdId.current) {
+                const responses = await Promise.all([d.contracts(), d.salaries(), d.insurance(), d.bankAccounts()]);
+                savedRelated = Object.fromEntries(["contract", "salary", "insurance", "bankAccount"].map((key, index) => [key, responses[index].data.data?.items?.find((item) => item.employeeId === employeeId)]));
+            }
+            createdId.current = employeeId;
 
             const hasContract = Boolean(form.contractNumber || form.contractStart || form.contractEnd || related.contract);
             if (hasContract && form.contractNumber && form.contractStart) {
                 const payload = { employeeId, contractNumber: form.contractNumber, contractType: Number(form.contractType), startDate: form.contractStart, endDate: form.contractEnd || null, note: form.contractNote || null };
-                await (related.contract ? d.updateContract({ ...payload, id: related.contract.id }) : d.createContract(payload));
+                await (savedRelated.contract ? d.updateContract({ ...payload, id: savedRelated.contract.id }) : d.createContract(payload));
             }
 
             const hasSalary = [form.basicSalary, form.dailyRate, form.positionAllowance, form.otherAllowance, form.bonus, form.salaryInsuranceBase].some((value) => value !== "") || related.salary;
             if (hasSalary) {
                 const payload = { employeeId, paymentType: Number(form.paymentType), basicSalary: Number(form.basicSalary || 0), dailyRate: Number(form.dailyRate || 0), positionAllowance: Number(form.positionAllowance || 0), otherAllowance: Number(form.otherAllowance || 0), bonus: Number(form.bonus || 0), socialInsuranceSalary: Number(form.salaryInsuranceBase || 0), effectiveFrom: form.salaryEffectiveFrom || employee?.startDate?.slice(0, 10) || new Date().toISOString().slice(0, 10), effectiveTo: form.salaryEffectiveTo || null };
-                await (related.salary ? d.updateSalary({ ...payload, id: related.salary.id }) : d.createSalary(payload));
+                await (savedRelated.salary ? d.updateSalary({ ...payload, id: savedRelated.salary.id }) : d.createSalary(payload));
             }
 
             const hasInsurance = Boolean(form.socialInsuranceNumber || form.healthInsuranceNumber || form.personalTaxCode || form.isSocialInsuranceParticipant || form.insuranceStartDate || form.insuranceEndDate || form.insuranceSalary !== "" || related.insurance);
             if (hasInsurance) {
                 const payload = { employeeId, socialInsuranceNumber: form.socialInsuranceNumber || null, healthInsuranceNumber: form.healthInsuranceNumber || null, personalTaxCode: form.personalTaxCode || null, isSocialInsuranceParticipant: form.isSocialInsuranceParticipant, participationStartDate: form.insuranceStartDate || null, participationEndDate: form.insuranceEndDate || null, socialInsuranceSalary: Number(form.insuranceSalary || 0), status: Number(form.insuranceStatus) };
-                await (related.insurance ? d.updateInsurance({ ...payload, id: related.insurance.id }) : d.createInsurance(payload));
+                await (savedRelated.insurance ? d.updateInsurance({ ...payload, id: savedRelated.insurance.id }) : d.createInsurance(payload));
             }
 
             const hasBankAccount = Boolean(form.bankId || form.accountNumber || form.accountHolderName || related.bankAccount);
             if (hasBankAccount && form.bankId && form.accountNumber) {
                 const payload = { employeeId, bankId: form.bankId, accountNumber: form.accountNumber, accountHolderName: form.accountHolderName || null, isPrimary: form.isPrimary, status: Number(form.bankAccountStatus) };
-                await (related.bankAccount ? d.updateBankAccount({ ...payload, id: related.bankAccount.id }) : d.createBankAccount(payload));
+                await (savedRelated.bankAccount ? d.updateBankAccount({ ...payload, id: savedRelated.bankAccount.id }) : d.createBankAccount(payload));
             }
 
             onSaved?.(employeeId, missing);
@@ -192,6 +245,9 @@ const HR_ADDForm = ({
                 "Lưu thất bại: " +
                     (e.response?.data?.message || e.message)
             );
+        } finally {
+            savingRef.current = false;
+            setSaving(false);
         }
     };
 
@@ -214,7 +270,9 @@ const HR_ADDForm = ({
                     </button>
                 </div>
 
+                <FieldContext.Provider value={{ errors, touched, touch: (key) => setTouched((previous) => ({ ...previous, [key]: true })) }}>
                 <div className="hrf-body">
+                <p className="hrf-hint">Trường có dấu * là bắt buộc. Các thông tin chưa có có thể để trống. Lỗi sẽ hiện khi bạn rời khỏi ô nhập.</p>
                 <Grp t="1. Danh tính">
                     <F l="Mã nhân viên" req>
                         <input className={inp} value={form.employeeCode} onChange={set("employeeCode")} readOnly={!employee} placeholder={form.departmentId ? "Đang lấy mã nhân viên…" : "Chọn bộ phận để tự tạo mã"} />
@@ -437,6 +495,7 @@ const HR_ADDForm = ({
                 </Grp>
 
                 </div>
+                </FieldContext.Provider>
 
                 <div className="hrf-foot">
                     {!canSave && (
@@ -451,10 +510,10 @@ const HR_ADDForm = ({
                         <button
                             type="button"
                             className="hr-btn hr-btn--primary"
-                            disabled={!canSave}
+                            disabled={!canSave || saving}
                             onClick={save}
                         >
-                            {employee ? "Lưu thay đổi" : "Lưu hồ sơ"}
+                            {saving ? "Đang lưu…" : employee ? "Lưu thay đổi" : "Lưu hồ sơ"}
                         </button>
                     </div>
                 </div>

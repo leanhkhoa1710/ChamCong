@@ -19,7 +19,7 @@
 .home-hero {
     position: relative;
     display: flex;
-    min-height: 260px;
+    min-height: 200px;
     align-items: center;
     justify-content: space-between;
     gap: 32px;
@@ -52,7 +52,7 @@
 .home-heading h2 { margin: 5px 0 0; color: #152d40; font: 700 22px "Montserrat", "Be Vietnam Pro", sans-serif; letter-spacing: -.02em; }
 .home-heading p { margin: 0 0 2px; color: #788895; font-size: 11px; }
 .home-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
-.home-card { position: relative; display: flex; min-height: 164px; flex-direction: column; align-items: flex-start; padding: 16px; border: 1px solid #e3e9ee; border-radius: 12px; background: #fff; color: inherit; text-decoration: none; transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease; }
+.home-card { position: relative; display: flex; min-height: 144px; flex-direction: column; align-items: flex-start; padding: 18px; border: 1px solid #e3e9ee; border-radius: 12px; background: #fff; color: inherit; text-decoration: none; transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease; }
 .home-card:hover { transform: translateY(-2px); border-color: #bfd7e5; box-shadow: 0 10px 22px #18344910; }
 .home-icon { display: grid; width: 42px; height: 42px; place-items: center; margin-bottom: 13px; border-radius: 12px; font-size: 22px; font-weight: 700; }
 .home-icon--blue { background: #e4f2fa; color: #0873ad; }

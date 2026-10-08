@@ -145,7 +145,7 @@ const HR_ADDForm = ({
             const res = employee
                 ? await d.updateEmployee({ ...base, id: employee.id, userId: employee.userId, managerId: employee.managerId })
                 : await d.createEmployee(base);
-            onSaved?.(res?.data?.data?.id || null, missing);
+            onSaved?.(employee?.id || res?.data?.data || null, missing);
         } catch (e) {
             alert(
                 "Lưu thất bại: " +

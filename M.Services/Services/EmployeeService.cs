@@ -390,6 +390,32 @@ namespace M.Services.Service
             await _unitOfWork.SaveAsync();
         }
 
+        public async Task<EmployeeResponseModelView> UpdateMyProfileAsync(Guid userId, UpdateMyProfileModelView model)
+        {
+            var repo = _unitOfWork.GetRepository<Employee>();
+            var employee = await repo.Entities.Include(x => x.Department).Include(x => x.Position)
+                .FirstOrDefaultAsync(x => x.UserId == userId && !x.DeletedTime.HasValue)
+                ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Không tìm thấy hồ sơ của bạn.");
+            if (model.BirthDate.HasValue && model.BirthDate.Value.Date > CoreHelper.SystemTimeNow.Date)
+                throw new ErrorException(StatusCodes.Status400BadRequest, "INVALID_INPUT", "Ngày sinh không được ở tương lai.");
+            string? email = string.IsNullOrWhiteSpace(model.Email) ? null : model.Email.Trim();
+            if (email != null && await repo.Entities.AnyAsync(x => x.Id != employee.Id && x.Email == email && !x.DeletedTime.HasValue))
+                throw new ErrorException(StatusCodes.Status400BadRequest, "DUPLICATE", "Email đã được sử dụng trong hồ sơ khác.");
+            employee.GivenName = model.GivenName.Trim();
+            employee.FamilyName = model.FamilyName.Trim();
+            employee.BirthDate = model.BirthDate;
+            employee.Gender = model.Gender;
+            employee.PhoneNumber = model.PhoneNumber?.Trim();
+            employee.Email = email;
+            employee.PermanentAddress = model.PermanentAddress?.Trim();
+            employee.CurrentAddress = model.CurrentAddress?.Trim();
+            employee.LastUpdatedBy = _httpContextAccessor.HttpContext?.User.Identity?.Name;
+            employee.LastUpdatedTime = CoreHelper.SystemTimeNow;
+            await repo.UpdateAsync(employee);
+            await _unitOfWork.SaveAsync();
+            return employee.ToViewModel();
+        }
+
         public async Task SoftDeleteAsync(Guid id)
         {
             IGenericRepository<Employee> repo =

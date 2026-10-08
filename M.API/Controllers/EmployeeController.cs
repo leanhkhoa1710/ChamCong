@@ -4,6 +4,7 @@ using M.Core.Store;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelViews.EmployeeModelView;
+using System.Security.Claims;
 
 namespace M.API.Controllers
 {
@@ -17,6 +18,26 @@ namespace M.API.Controllers
         public EmployeeController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
+        }
+
+        private Guid? CurrentUserId => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub"), out var id) ? id : null;
+        private bool CanReadAll => User.IsInRole("HR") || User.IsInRole("Admin") || User.IsInRole("Manager");
+
+        [HttpGet("my-profile")]
+        public async Task<IActionResult> GetMyProfile()
+        {
+            if (!CurrentUserId.HasValue) return Unauthorized();
+            var result = await _employeeService.GetByUserIdAsync(CurrentUserId.Value);
+            if (result == null) return NotFound();
+            return Ok(new BaseResponse<EmployeeResponseModelView>(StatusCodeHelper.OK, ResponseCodeConstants.SUCCESS, result));
+        }
+
+        [HttpPut("my-profile")]
+        public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateMyProfileModelView model)
+        {
+            if (!CurrentUserId.HasValue) return Unauthorized();
+            var result = await _employeeService.UpdateMyProfileAsync(CurrentUserId.Value, model);
+            return Ok(new BaseResponse<EmployeeResponseModelView>(StatusCodeHelper.OK, ResponseCodeConstants.SUCCESS, result));
         }
 
         /// <summary>
@@ -47,6 +68,8 @@ namespace M.API.Controllers
             EmployeeResponseModelView result =
                 await _employeeService.GetByIdAsync(id);
 
+            if (!CanReadAll && (!CurrentUserId.HasValue || result.UserId != CurrentUserId)) return Forbid();
+
             return Ok(new BaseResponse<EmployeeResponseModelView>(
                 statusCode: StatusCodeHelper.OK,
                 code: ResponseCodeConstants.SUCCESS,
@@ -63,6 +86,7 @@ namespace M.API.Controllers
         [HttpGet("get-by-user/{userId}")]
         public async Task<IActionResult> GetByUser(Guid userId)
         {
+            if (!CanReadAll && userId != CurrentUserId) return Forbid();
             EmployeeResponseModelView? result =
                 await _employeeService.GetByUserIdAsync(userId);
 

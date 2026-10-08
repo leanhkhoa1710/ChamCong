@@ -164,3 +164,11 @@
         grid-template-columns: 1fr;
     }
 }
+.profile-edit { margin-top: 18px; }
+.profile-edit p, .profile-edit small { color: #64748b; font-size: 12px; line-height: 1.5; }
+.profile-edit fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; border: 0; padding: 0; margin: 16px 0; }
+.profile-edit label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.profile-edit input, .profile-edit select { min-width: 0; padding: 10px 12px; border: 1px solid #d1dbe5; border-radius: 8px; font: inherit; }
+.profile-edit input:user-invalid { border-color: #dc2626; }
+.profile-edit-actions { display: flex; justify-content: flex-end; gap: 10px; }
+@media (max-width: 600px) { .profile-edit fieldset { grid-template-columns: 1fr; } }
